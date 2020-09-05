@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="18dp"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:onClick="simpleActivity"
+        android:text="Simple Activity" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:onClick="colorLayerActivity"
+        android:text="Color Layer Activity" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:onClick="emojiViewActivity"
+        android:text="AXEmojiView Activity" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:onClick="lottie2gifActivity"
+        android:text="Lottie2Gif Activity" />
+
+</TableLayout>

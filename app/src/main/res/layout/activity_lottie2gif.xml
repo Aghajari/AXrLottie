@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.Lottie2GifActivity">
+
+    <com.aghajari.rlottie.AXrLottieImageView
+        android:id="@+id/lottie_view"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:adjustViewBounds="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:id="@+id/log_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <CheckBox
+            android:id="@+id/async_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Do in background"/>
+
+        <CheckBox
+            android:id="@+id/dithering"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Dithering Mode"/>
+
+        <CheckBox
+            android:id="@+id/bg_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="White Background"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/size_log"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Size : 256x256"
+                android:gravity="center"
+                android:layout_marginRight="16dp"
+                android:textColor="@color/colorPrimaryDark"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="256"
+                android:hint="Gif Size"/>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:onClick="convert"
+            android:text="Save As Gif" />
+
+    </LinearLayout>
+
+</LinearLayout>

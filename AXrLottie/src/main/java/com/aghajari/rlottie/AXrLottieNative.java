@@ -1,0 +1,46 @@
+/*
+ * Copyright (C) 2020 - Amir Hossein Aghajari
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+
+package com.aghajari.rlottie;
+
+import android.graphics.Bitmap;
+
+class AXrLottieNative {
+    public static native long create(String src, int w, int h, int[] params, boolean precache, int[] colorReplacement, boolean limitFps);
+    public static native long createWithJson(String json, String name, int[] params, int[] colorReplacement);
+    public static native void destroy(long ptr);
+    public static native int getFrame(long ptr, int frame, Bitmap bitmap, int w, int h, int stride);
+    public static native void createCache(long ptr, int w, int h);
+
+    public static native int getLayersCount(long ptr);
+    public static native String[] getLayerData(long ptr,int index);
+
+    public static native void setLayerColor(long ptr, String layer, int color);
+    public static native void replaceColors(long ptr, int[] colorReplacement);
+
+    public static native void setLayerFillOpacity(long ptr, String layer, float color);
+    public static native void setLayerStrokeOpacity(long ptr, String layer, float value);
+    public static native void setLayerStrokeWidth(long ptr, String layer, float value);
+    public static native void setLayerTrRotation(long ptr, String layer, float value);
+    public static native void setLayerTrOpacity(long ptr, String layer, float value);
+    public static native void setLayerTrAnchor(long ptr, String layer, float x,float y);
+    public static native void setLayerTrPosition(long ptr, String layer, float x,float y);
+    public static native void setLayerTrScale(long ptr, String layer, float w,float h);
+
+    public static native boolean lottie2gif(long ptr, Bitmap bitmap,int w, int h,int stride, int bgColor,boolean transparent, String gifPath,int delay, int bitDepth, boolean dither,int frameStart,int frameEnd, AXrLottie2Gif.Lottie2GifListener listener);
+}
