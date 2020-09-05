@@ -13,7 +13,7 @@
   - [Install AXrLottie](#install-axrlottie)
   - [Basic Usage](#basic-usage)
   - [LayerProperty](#layerproperty)
-    - [AnimationLayers](#animationlayers)
+    - [AnimationLayers](#animatedsticker---axemojiview)
   - [Lottie2Gif](#lottie2gif)
   - [Listeners](#listeners)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker)
