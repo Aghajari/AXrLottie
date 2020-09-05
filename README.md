@@ -40,8 +40,13 @@ Maven
 ```
 
 # Usage
-Let's START! :smiley:
+First you should know what is lottie?
+> Lottie loads and renders animations and vectors exported in the bodymovin JSON format. Bodymovin JSON can be created and exported from After Effects with bodymovin, Sketch with Lottie Sketch Export, and from Haiku.
+>
+> For the first time, designers can create and ship beautiful animations without an engineer painstakingly recreating it by hand. Since the animation is backed by > JSON they are extremely small in size but can be large in complexity!
 
+
+Let's START! :smiley:
 
 ## Install AXrLottie 
 First step, you should install AXrLottie
