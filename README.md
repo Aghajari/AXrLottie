@@ -113,6 +113,8 @@ you can disable cache in AXrLottieDrawable Builder
 ### Output
 <img src="./images/simple.gif" width=300 title="Screen">
 
+[Back to contents](#table-of-contents)
+
 ## LayerProperty
 
 To update a property at runtime, you need 3 things:
@@ -151,6 +153,8 @@ Keypath should contains object names separated by (.) and can handle globe(`**`)
 - TrRotation
 - TrScale
 
+[Back to contents](#table-of-contents)
+
 ## Layers
 AXrLottieLayerInfo contains Layer's name,type,startFrame and endFrame.
 
@@ -159,6 +163,8 @@ for (AXrLottieLayerInfo layerInfo : lottieDrawable.getLayers()) {
     Log.i("AXrLottie", layerInfo.toString());
 }
 ```
+
+[Back to contents](#table-of-contents)
 
 ## Markers
 Markers exported form AE are used to describe a segment of an animation {comment/tag , startFrame, endFrame} 
@@ -172,6 +178,8 @@ for (AXrLottieMarker marker : lottieDrawable.getMarkers()) {
     Log.i("AXrLottie", marker.toString());
 }
 ```
+
+[Back to contents](#table-of-contents)
 
 ## Lottie2Gif
 <img src="./images/gif.png" width=300 title="Screen">
@@ -216,6 +224,7 @@ AXrLottie2Gif.create(lottieDrawable)
 
 *[lottie.gif](./images/lottie.gif) has been exported by AXrLottie2Gif*
 
+[Back to contents](#table-of-contents)
 
 ## Listeners
 OnFrameChangedListener:
@@ -228,6 +237,8 @@ OnFrameRenderListener:
 void onUpdate(AXrLottieDrawable drawable, int frame, long timeDiff, boolean force);
 Bitmap renderFrame(AXrLottieDrawable drawable, Bitmap bitmap, int frame);
 ```
+
+[Back to contents](#table-of-contents)
 
 ## AnimatedSticker - AXEmojiView
 you can create AXrLottieImageView in AXEmojiView/StickerView using this code :
@@ -283,6 +294,8 @@ and you can load your animations in StickerProvider
 
 ### Output
 <img src="./images/screen.png" width=300 title="Screen">
+
+[Back to contents](#table-of-contents)
 
 ## Author 
 - **Amir Hossein Aghajari**
