@@ -101,13 +101,13 @@ lottieView.playAnimation();
 ```
 you can load lottie file from following sources :
 - File
-- Json (String)
-- Url
+- JSON (String)
+- URL
 - Assets
 - Resource
 - InputStram
 
-lottie will cache animations and files
+lottie will cache animations/files by default.
 you can disable cache in AXrLottieDrawable Builder
 
 ### Output
@@ -121,7 +121,7 @@ To update a property at runtime, you need 3 things:
 3. setLayerProperty(KeyPath, AXrLottieProperty)
 
 ```java
-lottieView.setLayerProperty("KeyPath", AXrLottieProperty.colorProperty(color));
+lottieDrawable.setLayerProperty("**" /**KeyPath*/, AXrLottieProperty.colorProperty(color) /**AXrLottieProperty*/);
 ```
 ### Output
 <img src="./images/layer.gif" width=300 title="Screen">
@@ -136,8 +136,8 @@ KeyPaths can include the specific name of the contents or wildcards:
 	- Globstars match zero or more layers.
   
 Keypath should contains object names separated by (.) and can handle globe(`**`) or wildchar(`*`).
- - To change fillcolor property of fill1 object in the layer1->group1->fill1 hirarchy to RED color, KeyPath = `layer1.group1.fill1`
-- if all the color property inside group1 needs to be changed to GREEN color, KeyPath = `**.group1.**`
+- To change the property of fill1 object in the layer1->group1->fill1 : KeyPath = `layer1.group1.fill1`
+- If all the property inside group1 needs to be changed : KeyPath = `**.group1.**`
 
 ### Properties
 - FillColor
@@ -174,6 +174,8 @@ for (AXrLottieMarker marker : lottieDrawable.getMarkers()) {
 ```
 
 ## Lottie2Gif
+<img src="./images/gif.png" width=300 title="Screen">
+
 you can export lottie animations as a GIF!
 thanks to [gif-h](https://github.com/charlietangora/gif-h)
 
@@ -210,11 +212,10 @@ AXrLottie2Gif.create(lottieDrawable)
 ```
 
 ### Output
-<img src="./images/gif.png" width=300 title="Screen">
-
 <img height=250 src="./images/lottie2.gif">
 
 *[lottie.gif](./images/lottie.gif) has been exported by AXrLottie2Gif*
+
 
 ## Listeners
 OnFrameChangedListener:
@@ -249,7 +250,7 @@ add this just after `AXEmojiManager.install`
 and you can load your animations in StickerProvider
 ```java
   @Override
-    public StickerLoader getLoader() {
+  public StickerLoader getLoader() {
         return new StickerLoader() {
             @Override
             public void onLoadSticker(View view, Sticker sticker) {
@@ -277,7 +278,7 @@ and you can load your animations in StickerProvider
                 }
             }
         };
-    }
+  }
 ```
 
 ### Output
