@@ -5,7 +5,7 @@
 </div>
 
 ## Screenshot
-<img src="./images/screen.png" width=300 title="Screen">
+<img src="./images/screen.png" width=300 title="Screen"> <img src="./images/editor.png" width=300 title="Screen">
 
 ## Table of Contents  
 - [Installation](#installation)  
@@ -13,20 +13,22 @@
   - [Install AXrLottie](#install-axrlottie)
   - [Basic Usage](#basic-usage)
   - [LayerProperty](#layerproperty)
-    - [AnimationLayers](#animatedsticker---axemojiview)
+    - [KeyPath](#keypath)
+    - [Properties](#properties)
+  - [Layers](#layers)
+  - [Markers](#markers)
   - [Lottie2Gif](#lottie2gif)
   - [Listeners](#listeners)
-- [AnimatedSticker (AXEmojiView)](#animatedsticker)
+- [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
 
 ## Installation
-
 AXrLottie is available in the JCenter, so you just need to add it as a dependency (Module gradle)
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.0'
+implementation 'com.aghajari.rlottie:AXrLottie:1.0.2'
 ```
 
 Maven
@@ -34,10 +36,20 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.2</version>
   <type>pom</type>
 </dependency>
 ```
+
+## Changelogs
+
+**1.0.2 :**
+- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
+- [AXrLottieMarker](#markers) added.
+- StrokeColor added to AXrLottieProperty.
+- configureModelCacheSize added to AXrLottie.
+- Now AXrLottieLayerInfo contains the type of layer.
+- Some improvements & Bugs fixed
 
 # Usage
 First you should know what is lottie?
@@ -90,13 +102,34 @@ you can disable cache in AXrLottieDrawable Builder
 
 ## LayerProperty
 
-```java
-lottieView.setLayerProperty("layer_name.**", AXrLottieProperty.colorProperty(color));
-```
+To update a property at runtime, you need 3 things:
+1. KeyPath
+2. AXrLottieProperty
+3. setLayerProperty(KeyPath, AXrLottieProperty)
 
-Properties :
-- Color
+```java
+lottieView.setLayerProperty("KeyPath", AXrLottieProperty.colorProperty(color));
+```
+### Output
+<img src="./images/layer.gif" width=300 title="Screen">
+
+### KeyPath
+
+A KeyPath is used to target a specific content or a set of contents that will be updated. A KeyPath is specified by a list of strings that correspond to the hierarchy of After Effects contents in the original animation.
+KeyPaths can include the specific name of the contents or wildcards:
+- Wildcard *
+	- Wildcards match any single content name in its position in the keypath.
+- Globstar **
+	- Globstars match zero or more layers.
+  
+Keypath should contains object names separated by (.) and can handle globe(`**`) or wildchar(`*`).
+ - To change fillcolor property of fill1 object in the layer1->group1->fill1 hirarchy to RED color, KeyPath = `layer1.group1.fill1`
+- if all the color property inside group1 needs to be changed to GREEN color, KeyPath = `**.group1.**`
+
+### Properties
+- FillColor
 - FillOpacity
+- StrokeColor
 - StrokeOpacity
 - StrokeWidth
 - TrAnchor
@@ -105,14 +138,25 @@ Properties :
 - TrRotation
 - TrScale
 
-### Output
-<img src="./images/layer.gif" width=300 title="Screen">
-
-### AnimationLayers
+## Layers
+AXrLottieLayerInfo contains Layer's name,type,startFrame and endFrame.
 
 ```java
 for (AXrLottieLayerInfo layerInfo : lottieDrawable.getLayers()) {
-    Log.i("AXrLottie", "layerName: " + layerInfo.getName());
+    Log.i("AXrLottie", layerInfo.toString());
+}
+```
+
+## Markers
+Markers exported form AE are used to describe a segment of an animation {comment/tag , startFrame, endFrame} 
+Marker can be use to divide a resource in to separate animations by tagging the segment with comment string ,
+start frame and duration of that segment.
+
+[More...](https://helpx.adobe.com/after-effects/using/layer-markers-composition-markers.html)
+
+```java
+for (AXrLottieMarker marker : lottieDrawable.getMarkers()) {
+    Log.i("AXrLottie", marker.toString());
 }
 ```
 
