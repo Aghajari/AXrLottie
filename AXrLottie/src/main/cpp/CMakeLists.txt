@@ -205,7 +205,6 @@ target_link_libraries(jlottie rlottie2gif)
 target_link_libraries( # Specifies the target library.
         jlottie
         -ljnigraphics
-
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib} )

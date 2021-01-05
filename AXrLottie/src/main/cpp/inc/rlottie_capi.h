@@ -1,19 +1,23 @@
-/* 
- * Copyright (c) 2018 Samsung Electronics Co., Ltd. All rights reserved.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+/*
+ * Copyright (c) 2020 Samsung Electronics Co., Ltd. All rights reserved.
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 #ifndef _RLOTTIE_CAPI_H_
@@ -26,6 +30,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef enum {
+    LOTTIE_ANIMATION_PROPERTY_FILLCOLOR,      /*!< Color property of Fill object , value type is float [0 ... 1] */
+    LOTTIE_ANIMATION_PROPERTY_FILLOPACITY,    /*!< Opacity property of Fill object , value type is float [ 0 .. 100] */
+    LOTTIE_ANIMATION_PROPERTY_STROKECOLOR,    /*!< Color property of Stroke object , value type is float [0 ... 1] */
+    LOTTIE_ANIMATION_PROPERTY_STROKEOPACITY,  /*!< Opacity property of Stroke object , value type is float [ 0 .. 100] */
+    LOTTIE_ANIMATION_PROPERTY_STROKEWIDTH,    /*!< stroke with property of Stroke object , value type is float */
+    LOTTIE_ANIMATION_PROPERTY_TR_ANCHOR,      /*!< Transform Anchor property of Layer and Group object , value type is int */
+    LOTTIE_ANIMATION_PROPERTY_TR_POSITION,    /*!< Transform Position property of Layer and Group object , value type is int */
+    LOTTIE_ANIMATION_PROPERTY_TR_SCALE,       /*!< Transform Scale property of Layer and Group object , value type is float range[0 ..100] */
+    LOTTIE_ANIMATION_PROPERTY_TR_ROTATION,    /*!< Transform Scale property of Layer and Group object , value type is float. range[0 .. 360] in degrees*/
+    LOTTIE_ANIMATION_PROPERTY_TR_OPACITY      /*!< Transform Opacity property of Layer and Group object , value type is float [ 0 .. 100] */
+}Lottie_Animation_Property;
 
 typedef struct Lottie_Animation_S Lottie_Animation;
 
@@ -42,7 +59,7 @@ typedef struct Lottie_Animation_S Lottie_Animation;
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT Lottie_Animation *lottie_animation_from_file(const char *path);
+RLOTTIE_API Lottie_Animation *lottie_animation_from_file(const char *path);
 
 /**
  *  @brief Constructs an animation object from JSON string data.
@@ -57,7 +74,7 @@ LOT_EXPORT Lottie_Animation *lottie_animation_from_file(const char *path);
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT Lottie_Animation *lottie_animation_from_data(const char *data, const char *key, const char *resource_path);
+RLOTTIE_API Lottie_Animation *lottie_animation_from_data(const char *data, const char *key, const char *resource_path);
 
 /**
  *  @brief Free given Animation object resource.
@@ -70,7 +87,7 @@ LOT_EXPORT Lottie_Animation *lottie_animation_from_data(const char *data, const 
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT void lottie_animation_destroy(Lottie_Animation *animation);
+RLOTTIE_API void lottie_animation_destroy(Lottie_Animation *animation);
 
 /**
  *  @brief Returns default viewport size of the Lottie resource.
@@ -82,7 +99,7 @@ LOT_EXPORT void lottie_animation_destroy(Lottie_Animation *animation);
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT void lottie_animation_get_size(const Lottie_Animation *animation, size_t *width, size_t *height);
+RLOTTIE_API void lottie_animation_get_size(const Lottie_Animation *animation, size_t *width, size_t *height);
 
 /**
  *  @brief Returns total animation duration of Lottie resource in second.
@@ -100,7 +117,7 @@ LOT_EXPORT void lottie_animation_get_size(const Lottie_Animation *animation, siz
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT double lottie_animation_get_duration(const Lottie_Animation *animation);
+RLOTTIE_API double lottie_animation_get_duration(const Lottie_Animation *animation);
 
 /**
  *  @brief Returns total number of frames present in the Lottie resource.
@@ -117,7 +134,7 @@ LOT_EXPORT double lottie_animation_get_duration(const Lottie_Animation *animatio
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT size_t lottie_animation_get_totalframe(const Lottie_Animation *animation);
+RLOTTIE_API size_t lottie_animation_get_totalframe(const Lottie_Animation *animation);
 
 /**
  *  @brief Returns default framerate of the Lottie resource.
@@ -130,7 +147,7 @@ LOT_EXPORT size_t lottie_animation_get_totalframe(const Lottie_Animation *animat
  *  @internal
  *
  */
-LOT_EXPORT double lottie_animation_get_framerate(const Lottie_Animation *animation);
+RLOTTIE_API double lottie_animation_get_framerate(const Lottie_Animation *animation);
 
 /**
  *  @brief Get the render tree which contains the snapshot of the animation object
@@ -151,9 +168,7 @@ LOT_EXPORT double lottie_animation_get_framerate(const Lottie_Animation *animati
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT const LOTLayerNode * lottie_animation_render_tree(Lottie_Animation *animation,
-                                                             size_t frame_num,
-                                                             size_t width, size_t height);
+RLOTTIE_API const LOTLayerNode *lottie_animation_render_tree(Lottie_Animation *animation, size_t frame_num, size_t width, size_t height);
 
 /**
  *  @brief Maps position to frame number and returns it.
@@ -168,7 +183,7 @@ LOT_EXPORT const LOTLayerNode * lottie_animation_render_tree(Lottie_Animation *a
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT size_t lottie_animation_get_frame_at_pos(const Lottie_Animation *animation, float pos);
+RLOTTIE_API size_t lottie_animation_get_frame_at_pos(const Lottie_Animation *animation, float pos);
 
 /**
  *  @brief Request to render the content of the frame @p frame_num to buffer @p buffer.
@@ -184,13 +199,7 @@ LOT_EXPORT size_t lottie_animation_get_frame_at_pos(const Lottie_Animation *anim
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT void
-lottie_animation_render(Lottie_Animation *animation,
-                        size_t frame_num,
-                        uint32_t *buffer,
-                        size_t width,
-                        size_t height,
-                        size_t bytes_per_line);
+RLOTTIE_API void lottie_animation_render(Lottie_Animation *animation, size_t frame_num, uint32_t *buffer, size_t width, size_t height, size_t bytes_per_line);
 
 /**
  *  @brief Request to render the content of the frame @p frame_num to buffer @p buffer asynchronously.
@@ -207,13 +216,7 @@ lottie_animation_render(Lottie_Animation *animation,
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT void
-lottie_animation_render_async(Lottie_Animation *animation,
-                              size_t frame_num,
-                              uint32_t *buffer,
-                              size_t width,
-                              size_t height,
-                              size_t bytes_per_line);
+RLOTTIE_API void lottie_animation_render_async(Lottie_Animation *animation, size_t frame_num, uint32_t *buffer, size_t width, size_t height, size_t bytes_per_line);
 
 /**
  *  @brief Request to finish the current async renderer job for this animation object.
@@ -230,8 +233,46 @@ lottie_animation_render_async(Lottie_Animation *animation,
  *  @ingroup Lottie_Animation
  *  @internal
  */
-LOT_EXPORT uint32_t *
-lottie_animation_render_flush(Lottie_Animation *animation);
+RLOTTIE_API uint32_t *lottie_animation_render_flush(Lottie_Animation *animation);
+
+
+/**
+ *  @brief Request to change the properties of this animation object.
+ *  Keypath should conatin object names separated by (.) and can handle globe(**) or wildchar(*)
+ *
+ *  @usage
+ *  To change fillcolor property of fill1 object in the layer1->group1->fill1 hirarchy to RED color
+ *
+ *      lottie_animation_property_override(animation, LOTTIE_ANIMATION_PROPERTY_FILLCOLOR, "layer1.group1.fill1", 1.0, 0.0, 0.0);
+ *
+ *  if all the color property inside group1 needs to be changed to GREEN color
+ *
+ *      lottie_animation_property_override(animation, LOTTIE_ANIMATION_PROPERTY_FILLCOLOR, "**.group1.**", 1.0, 0.0, 0.0);
+ *
+ *  @param[in] animation Animation object.
+ *  @param[in] type Property type. (@p Lottie_Animation_Property)
+ *  @param[in] keypath Specific content of target.
+ *  @param[in] ... Property values.
+ *
+ *  @ingroup Lottie_Animation
+ *  @internal
+ * */
+RLOTTIE_API void lottie_animation_property_override(Lottie_Animation *animation, const Lottie_Animation_Property type, const char *keypath, ...);
+
+
+/**
+ *  @brief Returns list of markers in the Lottie resource
+ *  @p LOTMarkerList has a @p LOTMarker list and size of list
+ *  @p LOTMarker has the marker's name, start frame, and end frame.
+ *
+ *  @param[in] animation Animation object.
+ *
+ *  @return The list of marker. If there is no marker, return null.
+ *
+ *  @ingroup Lottie_Animation
+ *  @internal
+ * */
+RLOTTIE_API const LOTMarkerList* lottie_animation_get_markerlist(Lottie_Animation *animation);
 
 #ifdef __cplusplus
 }

@@ -23,8 +23,9 @@ public class AXrLottieProperty {
     PropertyType type;
 
     private enum PropertyType {
-        Color,
+        FillColor,
         FillOpacity,
+        StrokeColor,
         StrokeOpacity,
         StrokeWidth,
         TrAnchor,
@@ -55,13 +56,18 @@ public class AXrLottieProperty {
     }
 
     /* Color property of Fill object */
-    public static AXrLottieProperty colorProperty(int color) {
-        return new AXrLottieProperty(PropertyType.Color, color);
+    public static AXrLottieProperty fillColorProperty(int color) {
+        return new AXrLottieProperty(PropertyType.FillColor, color);
     }
 
     /* Opacity property of Fill object, [ 0 .. 100] */
     public static AXrLottieProperty fillOpacity(float value) {
         return new AXrLottieProperty(PropertyType.FillOpacity, value);
+    }
+
+    /* Color property of Stroke object */
+    public static AXrLottieProperty strokeColorProperty(int color) {
+        return new AXrLottieProperty(PropertyType.StrokeColor, color);
     }
 
     /* Opacity property of Stroke object, [ 0 .. 100] */
@@ -115,11 +121,14 @@ public class AXrLottieProperty {
 
     private static void apply(long ptr, String layer, AXrLottieProperty property) {
         switch (property.type) {
-            case Color:
+            case FillColor:
                 AXrLottieNative.setLayerColor(ptr, layer, property.intValue);
                 break;
             case FillOpacity:
                 AXrLottieNative.setLayerFillOpacity(ptr, layer, property.floatValue);
+                break;
+            case StrokeColor:
+                AXrLottieNative.setLayerStrokeColor(ptr, layer, property.intValue);
                 break;
             case StrokeOpacity:
                 AXrLottieNative.setLayerStrokeOpacity(ptr, layer, property.floatValue);

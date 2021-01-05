@@ -17,29 +17,14 @@
 extern "C" {
 using namespace rlottie;
 
-jlong Java_com_aghajari_rlottie_AXrLottieNative_create(JNIEnv *env, jclass clazz, jstring src, jint w, jint h, jintArray data, jboolean precache, jintArray colorReplacement, jboolean limitFps) {
+jlong Java_com_aghajari_rlottie_AXrLottieNative_create(JNIEnv *env, jclass clazz, jstring src, jint w, jint h, jintArray data, jboolean precache, jboolean limitFps) {
     LottieInfo *info = new LottieInfo();
 
     std::map<int32_t, int32_t> *colors = nullptr;
-    int color = 0;
-    if (colorReplacement != nullptr) {
-        jint *arr = env->GetIntArrayElements(colorReplacement, 0);
-        if (arr != nullptr) {
-            jsize len = env->GetArrayLength(colorReplacement);
-            colors = new std::map<int32_t, int32_t>();
-            for (int32_t a = 0; a < len / 2; a++) {
-                (*colors)[arr[a * 2]] = arr[a * 2 + 1];
-                if (color == 0) {
-                    color = arr[a * 2 + 1];
-                }
-            }
-            env->ReleaseIntArrayElements(colorReplacement, arr, 0);
-        }
-    }
 
     char const *srcString = env->GetStringUTFChars(src, 0);
     info->path = srcString;
-    info->animation = rlottie::Animation::loadFromFile(info->path, colors);
+    info->animation = rlottie::Animation::loadFromFile(info->path);
     if (srcString != 0) {
         env->ReleaseStringUTFChars(src, srcString);
     }
@@ -64,9 +49,6 @@ jlong Java_com_aghajari_rlottie_AXrLottieNative_create(JNIEnv *env, jclass clazz
             info->cacheFile.insert(index, "/acache");
         }
         info->cacheFile += std::to_string(w) + "_" + std::to_string(h);
-        if (color != 0) {
-            info->cacheFile += "_" + std::to_string(color);
-        }
         if (limitFps) {
             info->cacheFile += ".s.cache";
         } else {
@@ -101,25 +83,12 @@ jlong Java_com_aghajari_rlottie_AXrLottieNative_create(JNIEnv *env, jclass clazz
     return (jlong) (intptr_t) info;
 }
 
-jlong Java_com_aghajari_rlottie_AXrLottieNative_createWithJson(JNIEnv *env, jclass clazz, jstring json, jstring name, jintArray data, jintArray colorReplacement) {
-    std::map<int32_t, int32_t> *colors = nullptr;
-    if (colorReplacement != nullptr) {
-        jint *arr = env->GetIntArrayElements(colorReplacement, 0);
-        if (arr != nullptr) {
-            jsize len = env->GetArrayLength(colorReplacement);
-            colors = new std::map<int32_t, int32_t>();
-            for (int32_t a = 0; a < len / 2; a++) {
-                (*colors)[arr[a * 2]] = arr[a * 2 + 1];
-            }
-            env->ReleaseIntArrayElements(colorReplacement, arr, 0);
-        }
-    }
-
+jlong Java_com_aghajari_rlottie_AXrLottieNative_createWithJson(JNIEnv *env, jclass clazz, jstring json, jstring name, jintArray data) {
     LottieInfo *info = new LottieInfo();
 
     char const *jsonString = env->GetStringUTFChars(json, 0);
     char const *nameString = env->GetStringUTFChars(name, 0);
-    info->animation = rlottie::Animation::loadFromData(jsonString, nameString, colors);
+    info->animation = rlottie::Animation::loadFromData(jsonString, nameString);
     if (jsonString != 0) {
         env->ReleaseStringUTFChars(json, jsonString);
     }
@@ -238,6 +207,7 @@ void Java_com_aghajari_rlottie_AXrLottieNative_createCache(JNIEnv *env, jclass c
                 Surface &surfaceToRender = num % 2 == 0 ? surface1 : surface2;
                 num++;
                 info->animation->renderSync(a, surfaceToRender);
+                LottieWrapper::convertToCanvasFormat(surfaceToRender);
                 if (a != 0) {
                     std::unique_lock<std::mutex> lk(cacheDoneMutex);
                     cacheDoneCv.wait(lk, [] { return !frameReady.load(); });
@@ -323,6 +293,7 @@ jint Java_com_aghajari_rlottie_AXrLottieNative_getFrame(JNIEnv *env, jclass claz
             if (!info->nextFrameIsCacheFrame || !info->precache) {
                 Surface surface((uint32_t *) pixels, (size_t) w, (size_t) h, (size_t) stride);
                 info->animation->renderSync((size_t) frame, surface);
+                LottieWrapper::convertToCanvasFormat(surface);
                 info->nextFrameIsCacheFrame = true;
             }
         }
@@ -330,6 +301,36 @@ jint Java_com_aghajari_rlottie_AXrLottieNative_getFrame(JNIEnv *env, jclass claz
         AndroidBitmap_unlockPixels(env, bitmap);
     }
     return frame;
+}
+
+void LottieWrapper::convertToCanvasFormat(Surface &s) {
+    uint8_t *buffer = reinterpret_cast<uint8_t *>(s.buffer());
+    uint32_t totalBytes = s.height() * s.bytesPerLine();
+
+    for (int i = 0; i < totalBytes; i += 4) {
+        unsigned char a = buffer[i + 3];
+        // compute only if alpha is non zero
+        if (a) {
+            unsigned char r = buffer[i + 2];
+            unsigned char g = buffer[i + 1];
+            unsigned char b = buffer[i];
+
+            if (a != 255) {  // un premultiply
+                r = (r * 255) / a;
+                g = (g * 255) / a;
+                b = (b * 255) / a;
+
+                buffer[i] = r;
+                buffer[i + 1] = g;
+                buffer[i + 2] = b;
+
+            } else {
+                buffer[i] = r;
+                buffer[i + 1] = g;
+                buffer[i + 2] = b;
+            }
+        }
+    }
 }
 
 jint Java_com_aghajari_rlottie_AXrLottieNative_getLayersCount(JNIEnv *env, jclass clazz, jlong ptr){
@@ -346,30 +347,37 @@ jobjectArray Java_com_aghajari_rlottie_AXrLottieNative_getLayerData(JNIEnv *env,
     }
     LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
 
-    jobjectArray ret =(jobjectArray)env->NewObjectArray(3,env->FindClass("java/lang/String"),env->NewStringUTF(""));
+    jobjectArray ret =(jobjectArray)env->NewObjectArray(4,env->FindClass("java/lang/String"),env->NewStringUTF(""));
 
-    std::tuple<std::string, int , int> layer = info->animation->layers().at(index);
+    std::tuple<std::string, int , int, int> layer = info->animation->layers().at(index);
     env->SetObjectArrayElement(ret,0,env->NewStringUTF(std::get<0>(layer).c_str()));
     env->SetObjectArrayElement(ret,1,env->NewStringUTF(std::to_string(std::get<1>(layer)).c_str()));
     env->SetObjectArrayElement(ret,2,env->NewStringUTF(std::to_string(std::get<2>(layer)).c_str()));
+    env->SetObjectArrayElement(ret,3,env->NewStringUTF(std::to_string(std::get<3>(layer)).c_str()));
     return(ret);
 }
 
-void Java_com_aghajari_rlottie_AXrLottieNative_replaceColors(JNIEnv *env, jclass clazz, jlong ptr, jintArray colorReplacement) {
-    if (ptr == NULL || colorReplacement == nullptr) {
-        return;
+jint Java_com_aghajari_rlottie_AXrLottieNative_getMarkersCount(JNIEnv *env, jclass clazz, jlong ptr){
+    if (ptr == NULL) {
+        return 0;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    return info->animation->markers().size();
+}
+
+jobjectArray Java_com_aghajari_rlottie_AXrLottieNative_getMarkerData(JNIEnv *env, jclass clazz, jlong ptr, jint index){
+    if (ptr == NULL) {
+        return NULL;
     }
     LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
 
-    jint *arr = env->GetIntArrayElements(colorReplacement, 0);
-    if (arr != nullptr) {
-        jsize len = env->GetArrayLength(colorReplacement);
-        for (int32_t a = 0; a < len / 2; a++) {
-            (*info->animation->colorMap)[arr[a * 2]] = arr[a * 2 + 1];
-        }
-        info->animation->resetCurrentFrame();
-        env->ReleaseIntArrayElements(colorReplacement, arr, 0);
-    }
+    jobjectArray ret =(jobjectArray)env->NewObjectArray(3,env->FindClass("java/lang/String"),env->NewStringUTF(""));
+
+    std::tuple<std::string, int , int> markers = info->animation->markers().at(index);
+    env->SetObjectArrayElement(ret,0,env->NewStringUTF(std::get<0>(markers).c_str()));
+    env->SetObjectArrayElement(ret,1,env->NewStringUTF(std::to_string(std::get<1>(markers)).c_str()));
+    env->SetObjectArrayElement(ret,2,env->NewStringUTF(std::to_string(std::get<2>(markers)).c_str()));
+    return(ret);
 }
 
 void Java_com_aghajari_rlottie_AXrLottieNative_setLayerColor(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jint color) {
@@ -378,12 +386,23 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerColor(JNIEnv *env, jclass
     }
     LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
     char const *layerString = env->GetStringUTFChars(layer, 0);
-    info->animation->setValue<Property::Color>(layerString, Color(((color) & 0xff) / 255.0f, ((color >> 8) & 0xff) / 255.0f, ((color >> 16) & 0xff) / 255.0f));
-    if (layerString != 0) {
+    info->animation->setValue<Property::FillColor>(layerString, rlottie::Color(((color >> 16) & 0xff) / 255.0f, ((color >> 8) & 0xff) / 255.0f, ((color) & 0xff) / 255.0f));
+     if (layerString != 0) {
         env->ReleaseStringUTFChars(layer, layerString);
     }
 }
 
+void Java_com_aghajari_rlottie_AXrLottieNative_setLayerStrokeColor(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jint color) {
+    if (ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+    info->animation->setValue<Property::StrokeColor>(layerString, rlottie::Color(((color >> 16) & 0xff) / 255.0f, ((color >> 8) & 0xff) / 255.0f, ((color) & 0xff) / 255.0f));
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
 
 void Java_com_aghajari_rlottie_AXrLottieNative_setLayerFillOpacity(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jfloat value) {
     if (ptr == NULL || layer == nullptr) {
@@ -481,6 +500,10 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrScale(JNIEnv *env, jcla
     }
 }
 
+void Java_com_aghajari_rlottie_AXrLottieNative_configureModelCacheSize(JNIEnv *env, jclass clazz, jint cacheSize) {
+    rlottie::configureModelCacheSize((size_t )cacheSize);
+}
+
 jboolean Java_com_aghajari_rlottie_AXrLottieNative_lottie2gif(JNIEnv *env, jclass clazz, jlong ptr,jobject bitmap, jint w, jint h, jint stride, jint bgColor,jboolean transparent, jstring gifName,jint delay,jint bitDepth, jboolean dither,jint frameStart,jint frameEnd,jobject listener) {
     if (ptr == NULL) {
         return false;
@@ -493,3 +516,4 @@ jboolean Java_com_aghajari_rlottie_AXrLottieNative_lottie2gif(JNIEnv *env, jclas
 
 
 }
+

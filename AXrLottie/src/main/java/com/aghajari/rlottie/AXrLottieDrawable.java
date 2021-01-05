@@ -58,8 +58,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     private int timeBetweenFrames;
     private int customEndFrame = -1;
     private boolean playInDirectionOfCustomEndFrame;
-    private int[] newReplaceColors;
-    private int[] pendingReplaceColors;
+
     private ArrayList<AXrLottieProperty.PropertyUpdate> newPropertyUpdates = new ArrayList<>();
     private volatile ArrayList<AXrLottieProperty.PropertyUpdate> pendingPropertyUpdates = new ArrayList<>();
 
@@ -253,10 +252,6 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
                     }
                 } catch (Exception ignore) {
                 }
-                if (pendingReplaceColors != null) {
-                    AXrLottieNative.replaceColors(nativePtr, pendingReplaceColors);
-                    pendingReplaceColors = null;
-                }
                 try {
                     long ptrToUse = nativePtr;
 
@@ -332,10 +327,10 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
 
         switch (builder.type) {
             case FILE:
-                initFromFile(builder.file, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps, builder.colorReplacement);
+                initFromFile(builder.file, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps);
                 break;
             case JSON:
-                initFromJson(builder.json, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps, builder.startDecode, builder.colorReplacement);
+                initFromJson(builder.json, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps, builder.startDecode);
                 break;
             case URL:
                 this.width = builder.w;
@@ -364,11 +359,11 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             start();
     }
 
-    private void initFromJson(String json, String name, int width, int height, boolean cache, boolean limitFps, boolean startDecode, int[] colorReplacement) {
+    private void initFromJson(String json, String name, int width, int height, boolean cache, boolean limitFps, boolean startDecode) {
         if (cache) {
             File f = CacheWriter.load(json, name);
             if (f != null) {
-                initFromFile(f, name, width, height, true, limitFps, colorReplacement);
+                initFromFile(f, name, width, height, true, limitFps);
                 return;
             }
         }
@@ -379,7 +374,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         shouldLimitFps = limitFps;
         this.cacheName = name;
         getPaint().setFlags(Paint.FILTER_BITMAP_FLAG);
-        nativePtr = createWithJson(json, name, metaData, colorReplacement);
+        nativePtr = createWithJson(json, name, metaData);
         timeBetweenFrames = Math.max(shouldLimitFps ? 33 : 16, (int) (1000.0f / metaData[1]));
         if (startDecode) {
             setAllowDecodeSingleFrame(true);
@@ -387,14 +382,14 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         lottieLoaded();
     }
 
-    private void initFromFile(File file, String name, int width, int height, boolean precache, boolean limitFps, int[] colorReplacement) {
+    private void initFromFile(File file, String name, int width, int height, boolean precache, boolean limitFps) {
         this.width = width;
         this.height = height;
         shouldLimitFps = limitFps;
         this.cacheName = name;
         getPaint().setFlags(Paint.FILTER_BITMAP_FLAG);
 
-        nativePtr = create(file.getAbsolutePath(), width, height, metaData, precache, colorReplacement, shouldLimitFps);
+        nativePtr = create(file.getAbsolutePath(), width, height, metaData, precache, shouldLimitFps);
         if (precache && lottieCacheGenerateQueue == null) {
             lottieCacheGenerateQueue = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         }
@@ -587,19 +582,14 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         invalidateInternal();
     }
 
-    public void replaceColors(int[] colors) {
-        newReplaceColors = colors;
-        requestRedraw();
-    }
-
     /**
      * Sets property value for the specified layer. layer can resolve
      * to multiple contents. In that case, the callback's value will apply to all of them.
      * <p>
-     * layer should contain object names separated by (.) and can handle globe(**) or wildchar(*).
+     * keyPath should contain object names separated by (.) and can handle globe(**) or wildchar(*).
      */
-    public void setLayerProperty(String layerName, AXrLottieProperty property) {
-        newPropertyUpdates.add(new AXrLottieProperty.PropertyUpdate(property, layerName));
+    public void setLayerProperty(String keyPath, AXrLottieProperty property) {
+        newPropertyUpdates.add(new AXrLottieProperty.PropertyUpdate(property, keyPath));
         requestRedraw();
     }
 
@@ -630,10 +620,6 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         if (!newPropertyUpdates.isEmpty()) {
             pendingPropertyUpdates.addAll(newPropertyUpdates);
             newPropertyUpdates.clear();
-        }
-        if (newReplaceColors != null) {
-            pendingReplaceColors = newReplaceColors;
-            newReplaceColors = null;
         }
         loadFrameRunnableQueue.execute(loadFrameTask = loadFrameRunnable);
         return true;
@@ -886,10 +872,6 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             } catch (Exception ignore) {
 
             }
-            if (pendingReplaceColors != null) {
-                AXrLottieNative.replaceColors(nativePtr, pendingReplaceColors);
-                pendingReplaceColors = null;
-            }
 
             int result = getFrame(nativePtr, frame, backgroundBitmap, width, height, backgroundBitmap.getRowBytes());
             cframe.loaded = (result != -1);
@@ -900,14 +882,14 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     /**
-     * @return Size of layers of the composition.
+     * @return composition layers count.
      */
     public int getLayersCount() {
         return AXrLottieNative.getLayersCount(nativePtr);
     }
 
     /**
-     * Returns Layer information {name, inFrame, outFrame} of an specific layer of the composition.
+     * Returns Layer information {name, inFrame, outFrame, type} of an specific layer of the composition.
      *
      * @return Layer Information of the Composition.
      * @see AXrLottieLayerInfo
@@ -917,7 +899,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     /**
-     * Returns Layer information {name, inFrame, outFrame} of an specific layer of the composition.
+     * Returns Layer information {name, inFrame, outFrame, type} of an specific layer of the composition.
      * or null if layer doesn't exists
      *
      * @return Layer Information of the Composition.
@@ -933,7 +915,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     /**
-     * Returns Layer information {name, inFrame, outFrame} of all the child layers  of the composition.
+     * Returns Layer information {name, inFrame, outFrame, type} of all the child layers  of the composition.
      *
      * @return List of Layer Information of the Composition.
      * @see AXrLottieLayerInfo
@@ -945,6 +927,47 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             layers.add(getLayerInfo(i));
         }
         return layers;
+    }
+
+    /**
+     * @return composition markers count.
+     */
+    public int getMarkersCount() {
+        return AXrLottieNative.getMarkersCount(nativePtr);
+    }
+
+    /**
+     * @return Composition Marker
+     * @see AXrLottieMarker
+     */
+    public AXrLottieMarker getMarker(int index) {
+        return new AXrLottieMarker(AXrLottieNative.getMarkerData(nativePtr, index));
+    }
+
+    /**
+     * @return Composition Marker
+     * @see AXrLottieMarker
+     */
+    public AXrLottieMarker getMarker(String marker) {
+        int max = getMarkersCount();
+        for (int i = 0; i < max; i++) {
+            AXrLottieMarker info = getMarker(i);
+            if (info.getMarker().equals(marker)) return info;
+        }
+        return null;
+    }
+
+    /**
+     * @return Composition Markers List
+     * @see AXrLottieMarker
+     */
+    public List<AXrLottieMarker> getMarkers() {
+        List<AXrLottieMarker> markers = new ArrayList<>();
+        int max = getMarkersCount();
+        for (int i = 0; i < max; i++) {
+            markers.add(getMarker(i));
+        }
+        return markers;
     }
 
     protected Bitmap render(Bitmap bitmap, int frame) {
@@ -962,7 +985,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     public void load(File file) {
-        initFromFile(file, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps, builder.colorReplacement);
+        initFromFile(file, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps);
         uiHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -1092,7 +1115,6 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         private boolean cache = true;
         private boolean limitFps = false;
         private boolean startDecode = true;
-        private int[] colorReplacement = null;
         private List<AXrLottieProperty.PropertyUpdate> properties = null;
         private int customEndFrame = -1;
         private int autoRepeat = 0;
@@ -1172,11 +1194,6 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             return this;
         }
 
-        public Builder setColorReplacement(int[] colorReplacement) {
-            this.colorReplacement = colorReplacement;
-            return this;
-        }
-
         public Builder setAllowDecodeSingleFrame(boolean startDecode) {
             this.startDecode = startDecode;
             return this;
@@ -1186,11 +1203,11 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
          * Sets property value for the specified layer. layer can resolve
          * to multiple contents. In that case, the callback's value will apply to all of them.
          * <p>
-         * layer should contain object names separated by (.) and can handle globe(**) or wildchar(*).
+         * keyPath should contain object names separated by (.) and can handle globe(**) or wildchar(*).
          */
-        public Builder addLayerProperty(String layerName, AXrLottieProperty property) {
+        public Builder addLayerProperty(String keyPath, AXrLottieProperty property) {
             if (properties == null) properties = new ArrayList<>();
-            properties.add(new AXrLottieProperty.PropertyUpdate(property, layerName));
+            properties.add(new AXrLottieProperty.PropertyUpdate(property, keyPath));
             return this;
         }
 

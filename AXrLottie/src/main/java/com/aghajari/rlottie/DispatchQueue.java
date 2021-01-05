@@ -55,20 +55,6 @@ class DispatchQueue extends Thread {
             start();
         }
     }
-
-    public void sendMessage(Message msg, int delay) {
-        try {
-            syncLatch.await();
-            if (delay <= 0) {
-                handler.sendMessage(msg);
-            } else {
-                handler.sendMessageDelayed(msg, delay);
-            }
-        } catch (Exception ignore) {
-
-        }
-    }
-
     public void cancelRunnable(Runnable runnable) {
         try {
             syncLatch.await();
@@ -116,10 +102,6 @@ class DispatchQueue extends Thread {
         }
     }
 
-    public void handleMessage(Message inputMessage) {
-
-    }
-
     public long getLastTaskTime() {
         return lastTaskTime;
     }
@@ -131,12 +113,7 @@ class DispatchQueue extends Thread {
     @Override
     public void run() {
         Looper.prepare();
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                DispatchQueue.this.handleMessage(msg);
-            }
-        };
+        handler = new Handler();
         syncLatch.countDown();
         Looper.loop();
     }

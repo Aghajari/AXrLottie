@@ -21,17 +21,20 @@ package com.aghajari.rlottie;
 import android.graphics.Bitmap;
 
 class AXrLottieNative {
-    public static native long create(String src, int w, int h, int[] params, boolean precache, int[] colorReplacement, boolean limitFps);
-    public static native long createWithJson(String json, String name, int[] params, int[] colorReplacement);
+    public static native long create(String src, int w, int h, int[] params, boolean precache, boolean limitFps);
+    public static native long createWithJson(String json, String name, int[] params);
     public static native void destroy(long ptr);
     public static native int getFrame(long ptr, int frame, Bitmap bitmap, int w, int h, int stride);
     public static native void createCache(long ptr, int w, int h);
+
+    public static native int getMarkersCount(long ptr);
+    public static native String[] getMarkerData(long ptr,int index);
 
     public static native int getLayersCount(long ptr);
     public static native String[] getLayerData(long ptr,int index);
 
     public static native void setLayerColor(long ptr, String layer, int color);
-    public static native void replaceColors(long ptr, int[] colorReplacement);
+    public static native void setLayerStrokeColor(long ptr, String layer, int color);
 
     public static native void setLayerFillOpacity(long ptr, String layer, float color);
     public static native void setLayerStrokeOpacity(long ptr, String layer, float value);
@@ -43,4 +46,5 @@ class AXrLottieNative {
     public static native void setLayerTrScale(long ptr, String layer, float w,float h);
 
     public static native boolean lottie2gif(long ptr, Bitmap bitmap,int w, int h,int stride, int bgColor,boolean transparent, String gifPath,int delay, int bitDepth, boolean dither,int frameStart,int frameEnd, AXrLottie2Gif.Lottie2GifListener listener);
+    public static native void configureModelCacheSize(int cacheSize);
 }

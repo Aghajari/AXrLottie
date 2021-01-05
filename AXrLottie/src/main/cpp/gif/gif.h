@@ -865,14 +865,14 @@ public:
     }
     void addFrame(rlottie::Surface &s,bool transparent, uint32_t delay = 2,int32_t bitDepth = 8, bool dither = false)
     {
-        if(!transparent) argbTorgba(s);
+        convertToCanvasFormat(s);
         GifWriteFrame(&handle,
                       reinterpret_cast<uint8_t *>(s.buffer()),
                       s.width(),
                       s.height(),
                       delay,bitDepth,dither);
     }
-    void argbTorgba(rlottie::Surface &s)
+    void convertToCanvasFormat(rlottie::Surface &s)
     {
         uint8_t *buffer = reinterpret_cast<uint8_t *>(s.buffer());
         uint32_t totalBytes = s.height() * s.bytesPerLine();
@@ -889,20 +889,20 @@ public:
                     unsigned char r2 = (unsigned char) ((float) bgColorR * ((float) (255 - a) / 255));
                     unsigned char g2 = (unsigned char) ((float) bgColorG * ((float) (255 - a) / 255));
                     unsigned char b2 = (unsigned char) ((float) bgColorB * ((float) (255 - a) / 255));
-                    buffer[i+2] = r + r2;
+                    buffer[i] = r + r2;
                     buffer[i+1] = g + g2;
-                    buffer[i] = b + b2;
+                    buffer[i+2] = b + b2;
 
                 } else {
                     // only swizzle r and b
-                    buffer[i+2] = r;
+                    buffer[i] = r;
                     buffer[i+1] = g;
-                    buffer[i] = b;
+                    buffer[i+2] = b;
                 }
             } else {
-                buffer[i] = bgColorB;
+                buffer[i+2] = bgColorB;
                 buffer[i+1] = bgColorG;
-                buffer[i+2] = bgColorR;
+                buffer[i] = bgColorR;
             }
         }
     }
@@ -938,6 +938,7 @@ public:
                 for (size_t i = start; i < end; i++) {
                     rlottie::Surface surface((uint32_t *) pixels, (size_t) w, (size_t)h,(size_t) stride);
                     player->animation->renderSync(i, surface);
+                    //LottieWrapper::convertToCanvasFormat(surface);
                     builder.addFrame(surface, transparent,delay,bitDepth,dither);
 
                     env->CallVoidMethod(store_Wlistener, mth_update, (jint) (i + 1),
@@ -949,6 +950,7 @@ public:
                 for (size_t i = start; i < end; i++) {
                     rlottie::Surface surface((uint32_t *) pixels, (size_t)w, (size_t)h,(size_t)stride);
                     player->animation->renderSync(i, surface);
+                    //LottieWrapper::convertToCanvasFormat(surface);
                     builder.addFrame(surface, transparent,delay,bitDepth,dither);
                 }
             }

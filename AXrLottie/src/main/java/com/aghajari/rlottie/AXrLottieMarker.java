@@ -18,49 +18,27 @@
 
 package com.aghajari.rlottie;
 
-public class AXrLottieLayerInfo {
+/**
+ *  Markers exported form AE are used to describe a segment of an animation {comment/tag , startFrame, endFrame}
+ *  Marker can be use to divide a resource in to separate animations by tagging the segment with comment string ,
+ *  start frame and duration of that segment.
+ */
+public class AXrLottieMarker {
 
-    private String name;
+    private String marker;
     private int inFrame;
     private int outFrame;
-    private LayerType type;
 
-    public enum LayerType {
-        UNKNOWN(-1),
-        PRECOM(0),
-        SOLID (1),
-        IMAGE (2),
-        NULL (3),
-        SHAPE (4),
-        TEXT (5);
-
-        private int type;
-
-        LayerType(int type) {
-            this.type = type;
-        }
-
-        public int getType() {
-            return this.type;
-        }
-    }
-
-    AXrLottieLayerInfo(String[] data) {
+    AXrLottieMarker(String[] data) {
         try {
             if (data != null) {
-                name = data[0];
+                marker = data[0];
                 inFrame = Integer.parseInt(data[1]);
                 outFrame = Integer.parseInt(data[2]);
-
-                try {
-                    type = LayerType.values()[Integer.parseInt(data[3])+1]; // +1 for skipping UNKNOWN
-                }catch (Exception ignore){
-                }
             }
         } catch (Exception ignore) {
         }
 
-        if (type == null) type = LayerType.UNKNOWN;
     }
 
     public int getInFrame() {
@@ -71,19 +49,14 @@ public class AXrLottieLayerInfo {
         return outFrame;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public LayerType getType() {
-        return type;
+    public String getMarker() {
+        return marker;
     }
 
     @Override
     public String toString() {
-        return "AXrLottieLayerInfo{" +
-                "name='" + name + '\'' +
-                ", type=" + type +
+        return "AXrLottieMarker{" +
+                "marker='" + marker + '\'' +
                 ", inFrame=" + inFrame +
                 ", outFrame=" + outFrame +
                 '}';
@@ -94,21 +67,19 @@ public class AXrLottieLayerInfo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AXrLottieLayerInfo layerInfo = (AXrLottieLayerInfo) o;
+        AXrLottieMarker markerInfo = (AXrLottieMarker) o;
 
-        if (inFrame != layerInfo.inFrame) return false;
-        if (outFrame != layerInfo.outFrame) return false;
-        if (type != layerInfo.type) return false;
-        if (name == null) return layerInfo.name == null;
-        return name.equals(layerInfo.name);
+        if (inFrame != markerInfo.inFrame) return false;
+        if (outFrame != markerInfo.outFrame) return false;
+        if (marker == null) return markerInfo.marker == null;
+        return marker.equals(markerInfo.marker);
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
+        int result = marker.hashCode();
         result = 31 * result + inFrame;
         result = 31 * result + outFrame;
-        result = 31 * result + type.hashCode();
         return result;
     }
 }

@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/root"
-    tools:context=".activity.AXEmojiViewActivity">
+    tools:context=".activity.AXEmojiViewActivity"
+    android:orientation="vertical">
 
-    <FrameLayout
+    <com.aghajari.rlottie.AXrLottieImageView
+        android:id="@+id/lottie_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/content_layout">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp" />
 
-        <com.aghajari.rlottie.AXrLottieImageView
-            android:id="@+id/lottie_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="60dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="10dp"
+        android:orientation="vertical">
 
         <FrameLayout
             android:id="@+id/edt_parent"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_gravity="bottom"
-            android:background="@android:color/white"
-            android:elevation="10dp">
+            android:layout_gravity="top"
+            android:background="@android:color/white">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView"
@@ -38,7 +41,7 @@
                 android:tint="@android:color/black"
                 app:srcCompat="@drawable/ic_msg_panel_smiles" />
 
-            <com.aghajari.sample.axrlottie.CustomEditText
+            <com.aghajari.emojiview.view.AXEmojiEditText
                 android:id="@+id/edt"
                 android:layout_width="321dp"
                 android:layout_height="match_parent"
@@ -58,13 +61,13 @@
 
         </FrameLayout>
 
-    </FrameLayout>
+        <com.aghajari.emojiview.view.AXEmojiPopupLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:id="@+id/layout"/>
+
+    </LinearLayout>
 
 
-    <com.aghajari.emojiview.view.AXEmojiPopupLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:id="@+id/layout"/>
-
-</FrameLayout>
+</LinearLayout>

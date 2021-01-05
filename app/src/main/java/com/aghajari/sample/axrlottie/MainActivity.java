@@ -20,6 +20,7 @@ import com.aghajari.rlottie.AXrLottieImageView;
 import com.aghajari.sample.axrlottie.activity.AXEmojiViewActivity;
 import com.aghajari.sample.axrlottie.activity.ColorLayerActivity;
 import com.aghajari.sample.axrlottie.activity.Lottie2GifActivity;
+import com.aghajari.sample.axrlottie.activity.LottieEditorActivity;
 import com.aghajari.sample.axrlottie.activity.SimpleActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void colorLayerActivity(View view){
         startActivity(new Intent(this, ColorLayerActivity.class));
+    }
+
+    public void editorActivity(View view){
+        startActivity(new Intent(this, LottieEditorActivity.class));
     }
 
     public void emojiViewActivity(View view){

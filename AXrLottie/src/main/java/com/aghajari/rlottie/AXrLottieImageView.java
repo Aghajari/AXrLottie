@@ -60,12 +60,6 @@ public class AXrLottieImageView extends AppCompatImageView {
         }
     }
 
-    public void replaceColors(int[] colors) {
-        if (drawable != null) {
-            drawable.replaceColors(colors);
-        }
-    }
-
     public boolean setLottieDrawable(AXrLottieDrawable lottieDrawable) {
         if (drawable != null && drawable.equals(lottieDrawable)) return false;
         setImageDrawable(lottieDrawable);

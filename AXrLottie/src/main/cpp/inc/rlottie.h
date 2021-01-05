@@ -1,19 +1,23 @@
-/* 
- * Copyright (c) 2018 Samsung Electronics Co., Ltd. All rights reserved.
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+/*
+ * Copyright (c) 2020 Samsung Electronics Co., Ltd. All rights reserved.
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 #ifndef _RLOTTIE_H_
@@ -22,28 +26,19 @@
 #include <future>
 #include <vector>
 #include <memory>
-#include <map>
 
-#ifdef _WIN32
-#ifdef LOT_BUILD
-#ifdef DLL_EXPORT
-#define LOT_EXPORT __declspec(dllexport)
+#if defined _WIN32 || defined __CYGWIN__
+  #ifdef RLOTTIE_BUILD
+    #define RLOTTIE_API __declspec(dllexport)
+  #else
+    #define RLOTTIE_API __declspec(dllimport)
+  #endif
 #else
-#define LOT_EXPORT
-#endif
-#else
-#define LOT_EXPORT __declspec(dllimport)
-#endif
-#else
-#ifdef __GNUC__
-#if __GNUC__ >= 4
-#define LOT_EXPORT __attribute__((visibility("default")))
-#else
-#define LOT_EXPORT
-#endif
-#else
-#define LOT_EXPORT
-#endif
+  #ifdef RLOTTIE_BUILD
+      #define RLOTTIE_API __attribute__ ((visibility ("default")))
+  #else
+      #define RLOTTIE_API
+  #endif
 #endif
 
 class AnimationImpl;
@@ -51,6 +46,23 @@ struct LOTNode;
 struct LOTLayerNode;
 
 namespace rlottie {
+
+/**
+ *  @brief Configures rlottie model cache policy.
+ *
+ *  Provides Library level control to configure model cache
+ *  policy. Setting it to 0 will disable
+ *  the cache as well as flush all the previously cached content.
+ *
+ *  @param[in] cacheSize  Maximum Model Cache size.
+ *
+ *  @note to disable Caching configure with 0 size.
+ *  @note to flush the current Cache content configure it with 0 and
+ *        then reconfigure with the new size.
+ *
+ *  @internal
+ */
+RLOTTIE_API void configureModelCacheSize(size_t cacheSize);
 
 struct Color {
     Color() = default;
@@ -92,14 +104,15 @@ private:
 };
 
 enum class Property {
-    Color,         /*!< Color property of Fill object , value type is rlottie::Color */
+    FillColor,     /*!< Color property of Fill object , value type is rlottie::Color */
     FillOpacity,   /*!< Opacity property of Fill object , value type is float [ 0 .. 100] */
+    StrokeColor,   /*!< Color property of Stroke object , value type is rlottie::Color */
     StrokeOpacity, /*!< Opacity property of Stroke object , value type is float [ 0 .. 100] */
-    StrokeWidth,   /*!< stroke with property of Stroke object , value type is float */
+    StrokeWidth,   /*!< stroke width property of Stroke object , value type is float */
     TrAnchor,      /*!< Transform Anchor property of Layer and Group object , value type is rlottie::Point */
     TrPosition,    /*!< Transform Position property of Layer and Group object , value type is rlottie::Point */
     TrScale,       /*!< Transform Scale property of Layer and Group object , value type is rlottie::Size. range[0 ..100] */
-    TrRotation,    /*!< Transform Scale property of Layer and Group object , value type is float. range[0 .. 360] in degrees*/
+    TrRotation,    /*!< Transform Rotation property of Layer and Group object , value type is float. range[0 .. 360] in degrees*/
     TrOpacity      /*!< Transform Opacity property of Layer and Group object , value type is float [ 0 .. 100] */
 };
 
@@ -109,7 +122,7 @@ struct Size_Type{};
 struct Float_Type{};
 template <typename T> struct MapType;
 
-class LOT_EXPORT Surface {
+class RLOTTIE_API Surface {
 public:
     /**
      *  @brief Surface object constructor.
@@ -242,15 +255,30 @@ private:
     }mDrawArea;
 };
 
-using LayerInfoList = std::vector<std::tuple<std::string, int , int>>;
+using MarkerList = std::vector<std::tuple<std::string, int , int>>;
+/**
+ *  @brief https://helpx.adobe.com/after-effects/using/layer-markers-composition-markers.html
+ *  Markers exported form AE are used to describe a segmnet of an animation {comment/tag , startFrame, endFrame}
+ *  Marker can be use to devide a resource in to separate animations by tagging the segment with comment string ,
+ *  start frame and duration of that segment.
+ */
 
-class LOT_EXPORT Animation {
+using LayerInfoList = std::vector<std::tuple<std::string, int , int, int>>;
+
+
+using ColorFilter = std::function<void(float &r , float &g, float &b)>;
+
+class RLOTTIE_API Animation {
 public:
 
     /**
      *  @brief Constructs an animation object from file path.
      *
      *  @param[in] path Lottie resource file path
+     *  @param[in] cachePolicy whether to cache or not the model data.
+     *             use only when need to explicit disabl caching for a
+     *             particular resource. To disable caching at library level
+     *             use @see configureModelCacheSize() instead.
      *
      *  @return Animation object that can render the contents of the
      *          Lottie resource represented by file path.
@@ -258,7 +286,7 @@ public:
      *  @internal
      */
     static std::unique_ptr<Animation>
-    loadFromFile(const std::string &path, std::map<int32_t, int32_t> *colorReplacement);
+    loadFromFile(const std::string &path, bool cachePolicy=true);
 
     /**
      *  @brief Constructs an animation object from JSON string data.
@@ -266,6 +294,10 @@ public:
      *  @param[in] jsonData The JSON string data.
      *  @param[in] key the string that will be used to cache the JSON string data.
      *  @param[in] resourcePath the path will be used to search for external resource.
+     *  @param[in] cachePolicy whether to cache or not the model data.
+     *             use only when need to explicit disabl caching for a
+     *             particular resource. To disable caching at library level
+     *             use @see configureModelCacheSize() instead.
      *
      *  @return Animation object that can render the contents of the
      *          Lottie resource represented by JSON string data.
@@ -273,7 +305,25 @@ public:
      *  @internal
      */
     static std::unique_ptr<Animation>
-    loadFromData(std::string jsonData, const std::string &key, std::map<int32_t, int32_t> *colorReplacement, const std::string &resourcePath="");
+    loadFromData(std::string jsonData, const std::string &key,
+                 const std::string &resourcePath="", bool cachePolicy=true);
+
+    /**
+     *  @brief Constructs an animation object from JSON string data and update.
+     *  the color properties using ColorFilter.
+
+     *  @param[in] jsonData The JSON string data.
+     *  @param[in] resourcePath the path will be used to search for external resource.
+     *  @param[in] filter The color filter that will be applied for each color property
+     *             found during parsing.
+
+     *  @return Animation object that can render the contents of the
+     *          Lottie resource represented by JSON string data.
+     *
+     *  @internal
+     */
+    static std::unique_ptr<Animation>
+    loadFromData(std::string jsonData, std::string resourcePath, ColorFilter filter);
 
     /**
      *  @brief Returns default framerate of the Lottie resource.
@@ -337,15 +387,39 @@ public:
     size_t frameAtPos(double pos);
 
     /**
+     *  @brief Renders the content to surface Asynchronously.
+     *         it gives a future in return to get the result of the
+     *         rendering at a future point.
+     *         To get best performance user has to start rendering as soon as
+     *         it finds that content at {frameNo} has to be rendered and get the
+     *         result from the future at the last moment when the surface is needed
+     *         to draw into the screen.
+     *
+     *
+     *  @param[in] frameNo Content corresponds to the @p frameNo needs to be drawn
+     *  @param[in] surface Surface in which content will be drawn
+     *  @param[in] keepAspectRatio whether to keep the aspect ratio while scaling the content.
+     *
+     *  @return future that will hold the result when rendering finished.
+     *
+     *  for Synchronus rendering @see renderSync
+     *
+     *  @see Surface
+     *  @internal
+     */
+    std::future<Surface> render(size_t frameNo, Surface surface, bool keepAspectRatio=true);
+
+    /**
      *  @brief Renders the content to surface synchronously.
      *         for performance use the async rendering @see render
      *
      *  @param[in] frameNo Content corresponds to the @p frameNo needs to be drawn
      *  @param[in] surface Surface in which content will be drawn
+     *  @param[in] keepAspectRatio whether to keep the aspect ratio while scaling the content.
      *
      *  @internal
      */
-    void              renderSync(size_t frameNo, Surface &surface);
+    void              renderSync(size_t frameNo, Surface surface, bool keepAspectRatio=true);
 
     /**
      *  @brief Returns root layer of the composition updated with
@@ -362,7 +436,18 @@ public:
     const LOTLayerNode * renderTree(size_t frameNo, size_t width, size_t height) const;
 
     /**
-     *  @brief Returns Layer information{name, inFrame, outFrame} of all the child layers  of the composition.
+     *  @brief Returns Composition Markers.
+     *
+     *
+     *  @return returns MarkerList of the Composition.
+     *
+     *  @see MarkerList
+     *  @internal
+     */
+    const MarkerList& markers() const;
+
+    /**
+     *  @brief Returns Layer information{name, inFrame, outFrame, type} of all the child layers  of the composition.
      *
      *
      *  @return List of Layer Information of the Composition.
@@ -402,8 +487,6 @@ public:
      */
     ~Animation();
 
-    std::map<int32_t, int32_t> *colorMap{nullptr};
-    void resetCurrentFrame();
 private:
     void setValue(Color_Type, Property, const std::string &, Color);
     void setValue(Float_Type, Property, const std::string &, float);
@@ -425,7 +508,8 @@ private:
 };
 
 //Map Property to Value type
-template<> struct MapType<std::integral_constant<Property, Property::Color>>: Color_Type{};
+template<> struct MapType<std::integral_constant<Property, Property::FillColor>>: Color_Type{};
+template<> struct MapType<std::integral_constant<Property, Property::StrokeColor>>: Color_Type{};
 template<> struct MapType<std::integral_constant<Property, Property::FillOpacity>>: Float_Type{};
 template<> struct MapType<std::integral_constant<Property, Property::StrokeOpacity>>: Float_Type{};
 template<> struct MapType<std::integral_constant<Property, Property::StrokeWidth>>: Float_Type{};

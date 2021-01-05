@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.aghajari.rlottie.AXrLottieMarker;
 import com.aghajari.sample.axrlottie.R;
 
 import com.aghajari.rlottie.AXrLottie;
@@ -26,27 +27,34 @@ public class ColorLayerActivity extends AppCompatActivity {
 
         lottieView = findViewById(R.id.lottie_view);
 
-        lottieView.setLottieDrawable(AXrLottie.createFromAssets(ColorLayerActivity.this, "tractor.json",
-                "tractor", 512, 512, true, false));
+        lottieView.setLottieDrawable(AXrLottie.createFromAssets(this, "tractor.json",
+                "tractor", 512, 512, false, false));
 
         lottieView.playAnimation();
 
-        //Log lottie layers
+        // layers
+        Log.i("AXrLottie","Layers : ");
         for (AXrLottieLayerInfo layerInfo : lottieView.getLottieDrawable().getLayers()) {
-            Log.i("AXrLottie", "layerName: " + layerInfo.getName());
+            Log.i("AXrLottie", layerInfo.toString());
+        }
+
+        // markers
+        Log.i("AXrLottie","Markers : ");
+        for (AXrLottieMarker marker : lottieView.getLottieDrawable().getMarkers()) {
+            Log.i("AXrLottie", marker.toString());
         }
     }
 
     public void changeBgColor(View v) {
-        lottieView.setLayerProperty("BG Outlines.**", AXrLottieProperty.colorProperty(findColor()));
+        lottieView.setLayerProperty("BG Outlines.**", AXrLottieProperty.fillColorProperty(findColor()));
     }
 
     public void changeCloudsColor(View v) {
         int color = findColor();
-        lottieView.setLayerProperty("Cloud 1 Outlines.**", AXrLottieProperty.colorProperty(color));
-        lottieView.setLayerProperty("Cloud 2 Outlines.**", AXrLottieProperty.colorProperty(color));
-        lottieView.setLayerProperty("Cloud 3 Outlines.**", AXrLottieProperty.colorProperty(color));
-        lottieView.setLayerProperty("Cloud 4 Outlines.**", AXrLottieProperty.colorProperty(color));
+        lottieView.setLayerProperty("Cloud 1 Outlines.**", AXrLottieProperty.fillColorProperty(color));
+        lottieView.setLayerProperty("Cloud 2 Outlines.**", AXrLottieProperty.fillColorProperty(color));
+        lottieView.setLayerProperty("Cloud 3 Outlines.**", AXrLottieProperty.fillColorProperty(color));
+        lottieView.setLayerProperty("Cloud 4 Outlines.**", AXrLottieProperty.fillColorProperty(color));
     }
 
     Random rnd = new Random();

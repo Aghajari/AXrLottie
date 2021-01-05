@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.aghajari.emojiview.listener.OnStickerActions;
 import com.aghajari.emojiview.listener.SimplePopupAdapter;
 import com.aghajari.emojiview.sticker.Sticker;
+import com.aghajari.emojiview.view.AXEmojiEditText;
 import com.aghajari.emojiview.view.AXEmojiPager;
 import com.aghajari.emojiview.view.AXEmojiPopupLayout;
 import com.aghajari.emojiview.view.AXEmojiView;
@@ -23,19 +24,16 @@ import com.aghajari.emojiview.view.AXStickerView;
 
 import com.aghajari.rlottie.AXrLottieImageView;
 
-import com.aghajari.sample.axrlottie.CustomEditText;
 import com.aghajari.sample.axrlottie.R;
 import com.aghajari.sample.axrlottie.Utils;
 import com.aghajari.sample.axrlottie.sticker.AnimatedSticker;
 import com.aghajari.sample.axrlottie.sticker.MyStickerProvider;
 
 public class AXEmojiViewActivity extends AppCompatActivity {
-    FrameLayout root;
-    FrameLayout contentLayout;
     AXEmojiPopupLayout layout;
 
     FrameLayout edtParent;
-    CustomEditText edt;
+    AXEmojiEditText edt;
     AppCompatImageView emojiImg;
 
     AXrLottieImageView lottieView;
@@ -50,9 +48,7 @@ public class AXEmojiViewActivity extends AppCompatActivity {
     }
 
     private void init() {
-        root = findViewById(R.id.root);
         layout = findViewById(R.id.layout);
-        contentLayout = findViewById(R.id.content_layout);
 
         // get emoji edit text
         edtParent = findViewById(R.id.edt_parent);
@@ -64,7 +60,6 @@ public class AXEmojiViewActivity extends AppCompatActivity {
 
         // create emoji popup
         layout.initPopupView(emojiPager);
-        edt.setEmojiLayout(layout);
         layout.hideAndOpenKeyboard();
         edt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,25 +92,21 @@ public class AXEmojiViewActivity extends AppCompatActivity {
             @Override
             public void onShow() {
                 updateButton(true);
-                updateBottom(layout.getPopupHeight());
             }
 
             @Override
             public void onDismiss() {
                 updateButton(false);
-                updateBottom(0);
             }
 
             @Override
             public void onKeyboardOpened(int height) {
                 updateButton(false);
-                updateBottom(height);
             }
 
             @Override
             public void onKeyboardClosed() {
                 updateButton(layout.isShowing());
-                updateBottom(layout.isShowing() ? layout.getPopupHeight() : 0);
             }
 
             private void updateButton(boolean emoji) {
@@ -130,11 +121,6 @@ public class AXEmojiViewActivity extends AppCompatActivity {
                     DrawableCompat.setTint(DrawableCompat.wrap(dr), Color.BLACK);
                     emojiImg.setImageDrawable(dr);
                 }
-            }
-
-            private void updateBottom(int bottom) {
-                ((FrameLayout.LayoutParams) contentLayout.getLayoutParams()).bottomMargin = bottom;
-                contentLayout.requestLayout();
             }
         });
     }

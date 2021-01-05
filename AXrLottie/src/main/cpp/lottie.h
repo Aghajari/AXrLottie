@@ -5,6 +5,11 @@
 #ifndef AXRLOTTIE_APP_LOTTIE_H
 #define AXRLOTTIE_APP_LOTTIE_H
 
+typedef struct LottieWrapper{
+public:
+    static void convertToCanvasFormat(rlottie::Surface &s);
+};
+
 typedef struct LottieInfo{
     ~LottieInfo() {
         if (decompressBuffer != nullptr) {
