@@ -4,6 +4,21 @@
   <br><br><img width="40" alt="LCoders | AmirHosseinAghajari" src="https://user-images.githubusercontent.com/30867537/90538314-a0a79200-e193-11ea-8d90-0a3576e28a18.png"><br><img width="250" alt="picker" src="https://github.com/Samsung/rlottie/raw/master/.Gifs/logo.png">
 </div>
 
+
+What is **lottie**?
+
+> Lottie loads and renders animations and vectors exported in the bodymovin JSON format. Bodymovin JSON can be created and exported from After Effects with bodymovin, Sketch with Lottie Sketch Export, and from Haiku.
+>
+> For the first time, designers can create and ship beautiful animations without an engineer painstakingly recreating it by hand. Since the animation is backed by > JSON they are extremely small in size but can be large in complexity!
+
+What is [**rlottie**](https://github.com/Samsung/rlottie)?
+
+> rlottie is a platform independent standalone c++ library for rendering vector based animations and art in realtime.
+
+What is **AXrLottie**?
+
+**AXrLottie** includes [rlottie](https://github.com/Samsung/rlottie) into the Android. Easy A!
+
 ## Screenshot
 <img src="./images/screen.png" width=300 title="Screen"> <img src="./images/editor.png" width=300 title="Screen">
 
@@ -52,16 +67,6 @@ Maven
 - Some improvements & Bugs fixed
 
 # Usage
-What lottie is?
-> Lottie loads and renders animations and vectors exported in the bodymovin JSON format. Bodymovin JSON can be created and exported from After Effects with bodymovin, Sketch with Lottie Sketch Export, and from Haiku.
->
-> For the first time, designers can create and ship beautiful animations without an engineer painstakingly recreating it by hand. Since the animation is backed by > JSON they are extremely small in size but can be large in complexity!
-
-What [**rlottie**](https://github.com/Samsung/rlottie) is?
-> rlottie is a platform independent standalone c++ library for rendering vector based animations and art in realtime.
-
-**AXrLottie** includes [rlottie](https://github.com/Samsung/rlottie) into Android. Easy A!
-
 Let's START! :smiley:
 
 ## Install AXrLottie 
