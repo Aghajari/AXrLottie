@@ -19,6 +19,10 @@ What is **AXrLottie**?
 
 **AXrLottie** includes [rlottie](https://github.com/Samsung/rlottie) into the Android. Easy A!
 
+## Lottie Examples
+<img height=250 src="./images/lottie.gif">
+<img height=200 src="https://github.com/airbnb/lottie-ios/blob/master/_Gifs/Examples1.gif">
+
 ## Screenshot
 <img src="./images/screen.png" width=300 title="Screen"> <img src="./images/editor.png" width=300 title="Screen">
 
