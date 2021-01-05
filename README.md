@@ -212,7 +212,7 @@ AXrLottie2Gif.create(lottieDrawable)
 ### Output
 <img src="./images/gif.png" width=300 title="Screen">
 
-<img height=250 src="./images/lottie.gif">
+<img height=250 src="./images/lottie2.gif">
 
 *[lottie.gif](./images/lottie.gif) has been exported by AXrLottie2Gif*
 
