@@ -42,6 +42,18 @@ What is **AXrLottie**?
 - [Author](#author)
 - [License](#license)
 
+## Changelogs
+
+**1.0.2 :**
+- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
+- [AXrLottieMarker](#markers) added.
+- StrokeColor added to AXrLottieProperty.
+- configureModelCacheSize added to AXrLottie. (Method)
+- Now AXrLottieLayerInfo contains the type of layer.
+- Speed, RepeatMode(RESTART,REVERSE), AutoRepeatCount, CustomStartFrame, Marker added to AXrLottieDrawable.
+- onRepeat, onStart, onStop, onRecycle added to listener.
+- Some improvements & Bugs fixed
+
 ## Installation
 AXrLottie is available in the JCenter, so you just need to add it as a dependency (Module gradle)
 
@@ -59,18 +71,6 @@ Maven
   <type>pom</type>
 </dependency>
 ```
-
-## Changelogs
-
-**1.0.2 :**
-- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
-- [AXrLottieMarker](#markers) added.
-- StrokeColor added to AXrLottieProperty.
-- configureModelCacheSize added to AXrLottie. (Method)
-- Now AXrLottieLayerInfo contains the type of layer.
-- Speed, RepeatMode(RESTART,REVERSE), AutoRepeatCount, CustomStartFrame, Marker added to AXrLottieDrawable.
-- onRepeat, onStart, onStop, onRecycle added to listener.
-- Some improvements & Bugs fixed
 
 # Usage
 Let's START! :smiley:
