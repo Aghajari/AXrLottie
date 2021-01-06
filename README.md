@@ -24,7 +24,7 @@ What is **AXrLottie**?
 <img height=250 src="./images/lottie.gif">
 
 ## Screenshot
-<img src="./images/screen.png" width=300 title="Screen"> <img src="./images/editor.png" width=300 title="Screen">
+<img src="./images/screen.png" width=300 title="Screen">
 
 ## Table of Contents  
 - [Installation](#installation)  
@@ -41,6 +41,18 @@ What is **AXrLottie**?
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
+
+## Changelogs
+
+**1.0.2 :**
+- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
+- [AXrLottieMarker](#markers) added.
+- StrokeColor added to AXrLottieProperty.
+- configureModelCacheSize added to AXrLottie. (Method)
+- Now AXrLottieLayerInfo contains the type of layer.
+- Speed, RepeatMode(RESTART,REVERSE), AutoRepeatCount, CustomStartFrame, Marker added to AXrLottieDrawable.
+- onRepeat, onStart, onStop, onRecycle added to listener.
+- Some improvements & Bugs fixed
 
 ## Installation
 AXrLottie is available in the JCenter, so you just need to add it as a dependency (Module gradle)
@@ -59,16 +71,6 @@ Maven
   <type>pom</type>
 </dependency>
 ```
-
-## Changelogs
-
-**1.0.2 :**
-- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
-- [AXrLottieMarker](#markers) added.
-- StrokeColor added to AXrLottieProperty.
-- configureModelCacheSize added to AXrLottie.
-- Now AXrLottieLayerInfo contains the type of layer.
-- Some improvements & Bugs fixed
 
 # Usage
 Let's START! :smiley:
@@ -156,7 +158,9 @@ Keypath should contains object names separated by (.) and can handle globe(`**`)
 [Back to contents](#table-of-contents)
 
 ## Layers
-AXrLottieLayerInfo contains Layer's name,type,startFrame and endFrame.
+<img src="./images/editor.png" width=300 title="Screen">
+
+AXrLottieLayerInfo contains Layer's name,type,inFrame and outFrame.
 
 ```java
 for (AXrLottieLayerInfo layerInfo : lottieDrawable.getLayers()) {
@@ -167,16 +171,35 @@ for (AXrLottieLayerInfo layerInfo : lottieDrawable.getLayers()) {
 [Back to contents](#table-of-contents)
 
 ## Markers
+<img src="./images/marker.png" width=300 title="Screen">
+
 Markers exported form AE are used to describe a segment of an animation {comment/tag , startFrame, endFrame} 
 Marker can be use to divide a resource in to separate animations by tagging the segment with comment string ,
 start frame and duration of that segment.
 
 [More...](https://helpx.adobe.com/after-effects/using/layer-markers-composition-markers.html)
 
+AXrLottieMarker contains comment/tag, inFrame and outFrame.
+
 ```java
 for (AXrLottieMarker marker : lottieDrawable.getMarkers()) {
     Log.i("AXrLottie", marker.toString());
 }
+```
+
+You can select a marker in AXrLottieDrawable and set start&end frame of the animation with an AXrLottieMarker :
+```java
+lottieDrawable.selectMarker(MARKER);
+```
+
+Markers in a JSON:
+```
+"markers":[{"tm":IN_FRAME,"cm":"COMMENT","dr":DURATION},...]
+```
+
+Example :
+```json
+"markers":[{"tm":0,"cm":"first","dr":69.33},{"tm":69.33,"cm":"second","dr":69.33},{"tm":138.66,"cm":"third","dr":67.33}]
 ```
 
 [Back to contents](#table-of-contents)
@@ -230,6 +253,10 @@ AXrLottie2Gif.create(lottieDrawable)
 OnFrameChangedListener:
 ```java
 void onFrameChanged(AXrLottieDrawable drawable, int frame);
+void onRepeat (int repeatedCount,boolean lastFrame);
+void onStop();
+void onStart();
+void onRecycle();
 ```
 
 OnFrameRenderListener: 
