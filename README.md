@@ -69,6 +69,7 @@ Maven
 - configureModelCacheSize added to AXrLottie. (Method)
 - Now AXrLottieLayerInfo contains the type of layer.
 - Speed, RepeatMode(RESTART,REVERSE), AutoRepeatCount, CustomStartFrame, Marker added to AXrLottieDrawable.
+- onRpeat, onStart, onStop, onRecycle added to listener.
 - Some improvements & Bugs fixed
 
 # Usage
