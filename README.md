@@ -160,7 +160,7 @@ Keypath should contains object names separated by (.) and can handle globe(`**`)
 ## Layers
 <img src="./images/editor.png" width=300 title="Screen">
 
-AXrLottieLayerInfo contains Layer's name,type,startFrame and endFrame.
+AXrLottieLayerInfo contains Layer's name,type,inFrame and outFrame.
 
 ```java
 for (AXrLottieLayerInfo layerInfo : lottieDrawable.getLayers()) {
@@ -179,6 +179,8 @@ start frame and duration of that segment.
 
 [More...](https://helpx.adobe.com/after-effects/using/layer-markers-composition-markers.html)
 
+AXrLottieMarker contains comment/tag, inFrame and outFrame.
+
 ```java
 for (AXrLottieMarker marker : lottieDrawable.getMarkers()) {
     Log.i("AXrLottie", marker.toString());
@@ -188,6 +190,16 @@ for (AXrLottieMarker marker : lottieDrawable.getMarkers()) {
 You can select a marker in AXrLottieDrawable and set start&end frame of the animation with an AXrLottieMarker :
 ```java
 lottieDrawable.selectMarker(MARKER);
+```
+
+Markers in a JSON:
+```json
+"markers":[{"tm":IN_FRAME,"cm":"COMMENT","dr":DURATION},...]
+```
+
+Example :
+```json
+"markers":[{"tm":0,"cm":"first","dr":69.33},{"tm":69.33,"cm":"second","dr":69.33},{"tm":138.66,"cm":"third","dr":67.33}]
 ```
 
 [Back to contents](#table-of-contents)
