@@ -369,9 +369,9 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
 
     protected int findStartFrame(){
         if (getSelectedMarker() != null && getSelectedMarker().getInFrame()>=0)
-            return getSelectedMarker().getInFrame();
+            return Math.min(getSelectedMarker().getInFrame(),metaData[0]);
 
-        return Math.max(customStartFrame, 0);
+        return Math.min(Math.max(customStartFrame, 0),metaData[0]);
     }
 
     protected int findTimeBetweenFrames(){
@@ -506,20 +506,18 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     /**
-     * Returns default framerate of the Lottie resource.
+     * Returns total number of frames present in the Lottie resource.
      *
-     * @return framerate of the Lottie resource
+     * @return count of the lottie resource frames.
      */
     public int getTotalFrame() {
         return metaData[0];
     }
 
     /**
-     * Returns total number of frames present in the Lottie resource.
+     * Returns default framerate of the Lottie resource.
      *
-     * <i>Note: frame number starts with 0.</i>
-     *
-     * @return frame count of the Lottie resource.
+     * @return framerate of the Lottie resource
      */
     public int getFrameRate() {
         return metaData[1];
@@ -561,7 +559,10 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     public void setCustomStartFrame(int frame) {
-        customEndFrame = Math.max(frame,0);
+        if (customStartFrame > metaData[0]) {
+            return;
+        }
+        customStartFrame = Math.max(frame,0);
     }
 
     public int getStartFrame(){
