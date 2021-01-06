@@ -193,7 +193,7 @@ lottieDrawable.selectMarker(MARKER);
 ```
 
 Markers in a JSON:
-```json
+```
 "markers":[{"tm":IN_FRAME,"cm":"COMMENT","dr":DURATION},...]
 ```
 
