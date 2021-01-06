@@ -94,7 +94,7 @@ public class AXrLottie2Gif {
 
             if (bitmap!=null) {
                 successful = AXrLottieNative.lottie2gif(builder.lottie, bitmap ,builder.w, builder.h, bitmap.getRowBytes(),
-                        builder.bgColor,builder.bgColor==Color.TRANSPARENT, builder.path.getAbsolutePath(),
+                        builder.bgColor, builder.path.getAbsolutePath(),
                         builder.delay,builder.bitDepth,builder.dither,builder.frameStart,builder.frameEnd, listener);
             }else {
                 successful = false;

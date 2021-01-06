@@ -18,13 +18,14 @@ import com.aghajari.rlottie.AXrLottie;
 import com.aghajari.rlottie.AXrLottieDrawable;
 import com.aghajari.rlottie.AXrLottieImageView;
 import com.aghajari.rlottie.AXrLottieLayerInfo;
+import com.aghajari.rlottie.AXrLottieMarker;
 import com.aghajari.rlottie.AXrLottieProperty;
 import com.aghajari.sample.axrlottie.R;
 
 import java.util.List;
 import java.util.Random;
 
-public class LottieEditorActivity extends AppCompatActivity {
+public class MarkerActivity extends AppCompatActivity {
     AXrLottieImageView lottieView;
     RecyclerView rv;
 
@@ -36,42 +37,54 @@ public class LottieEditorActivity extends AppCompatActivity {
         lottieView = findViewById(R.id.lottie_view);
         rv = findViewById(R.id.rv);
 
-        lottieView.setLottieDrawable(AXrLottie.createFromAssets(this, "mountain.json",
-                "editor", 512, 512, false, false));
+        lottieView.setLottieDrawable(AXrLottieDrawable.fromAssets(this,"marker.json")
+                .setCacheName("marker")
+                .setSize(512,512)
+                .setCacheEnabled(false)
+                .setAutoRepeatMode(AXrLottieDrawable.REPEAT_MODE_REVERSE)
+                .setAutoRepeat(true)
+                .setSelectedMarker(null)
+                .build());
         lottieView.playAnimation();
 
         rv.setLayoutManager(new LinearLayoutManager(this));
-        LayerAdapter adapter = new LayerAdapter();
+        MarkerAdapter adapter = new MarkerAdapter();
         adapter.setAnimation(lottieView.getLottieDrawable());
         rv.setAdapter(adapter);
     }
 
 
-    private class LayerAdapter extends RecyclerView.Adapter<LayerAdapter.ViewHolder>{
+    private class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder>{
 
-        List<AXrLottieLayerInfo> list;
+        List<AXrLottieMarker> list;
         AXrLottieDrawable drawable;
+        int selected;
 
         public void setAnimation(AXrLottieDrawable drawable){
             this.drawable = drawable;
-            list = drawable.getLayers();
-            notifyDataSetChanged();
+            drawable.selectMarker(null);
 
-            Log.i("AXrLottie","Layers : ");
-            for (AXrLottieLayerInfo layerInfo : list) {
-                Log.i("AXrLottie", layerInfo.toString());
+            list = drawable.getMarkers();
+            // markers
+            Log.i("AXrLottie","Markers : ");
+            for (AXrLottieMarker marker : list) {
+                Log.i("AXrLottie", marker.toString());
             }
+
+            list.add(0,new AXrLottieMarker("default",-1,-1));
+            selected = 0;
+            notifyDataSetChanged();
         }
 
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_layer_info,parent,false));
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_marker_info,parent,false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.onBind(drawable,list.get(position).getName());
+            holder.onBind(drawable,this,position,list.get(position));
         }
 
         @Override
@@ -81,31 +94,33 @@ public class LottieEditorActivity extends AppCompatActivity {
 
         private class ViewHolder extends RecyclerView.ViewHolder{
 
-            TextView layerName;
+            TextView markerName;
             AppCompatButton button;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
 
-                layerName = ((ViewGroup) itemView).findViewById(R.id.layer_name);
+                markerName = ((ViewGroup) itemView).findViewById(R.id.marker_name);
                 button = ((ViewGroup) itemView).findViewById(R.id.btn);
             }
 
-            public void onBind(final AXrLottieDrawable drawable,final String layer){
-                layerName.setText(layer);
+            public void onBind(final AXrLottieDrawable drawable,final MarkerAdapter adapter,
+                               final int position,final AXrLottieMarker marker){
+
+                markerName.setText(marker.getMarker());
+                button.setEnabled(adapter.selected != position);
+                button.setText(button.isEnabled()?"SELECT":"SELECTED");
+
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        drawable.setLayerProperty(layer+".**",AXrLottieProperty.fillColorProperty(findColor()));
+                        adapter.selected = position;
+                        drawable.selectMarker(marker);
+                        drawable.restart();
+                        notifyDataSetChanged();
                     }
                 });
             }
-        }
-
-        Random rnd = new Random();
-
-        private int findColor() {
-            return Color.rgb(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
         }
     }
 }

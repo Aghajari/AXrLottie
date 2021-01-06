@@ -489,14 +489,14 @@ void Java_com_aghajari_rlottie_AXrLottieNative_configureModelCacheSize(JNIEnv *e
     rlottie::configureModelCacheSize((size_t )cacheSize);
 }
 
-jboolean Java_com_aghajari_rlottie_AXrLottieNative_lottie2gif(JNIEnv *env, jclass clazz, jlong ptr,jobject bitmap, jint w, jint h, jint stride, jint bgColor,jboolean transparent, jstring gifName,jint delay,jint bitDepth, jboolean dither,jint frameStart,jint frameEnd,jobject listener) {
+jboolean Java_com_aghajari_rlottie_AXrLottieNative_lottie2gif(JNIEnv *env, jclass clazz, jlong ptr,jobject bitmap, jint w, jint h, jint stride, jint bgColor, jstring gifName,jint delay,jint bitDepth, jboolean dither,jint frameStart,jint frameEnd,jobject listener) {
     if (ptr == NULL) {
         return false;
     }
     char const *name = env->GetStringUTFChars(gifName, 0);
     LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
     Lottie2Gif lottie2Gif;
-    return lottie2Gif.render(info,bitmap,w,h,stride,bgColor,(bool)transparent,name,delay,bitDepth,dither,frameStart,frameEnd,env,listener);
+    return lottie2Gif.render(info,bitmap,w,h,stride,bgColor,name,delay,bitDepth,dither,frameStart,frameEnd,env,listener);
 }
 
 

@@ -21,10 +21,16 @@
         android:text="Color Layer Activity" />
 
     <androidx.appcompat.widget.AppCompatButton
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:onClick="editorActivity"
+    android:text="Lottie Editor Activity" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:onClick="editorActivity"
-        android:text="Lottie Editor Activity" />
+        android:onClick="markerActivity"
+        android:text="Marker Activity" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"

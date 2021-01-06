@@ -25,9 +25,9 @@ package com.aghajari.rlottie;
  */
 public class AXrLottieMarker {
 
-    private String marker;
-    private int inFrame;
-    private int outFrame;
+    private String marker = "";
+    private int inFrame = -1;
+    private int outFrame = -1;
 
     AXrLottieMarker(String[] data) {
         try {
@@ -38,7 +38,12 @@ public class AXrLottieMarker {
             }
         } catch (Exception ignore) {
         }
+    }
 
+    public AXrLottieMarker(String marker,int inFrame,int outFrame){
+        this.marker = marker;
+        this.inFrame = inFrame;
+        this.outFrame = outFrame;
     }
 
     public int getInFrame() {

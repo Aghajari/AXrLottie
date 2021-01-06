@@ -863,7 +863,7 @@ public:
     {
         GifEnd(&handle);
     }
-    void addFrame(rlottie::Surface &s,bool transparent, uint32_t delay = 2,int32_t bitDepth = 8, bool dither = false)
+    void addFrame(rlottie::Surface &s, uint32_t delay = 2,int32_t bitDepth = 8, bool dither = false)
     {
         convertToCanvasFormat(s);
         GifWriteFrame(&handle,
@@ -914,7 +914,7 @@ private:
 
 class Lottie2Gif {
 public:
-    bool render(LottieInfo* player, jobject bitmap, int w, int h, int stride, int bgColor,bool transparent, std::string gifName,int delay,int bitDepth, bool dither,int frameStart,int frameEnd,JNIEnv *env,jobject listener) {
+    bool render(LottieInfo* player, jobject bitmap, int w, int h, int stride, int bgColor, std::string gifName,int delay,int bitDepth, bool dither,int frameStart,int frameEnd,JNIEnv *env,jobject listener) {
         void *pixels;
         if (AndroidBitmap_lockPixels(env, bitmap, &pixels) >= 0) {
             size_t frameCount = player->animation->totalFrame();
@@ -939,7 +939,7 @@ public:
                     rlottie::Surface surface((uint32_t *) pixels, (size_t) w, (size_t)h,(size_t) stride);
                     player->animation->renderSync(i, surface);
                     //LottieWrapper::convertToCanvasFormat(surface);
-                    builder.addFrame(surface, transparent,delay,bitDepth,dither);
+                    builder.addFrame(surface,delay,bitDepth,dither);
 
                     env->CallVoidMethod(store_Wlistener, mth_update, (jint) (i + 1),
                                         (jint) frameCount);
@@ -951,7 +951,7 @@ public:
                     rlottie::Surface surface((uint32_t *) pixels, (size_t)w, (size_t)h,(size_t)stride);
                     player->animation->renderSync(i, surface);
                     //LottieWrapper::convertToCanvasFormat(surface);
-                    builder.addFrame(surface, transparent,delay,bitDepth,dither);
+                    builder.addFrame(surface,delay,bitDepth,dither);
                 }
             }
 

@@ -45,6 +45,6 @@ class AXrLottieNative {
     public static native void setLayerTrPosition(long ptr, String layer, float x,float y);
     public static native void setLayerTrScale(long ptr, String layer, float w,float h);
 
-    public static native boolean lottie2gif(long ptr, Bitmap bitmap,int w, int h,int stride, int bgColor,boolean transparent, String gifPath,int delay, int bitDepth, boolean dither,int frameStart,int frameEnd, AXrLottie2Gif.Lottie2GifListener listener);
+    public static native boolean lottie2gif(long ptr, Bitmap bitmap,int w, int h,int stride, int bgColor, String gifPath,int delay, int bitDepth, boolean dither,int frameStart,int frameEnd, AXrLottie2Gif.Lottie2GifListener listener);
     public static native void configureModelCacheSize(int cacheSize);
 }

@@ -47,7 +47,7 @@ public class AXrLottie {
     private static int timeOut = 10000;
 
     public static void init(Context context){
-        AXrLottie.context = context;
+        AXrLottie.context = context.getApplicationContext();
         loadScreenRefreshRate(context);
     }
 
