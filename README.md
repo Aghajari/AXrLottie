@@ -24,7 +24,7 @@ What is **AXrLottie**?
 <img height=250 src="./images/lottie.gif">
 
 ## Screenshot
-<img src="./images/screen.png" width=300 title="Screen"> <img src="./images/editor.png" width=300 title="Screen">
+<img src="./images/screen.png" width=300 title="Screen">
 
 ## Table of Contents  
 - [Installation](#installation)  
@@ -158,6 +158,8 @@ Keypath should contains object names separated by (.) and can handle globe(`**`)
 [Back to contents](#table-of-contents)
 
 ## Layers
+<img src="./images/editor.png" width=300 title="Screen">
+
 AXrLottieLayerInfo contains Layer's name,type,startFrame and endFrame.
 
 ```java
