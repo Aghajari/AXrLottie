@@ -1314,7 +1314,8 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             }
             this.file = null;
             this.json = null;
-            this.url = "lottie_cache_" + url.replaceAll("\\W+", "");
+            this.url = url;
+            this.cacheName = "lottie_cache_" + url.replaceAll("\\W+", "");
             this.type = BuilderType.URL;
             this.fetcher = fetcher;
         }

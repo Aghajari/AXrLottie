@@ -31,7 +31,7 @@ import java.io.InputStream;
 /**
  *
  * @author Amir Hossein Aghajari
- * @version 1.0.2
+ * @version 1.0.3
  *
  */
 public class AXrLottie {
