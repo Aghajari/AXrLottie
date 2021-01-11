@@ -43,6 +43,8 @@ What is **AXrLottie**?
 - [License](#license)
 
 ## Changelogs
+**1.0.3 :**
+- LoadFromURL Bug fixed.
 
 **1.0.2 :**
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
@@ -59,7 +61,7 @@ AXrLottie is available in the JCenter, so you just need to add it as a dependenc
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.2'
+implementation 'com.aghajari.rlottie:AXrLottie:1.0.3'
 ```
 
 Maven
@@ -67,7 +69,7 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <type>pom</type>
 </dependency>
 ```
