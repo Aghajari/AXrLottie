@@ -328,8 +328,8 @@ and you can load your animations in StickerProvider
 
 ## Author 
 - **Amir Hossein Aghajari**
-
-[Samsung/rlottie](https://github.com/Samsung/rlottie)
+- [Samsung/rlottie](https://github.com/Samsung/rlottie)
+- [Telegram/RLottieDrawable](https://github.com/DrKLO/Telegram/blob/master/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java)
 
 License
 =======
