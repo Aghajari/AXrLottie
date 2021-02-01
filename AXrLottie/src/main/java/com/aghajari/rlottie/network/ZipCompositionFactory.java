@@ -15,7 +15,6 @@
  *
  */
 
-
 package com.aghajari.rlottie.network;
 
 import java.io.Closeable;
@@ -26,7 +25,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import androidx.annotation.WorkerThread;
-
 
 class ZipCompositionFactory {
 

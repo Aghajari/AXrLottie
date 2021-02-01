@@ -15,7 +15,6 @@
  *
  */
 
-
 package com.aghajari.rlottie;
 
 import android.os.Handler;
@@ -55,6 +54,7 @@ class DispatchQueue extends Thread {
             start();
         }
     }
+
     public void cancelRunnable(Runnable runnable) {
         try {
             syncLatch.await();

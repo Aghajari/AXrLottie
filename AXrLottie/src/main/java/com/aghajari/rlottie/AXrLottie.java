@@ -15,201 +15,152 @@
  *
  */
 
-
 package com.aghajari.rlottie;
 
 import android.content.Context;
-import android.view.Display;
-import android.view.WindowManager;
 
-import com.aghajari.rlottie.network.AXrLottieNetworkFetcher;
+import androidx.annotation.NonNull;
+
+import com.aghajari.rlottie.network.AXrLottieConfig;
 
 import java.io.File;
 import java.io.InputStream;
 
-
 /**
- *
  * @author Amir Hossein Aghajari
  * @version 1.0.3
- *
  */
 public class AXrLottie {
+
     static {
         System.loadLibrary("jlottie");
     }
 
-    private AXrLottie(){}
-
-    static Context context;
-    static float screenRefreshRate = 60;
-    private static boolean urlCacheEnabled = true;
-    private static int timeOut = 10000;
-
-    public static void init(Context context){
-        AXrLottie.context = context.getApplicationContext();
-        loadScreenRefreshRate(context);
+    private AXrLottie() {
     }
 
-    public static void configureModelCacheSize(int cacheSize){
-        AXrLottieNative.configureModelCacheSize(cacheSize);
+    public static void init(@NonNull final AXrLottieConfig config) {
+        AXrL.setContext(config.context);
+        AXrL.setFetcher(config.networkFetcher);
+        AXrL.setCacheProvider(config.cacheProvider);
+        AXrL.setCacheEnabled(config.cacheEnabled);
+        AXrL.setCacheSize(config.cacheSize);
+        AXrL.setScreenRefreshRate(config.screenRefreshRate);
     }
 
-    public static void loadScreenRefreshRate(Context context) {
-        WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        if (manager != null) {
-            Display display = manager.getDefaultDisplay();
-            if (display != null) {
-                screenRefreshRate = display.getRefreshRate();
-            }
-        }
-    }
-
-    public static void setScreenRefreshRate(float screenRefreshRate) {
-        AXrLottie.screenRefreshRate = screenRefreshRate;
-    }
-
-    public static float getScreenRefreshRate() {
-        return screenRefreshRate;
-    }
-
-    public static void setNetworkCacheEnabled(boolean urlCacheEnabled) {
-        AXrLottie.urlCacheEnabled = urlCacheEnabled;
-    }
-
-    public static boolean isNetworkCacheEnabled() {
-        return urlCacheEnabled;
-    }
-
-    public static void setNetworkTimeOut(int timeOut) {
-        AXrLottie.timeOut = timeOut;
-    }
-
-    public static int getNetworkTimeOut() {
-        return timeOut;
-    }
-
-    public static AXrLottieDrawable createFromPath(String path, int width, int height, boolean precache, boolean limitFps){
+    public static AXrLottieDrawable createFromPath(String path, int width, int height, boolean precache, boolean limitFps) {
         return AXrLottieDrawable.fromPath(path)
-                .setSize(width,height)
+                .setSize(width, height)
                 .setCacheEnabled(precache)
                 .setFpsLimit(limitFps)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromFile(File file,int width,int height,boolean precache, boolean limitFps){
-         return AXrLottieDrawable.fromFile(file)
-                .setSize(width,height)
+    public static AXrLottieDrawable createFromFile(File file, int width, int height, boolean precache, boolean limitFps) {
+        return AXrLottieDrawable.fromFile(file)
+                .setSize(width, height)
                 .setCacheEnabled(precache)
                 .setFpsLimit(limitFps)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromURL(String url,int width,int height,boolean precache, boolean limitFps){
+    public static AXrLottieDrawable createFromURL(String url, int width, int height, boolean precache, boolean limitFps) {
         return AXrLottieDrawable.fromURL(url)
-                .setSize(width,height)
-                .setCacheEnabled(precache)
-                .setFpsLimit(limitFps)
-                .build();
-    }
-
-    public static AXrLottieDrawable createFromURL(String url, AXrLottieNetworkFetcher fetcher, int width, int height, boolean precache, boolean limitFps){
-        return AXrLottieDrawable.fromURL(url,fetcher)
-                .setSize(width,height)
+                .setSize(width, height)
                 .setCacheEnabled(precache)
                 .setFpsLimit(limitFps)
                 .build();
     }
 
     public static AXrLottieDrawable createFromJson(String json, String name, int width, int height) {
-        return AXrLottieDrawable.fromJson(json,name)
-                .setSize(width,height)
+        return AXrLottieDrawable.fromJson(json, name)
+                .setSize(width, height)
                 .setCacheEnabled(false)
                 .setFpsLimit(false)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromJson(String json, String name, int width, int height,boolean cache,boolean limitFps) {
-        return AXrLottieDrawable.fromJson(json,name)
-                .setSize(width,height)
+    public static AXrLottieDrawable createFromJson(String json, String name, int width, int height, boolean cache, boolean limitFps) {
+        return AXrLottieDrawable.fromJson(json, name)
+                .setSize(width, height)
                 .setCacheEnabled(cache)
                 .setFpsLimit(limitFps)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromAssets(Context context,String fileName, String name, int width, int height) {
-        return AXrLottieDrawable.fromAssets(context,fileName)
+    public static AXrLottieDrawable createFromAssets(Context context, String fileName, String name, int width, int height) {
+        return AXrLottieDrawable.fromAssets(context, fileName)
                 .setCacheName(name)
-                .setSize(width,height)
+                .setSize(width, height)
                 .setCacheEnabled(false)
                 .setFpsLimit(false)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromAssets(Context context,String fileName, String name, int width, int height,boolean cache,boolean limitFps) {
-        return AXrLottieDrawable.fromAssets(context,fileName)
+    public static AXrLottieDrawable createFromAssets(Context context, String fileName, String name, int width, int height, boolean cache, boolean limitFps) {
+        return AXrLottieDrawable.fromAssets(context, fileName)
                 .setCacheName(name)
-                .setSize(width,height)
+                .setSize(width, height)
                 .setCacheEnabled(cache)
                 .setFpsLimit(limitFps)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromAssets(Context context,String fileName, String name, int width, int height,boolean startDecode) {
-        return AXrLottieDrawable.fromAssets(context,fileName)
+    public static AXrLottieDrawable createFromAssets(Context context, String fileName, String name, int width, int height, boolean startDecode) {
+        return AXrLottieDrawable.fromAssets(context, fileName)
                 .setCacheName(name)
-                .setSize(width,height)
+                .setSize(width, height)
                 .setCacheEnabled(false)
                 .setFpsLimit(false)
                 .setAllowDecodeSingleFrame(startDecode)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromRes(Context context,int res, String name, int width, int height) {
-        return AXrLottieDrawable.fromRes(context,res,name)
-                .setSize(width,height)
+    public static AXrLottieDrawable createFromRes(Context context, int res, String name, int width, int height) {
+        return AXrLottieDrawable.fromRes(context, res, name)
+                .setSize(width, height)
                 .setCacheEnabled(false)
                 .setFpsLimit(false)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromRes(Context context,int res, String name, int width, int height,boolean startDecode) {
-        return AXrLottieDrawable.fromRes(context,res,name)
-                .setSize(width,height)
+    public static AXrLottieDrawable createFromRes(Context context, int res, String name, int width, int height, boolean startDecode) {
+        return AXrLottieDrawable.fromRes(context, res, name)
+                .setSize(width, height)
                 .setCacheEnabled(false)
                 .setFpsLimit(false)
                 .setAllowDecodeSingleFrame(startDecode)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromRes(Context context,int res, String name, int width, int height,boolean cache,boolean limitFps) {
-        return AXrLottieDrawable.fromRes(context,res,name)
-                .setSize(width,height)
+    public static AXrLottieDrawable createFromRes(Context context, int res, String name, int width, int height, boolean cache, boolean limitFps) {
+        return AXrLottieDrawable.fromRes(context, res, name)
+                .setSize(width, height)
                 .setCacheEnabled(cache)
                 .setFpsLimit(limitFps)
                 .build();
     }
 
     public static AXrLottieDrawable createFromInputStream(InputStream inputStream, String name, int width, int height) {
-        return AXrLottieDrawable.fromInputStream(inputStream,name)
-                .setSize(width,height)
+        return AXrLottieDrawable.fromInputStream(inputStream, name)
+                .setSize(width, height)
                 .setCacheEnabled(false)
                 .setFpsLimit(false)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromInputStream(InputStream inputStream, String name, int width, int height,boolean startDecode) {
-        return AXrLottieDrawable.fromInputStream(inputStream,name)
-                .setSize(width,height)
+    public static AXrLottieDrawable createFromInputStream(InputStream inputStream, String name, int width, int height, boolean startDecode) {
+        return AXrLottieDrawable.fromInputStream(inputStream, name)
+                .setSize(width, height)
                 .setCacheEnabled(false)
                 .setFpsLimit(false)
                 .setAllowDecodeSingleFrame(startDecode)
                 .build();
     }
 
-    public static AXrLottieDrawable createFromInputStream(InputStream inputStream, String name, int width, int height,boolean cache,boolean limitFps) {
-        return AXrLottieDrawable.fromInputStream(inputStream,name)
-                .setSize(width,height)
+    public static AXrLottieDrawable createFromInputStream(InputStream inputStream, String name, int width, int height, boolean cache, boolean limitFps) {
+        return AXrLottieDrawable.fromInputStream(inputStream, name)
+                .setSize(width, height)
                 .setCacheEnabled(cache)
                 .setFpsLimit(limitFps)
                 .build();

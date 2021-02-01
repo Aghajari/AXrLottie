@@ -15,9 +15,7 @@
  *
  */
 
-
 package com.aghajari.rlottie;
-
 
 public class AXrLottieProperty {
     PropertyType type;

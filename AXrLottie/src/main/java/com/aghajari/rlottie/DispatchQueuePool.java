@@ -15,7 +15,6 @@
  *
  */
 
-
 package com.aghajari.rlottie;
 
 import android.os.SystemClock;
@@ -29,16 +28,16 @@ import androidx.annotation.UiThread;
 class DispatchQueuePool {
     public static SecureRandom random = new SecureRandom();
 
-    private LinkedList<DispatchQueue> queues = new LinkedList<>();
-    private HashMap<DispatchQueue, Integer> busyQueuesMap = new HashMap<>();
-    private LinkedList<DispatchQueue> busyQueues = new LinkedList<>();
+    private final LinkedList<DispatchQueue> queues = new LinkedList<>();
+    private final HashMap<DispatchQueue, Integer> busyQueuesMap = new HashMap<>();
+    private final LinkedList<DispatchQueue> busyQueues = new LinkedList<>();
     private int maxCount;
     private int createdCount;
     private int guid;
     private int totalTasksCount;
     private boolean cleanupScheduled;
 
-    private Runnable cleanupRunnable = new Runnable() {
+    private final Runnable cleanupRunnable = new Runnable() {
         @Override
         public void run() {
             if (!queues.isEmpty()) {

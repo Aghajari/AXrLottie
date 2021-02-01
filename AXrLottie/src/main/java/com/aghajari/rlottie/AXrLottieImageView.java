@@ -15,7 +15,6 @@
  *
  */
 
-
 package com.aghajari.rlottie;
 
 import android.content.Context;

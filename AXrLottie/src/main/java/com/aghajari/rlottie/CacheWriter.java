@@ -15,7 +15,6 @@
  *
  */
 
-
 package com.aghajari.rlottie;
 
 import java.io.File;
@@ -26,15 +25,15 @@ import java.io.OutputStreamWriter;
 class CacheWriter {
 
     public static File load(final String json, final String name) {
-        if (AXrLottie.context==null) return null;
-        File f = new File(new File(AXrLottie.context.getCacheDir(), "lottie"), name + ".cache");
+        if (AXrL.applicationContext == null) return null;
+        File f = new File(new File(AXrL.applicationContext.getCacheDir(), "lottie"), name + ".cache");
         if (f.exists()) return f;
         return write(json, name);
     }
 
     private static File write(final String json, final String name) {
         try {
-            File f = new File(AXrLottie.context.getCacheDir(), "lottie");
+            File f = new File(AXrL.applicationContext.getCacheDir(), "lottie");
             if (!f.mkdir()) return null;
             File f2 = new File(f, name + ".cache");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(f2));
