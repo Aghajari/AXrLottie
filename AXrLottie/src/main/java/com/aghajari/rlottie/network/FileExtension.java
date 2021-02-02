@@ -18,32 +18,71 @@
 
 package com.aghajari.rlottie.network;
 
+import android.content.Context;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipInputStream;
+
 /**
  * Helpers for known Lottie downloader file types.
  */
-public class FileExtension {
-    static FileExtension ZIP() {
-        return new FileExtension(".zip");
+public abstract class FileExtension {
+
+    public static FileExtension ZIP() {
+        return new FileExtension(".zip") {
+
+            @Override
+            public boolean canParseContent(String contentType) {
+                return ZipCompositionFactory.isZipContent(contentType);
+            }
+
+            public File fromZipStream(File file, File output, ZipInputStream stream) {
+                return ZipCompositionFactory.fromZipStreamSyncInternal(file, output, stream);
+            }
+
+            @Override
+            public File saveAsTempFile(Context context, String cacheName, InputStream stream) throws IOException {
+                File file = NetworkCache.writeTempCacheFile(context, cacheName, stream, FileExtension.ZIP());
+                file = fromZipStream(file,
+                        NetworkCache.getCachedFile(context, NetworkCache.filenameForUrl(cacheName, FileExtension.JSON(), true)),
+                        new ZipInputStream(new FileInputStream(file)));
+                return file;
+            }
+        };
     }
 
-    static FileExtension JSON() {
-        return new FileExtension(".json");
+    public static FileExtension JSON() {
+        return new FileExtension(".json") {
+            @Override
+            public boolean canParseContent(String contentType) {
+                return contentType.toLowerCase().contains("application/json");
+            }
+        };
     }
 
-    final String extension;
+    public final String extension;
 
     public FileExtension(String extension) {
         this.extension = extension;
     }
 
-    String tempExtension() {
+    public String tempExtension() {
         return ".temp" + extension;
+    }
+
+    public boolean canParseContent(String contentType) {
+        return false;
+    }
+
+    public File saveAsTempFile(Context context, String cacheName, InputStream stream) throws IOException {
+       return NetworkCache.writeTempCacheFile(context,cacheName, stream, FileExtension.JSON());
     }
 
     @Override
     public String toString() {
         return extension;
     }
-
-
 }

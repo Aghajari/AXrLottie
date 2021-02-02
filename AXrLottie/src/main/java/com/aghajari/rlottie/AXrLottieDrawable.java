@@ -43,7 +43,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.aghajari.rlottie.network.AXrLottieNetworkFetcher;
-import com.aghajari.rlottie.network.AXrLottieSimpleNetworkFetcher;
+import com.aghajari.rlottie.network.SimpleNetworkFetcher;
 
 import static com.aghajari.rlottie.AXrLottieNative.destroy;
 import static com.aghajari.rlottie.AXrLottieNative.create;
@@ -395,7 +395,8 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             case URL:
                 this.width = builder.w;
                 this.height = builder.h;
-                AXrLottieNetworkFetcher.load(AXrLottie.context, builder.url, this, builder.fetcher);
+                cacheName = builder.cacheName;
+                builder.fetcher.attachToDrawable(AXrLottie.context,this,builder.url,true);
                 break;
         }
 
@@ -1137,7 +1138,12 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         if (loaderListener != null) loaderListener.onLoaded(this);
     }
 
-    public void load(File file) {
+    /**
+     * called when animation loaded from {@link AXrLottieNetworkFetcher}
+     */
+    public void initFromNetwork(File file, AXrLottieNetworkFetcher fetcher) {
+        if (hasLoaded() || !builder.cacheName.equalsIgnoreCase(fetcher.getCacheName())) return;
+
         initFromFile(file, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps);
         uiHandler.post(new Runnable() {
             @Override
@@ -1187,6 +1193,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
 
     private static String readStream(InputStream inputStream) {
         if (inputStream == null) return null;
+
         int totalRead = 0;
         byte[] readBuffer = readBufferLocal.get();
         if (readBuffer == null) {
@@ -1235,7 +1242,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     public static Builder fromURL(String url) {
-        return new Builder(url, new AXrLottieSimpleNetworkFetcher());
+        return new Builder(url, SimpleNetworkFetcher.create());
     }
 
     public static Builder fromURL(String url, AXrLottieNetworkFetcher networkFetcher) {
@@ -1262,7 +1269,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         JSON, FILE, URL
     }
 
-    private static int DEFAULT = -100;
+    private static final int DEFAULT = -100;
 
     public static class Builder {
         private final BuilderType type;

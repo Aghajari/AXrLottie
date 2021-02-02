@@ -20,44 +20,43 @@ package com.aghajari.rlottie.network;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+import androidx.core.util.Pair;
+
 import com.aghajari.rlottie.AXrLottie;
 import com.aghajari.rlottie.AXrLottieDrawable;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 
 public abstract class AXrLottieNetworkFetcher {
 
     protected AXrLottieDrawable drawable;
+    protected String cacheName;
     protected String url;
 
-    public void attachToDrawable(AXrLottieDrawable drawable, String url) {
+    public void attachToDrawable(Context context,AXrLottieDrawable drawable, String url,boolean load) {
         this.drawable = drawable;
+        this.cacheName = this.drawable.getCacheName();
         this.url = url;
+
+        if (load) fetchSync(context);
     }
 
     public FileExtension[] getSupportedExtensions() {
-        return new FileExtension[]{FileExtension.ZIP(), FileExtension.JSON()};
+        return new FileExtension[]{
+                FileExtension.ZIP(),
+                FileExtension.JSON()
+        };
     }
 
-    public String getDecodedUrl(String url) {
+    public String getURL() {
         return url;
     }
 
-    public abstract void load(File file);
-
-    public abstract File getResultFromConnection(Context context, HttpURLConnection connection);
-
-    public void error(Exception e) {
-        e.printStackTrace();
-    }
-
-    public void error(InputStream errorInputStream, int responseCode) {
-    }
-
     public String getCacheName() {
-        return drawable.getCacheName();
+        return cacheName;
     }
 
     public boolean isCacheEnabled() {
@@ -68,11 +67,75 @@ public abstract class AXrLottieNetworkFetcher {
         return drawable;
     }
 
-    public String getUrl() {
-        return url;
+    @WorkerThread
+    public void fetchSync(Context context) {
+        File res = null;
+        if (isCacheEnabled()) res = fetchFromCache(context);
+
+        if (res == null && !NetworkCache.checkLoading(url, this)) {
+            fetchFromNetwork(context);
+            return;
+        }
+        if (res == null) return;
+        onLoad(res);
     }
 
-    public static void load(Context context, String url, AXrLottieDrawable drawable, AXrLottieNetworkFetcher fetcher) {
-        new NetworkFetcher(context, url, drawable, fetcher).fetchSync();
+    /**
+     * Returns null if the animation doesn't exist in the cache.
+     */
+    @Nullable
+    @WorkerThread
+    protected File fetchFromCache(Context context) {
+        Pair<FileExtension, File> cacheResult = NetworkCache.fetch(context, getCacheName(), getSupportedExtensions());
+        if (cacheResult == null) {
+            return null;
+        }
+        File f = cacheResult.second;
+        if (f == null || !f.exists()) return null;
+        return f;
+    }
+
+    @WorkerThread
+    protected abstract void fetchFromNetwork(Context context);
+
+    @WorkerThread
+    protected void parseStream(Context context, InputStream inputStream, String contentType) {
+        try {
+            File file;
+            if (contentType == null) {
+                // Assume JSON for best effort parsing. If it fails, it will just deliver the parse exception
+                // in the result which is more useful than failing here.
+                contentType = "application/json";
+            }
+
+            FileExtension[] fileExtensions = getSupportedExtensions();
+            boolean parsed = false;
+            for (FileExtension fileExtension : fileExtensions) {
+                if (fileExtension.canParseContent(contentType)){
+                    parsed = fileExtension.saveAsTempFile(context, getCacheName(),inputStream) != null;
+                }
+                if (parsed) break;
+            }
+            if (!parsed)
+                FileExtension.JSON().saveAsTempFile(context, getCacheName(),inputStream);
+
+            file = NetworkCache.loadTempFile(context, getCacheName());
+
+            onLoad(file);
+        } catch (Exception e) {
+            onError(new ParserException(e));
+        }
+    }
+
+    @WorkerThread
+    public void onLoad(File file) {
+        if (file != null && file.exists()) {
+            drawable.initFromNetwork(file,this);
+        }
+        NetworkCache.finishLoading(file, getURL(), this);
+    }
+
+    public void onError(Exception e){
+        e.printStackTrace();
     }
 }
