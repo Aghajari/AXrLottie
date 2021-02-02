@@ -39,6 +39,7 @@ What is **AXrLottie**?
   - [Lottie2Gif](#lottie2gif)
   - [Listeners](#listeners)
   - [NetworkFetcher](#networkfetcher)
+    - [FileExtension](#fileextension)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
