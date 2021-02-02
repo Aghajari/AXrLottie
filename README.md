@@ -48,7 +48,7 @@ What is **AXrLottie**?
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie) (Fix crash when path animation data is empty)
 - LoadFromURL Bug fixed.
 - Supportage for NetworkFetcher and FileExtension added.
-- OkHttpNetworkFetcher added to project.
+- - [OkHttpNetworkFetcher](https://github.com/Aghajari/AXrLottie/blob/master/app/src/main/java/com/aghajari/sample/axrlottie/OkHttpNetworkFetcher.java) (based on [OkHttp](https://square.github.io/okhttp/)) added to project.
 
 **1.0.2 :**
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
