@@ -275,7 +275,6 @@ Bitmap renderFrame(AXrLottieDrawable drawable, Bitmap bitmap, int frame);
 [Back to contents](#table-of-contents)
 
 ## NetworkFetcher
-NetworkFetcher will manage lottie downloader.
 
 Simple way to load lottie from URL (SimpleNetworkFetcher) :
 ```java
@@ -283,7 +282,7 @@ AXrLottieDrawable.fromURL(URL)
 	.build()
 ```
 
-AXrLottie has a default network fetching stack built on {@link java.net.HttpURLConnection}. However, if you would like to hook into your own network stack for performance, caching, or analytics, you may replace the internal stack with your own.
+AXrLottie has a default network fetching stack built on HttpURLConnection. However, if you would like to hook into your own network stack for performance, caching, or analytics, you may replace the internal stack with your own.
 
 - [OkHttpNetworkFetcher](https://github.com/Aghajari/AXrLottie/blob/master/app/src/main/java/com/aghajari/sample/axrlottie/OkHttpNetworkFetcher.java) (based on [OkHttp](https://square.github.io/okhttp/)) added to project.
 
