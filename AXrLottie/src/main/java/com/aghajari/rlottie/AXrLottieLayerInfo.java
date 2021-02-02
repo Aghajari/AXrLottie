@@ -28,11 +28,11 @@ public class AXrLottieLayerInfo {
     public enum LayerType {
         UNKNOWN(-1),
         PRECOM(0),
-        SOLID (1),
-        IMAGE (2),
-        NULL (3),
-        SHAPE (4),
-        TEXT (5);
+        SOLID(1),
+        IMAGE(2),
+        NULL(3),
+        SHAPE(4),
+        TEXT(5);
 
         private int type;
 
@@ -53,8 +53,8 @@ public class AXrLottieLayerInfo {
                 outFrame = Integer.parseInt(data[2]);
 
                 try {
-                    type = LayerType.values()[Integer.parseInt(data[3])+1]; // +1 for skipping UNKNOWN
-                }catch (Exception ignore){
+                    type = LayerType.values()[Integer.parseInt(data[3]) + 1]; // +1 for skipping UNKNOWN
+                } catch (Exception ignore) {
                 }
             }
         } catch (Exception ignore) {

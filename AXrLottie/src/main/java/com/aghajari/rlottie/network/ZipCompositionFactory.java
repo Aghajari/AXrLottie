@@ -28,7 +28,7 @@ import java.util.zip.ZipInputStream;
 import androidx.annotation.WorkerThread;
 
 
-public class ZipCompositionFactory {
+class ZipCompositionFactory {
 
     public static boolean isZipContent(String contentType) {
         return contentType.toLowerCase().contains("application/zip") ||
@@ -90,13 +90,13 @@ public class ZipCompositionFactory {
                         closeQuietly(inputStream);
                         return f;
                     }
-                /**} else if (entryName.contains(".png") || entryName.contains(".webp")) {
-                } else {
-                    File f = toFile(file, output, inputStream, entry);
-                    if (f != null) {
-                        closeQuietly(inputStream);
-                        return f;
-                    } */
+                    /**} else if (entryName.contains(".png") || entryName.contains(".webp")) {
+                     } else {
+                     File f = toFile(file, output, inputStream, entry);
+                     if (f != null) {
+                     closeQuietly(inputStream);
+                     return f;
+                     } */
                 }
                 entry = inputStream.getNextEntry();
             }

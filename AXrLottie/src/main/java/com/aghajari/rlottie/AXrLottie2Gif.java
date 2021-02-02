@@ -31,7 +31,9 @@ public class AXrLottie2Gif {
 
     public interface Lottie2GifListener {
         void onStarted();
-        void onProgress(int frame,int totalFrame);
+
+        void onProgress(int frame, int totalFrame);
+
         void onFinished();
     }
 
@@ -39,20 +41,20 @@ public class AXrLottie2Gif {
     private boolean successful;
     private boolean destroyed = false;
     private Builder builder;
-    private int mFrame,mTotalFrame;
+    private int mFrame, mTotalFrame;
 
     private Lottie2GifListener listener = new Lottie2GifListener() {
         @Override
         public void onStarted() {
             running = true;
-            if (builder.listener!=null) builder.listener.onStarted();
+            if (builder.listener != null) builder.listener.onStarted();
         }
 
         @Override
         public void onProgress(int frame, int totalFrame) {
             mFrame = frame;
             mTotalFrame = totalFrame;
-            if (builder.listener!=null) builder.listener.onProgress(frame,totalFrame);
+            if (builder.listener != null) builder.listener.onProgress(frame, totalFrame);
         }
 
         @Override
@@ -60,20 +62,20 @@ public class AXrLottie2Gif {
             running = false;
 
             if (builder.destroyable) destroy();
-            if (builder.listener!=null) builder.listener.onFinished();
+            if (builder.listener != null) builder.listener.onFinished();
         }
     };
 
-    AXrLottie2Gif(Builder builder){
-        if (runnableQueue==null) runnableQueue = new DispatchQueuePool(2);
+    AXrLottie2Gif(Builder builder) {
+        if (runnableQueue == null) runnableQueue = new DispatchQueuePool(2);
         this.builder = builder;
         build();
     }
 
-    public boolean buildAgain(){
+    public boolean buildAgain() {
         if (isRunning()) return false;
-        if (destroyed){
-              throw new RuntimeException("can't build a destroyable lottie again!");
+        if (destroyed) {
+            throw new RuntimeException("can't build a destroyable lottie again!");
         }
         build();
         return successful;
@@ -84,7 +86,7 @@ public class AXrLottie2Gif {
     Runnable converter = new Runnable() {
         @Override
         public void run() {
-            if (bitmap==null){
+            if (bitmap == null) {
                 try {
                     bitmap = Bitmap.createBitmap(builder.w, builder.h, Bitmap.Config.ARGB_8888);
                 } catch (Throwable e) {
@@ -92,11 +94,11 @@ public class AXrLottie2Gif {
                 }
             }
 
-            if (bitmap!=null) {
-                successful = AXrLottieNative.lottie2gif(builder.lottie, bitmap ,builder.w, builder.h, bitmap.getRowBytes(),
+            if (bitmap != null) {
+                successful = AXrLottieNative.lottie2gif(builder.lottie, bitmap, builder.w, builder.h, bitmap.getRowBytes(),
                         builder.bgColor, builder.path.getAbsolutePath(),
-                        builder.delay,builder.bitDepth,builder.dither,builder.frameStart,builder.frameEnd, listener);
-            }else {
+                        builder.delay, builder.bitDepth, builder.dither, builder.frameStart, builder.frameEnd, listener);
+            } else {
                 successful = false;
             }
 
@@ -104,15 +106,15 @@ public class AXrLottie2Gif {
         }
     };
 
-    private void build(){
+    private void build() {
         if (builder.async) {
             runnableQueue.execute(converter);
-        }else{
+        } else {
             converter.run();
         }
     }
 
-    private void destroy(){
+    private void destroy() {
         destroyed = true;
         AXrLottieNative.destroy(builder.lottie);
     }
@@ -125,7 +127,7 @@ public class AXrLottie2Gif {
         return successful;
     }
 
-    public Builder getBuilder(){
+    public Builder getBuilder() {
         return builder;
     }
 
@@ -137,15 +139,15 @@ public class AXrLottie2Gif {
         return mTotalFrame;
     }
 
-    public File getGifPath(){
+    public File getGifPath() {
         return builder.path;
     }
 
-    public static Builder create(@NonNull AXrLottieDrawable lottie){
+    public static Builder create(@NonNull AXrLottieDrawable lottie) {
         return new Builder(lottie);
     }
 
-    public static Builder create(long lottie){
+    public static Builder create(long lottie) {
         return new Builder(lottie);
     }
 
@@ -154,8 +156,8 @@ public class AXrLottie2Gif {
         if (this == o) return true;
         if (o == null || !(o instanceof AXrLottie2Gif)) return false;
         AXrLottie2Gif c = (AXrLottie2Gif) o;
-        if (c.getBuilder()==null) return false;
-        return (c.getGifPath().equals(getGifPath()) && c.getBuilder().lottie==builder.lottie);
+        if (c.getBuilder() == null) return false;
+        return (c.getGifPath().equals(getGifPath()) && c.getBuilder().lottie == builder.lottie);
     }
 
     @Override
@@ -163,9 +165,9 @@ public class AXrLottie2Gif {
         return getGifPath().getAbsolutePath();
     }
 
-    public static class Builder{
+    public static class Builder {
         long lottie;
-        int w,h;
+        int w, h;
         int bgColor = Color.WHITE;
         int delay = 2;
         Lottie2GifListener listener = null;
@@ -178,106 +180,121 @@ public class AXrLottie2Gif {
         int frameEnd = -1;
         boolean cancelable = false;
 
-        public Builder(@NonNull AXrLottieDrawable animation){
+        public Builder(@NonNull AXrLottieDrawable animation) {
             this.lottie = animation.getNativePtr();
             float density = 1;
-            if (AXrLottie.context!=null) density = AXrLottie.context.getResources().getDisplayMetrics().density;
-            setSize((int) (animation.getMinimumWidth()/density), (int) (animation.getMinimumHeight()/density));
+            if (AXrLottie.context != null)
+                density = AXrLottie.context.getResources().getDisplayMetrics().density;
+            setSize((int) (animation.getMinimumWidth() / density), (int) (animation.getMinimumHeight() / density));
         }
 
-        public Builder(long ptr){
+        public Builder(long ptr) {
             this.lottie = ptr;
-            setSize(200,200);
+            setSize(200, 200);
         }
 
-        public Builder setLottieAnimation(@NonNull AXrLottieDrawable animation){
+        public Builder setLottieAnimation(@NonNull AXrLottieDrawable animation) {
             this.lottie = animation.getNativePtr();
             return this;
         }
 
-        public Builder setLottieAnimation(long ptr){
+        public Builder setLottieAnimation(long ptr) {
             this.lottie = ptr;
             return this;
         }
 
-        /** set the output gif background color */
+        /**
+         * set the output gif background color
+         */
         public Builder setBackgroundColor(int bgColor) {
             this.bgColor = bgColor;
             return this;
         }
 
-        /** set the output gif width and height */
-        public Builder setSize(@Px int width,@Px int height){
+        /**
+         * set the output gif width and height
+         */
+        public Builder setSize(@Px int width, @Px int height) {
             this.w = width;
             this.h = height;
             return this;
         }
 
-        public Builder setListener(Lottie2GifListener listener){
+        public Builder setListener(Lottie2GifListener listener) {
             this.listener = listener;
             return this;
         }
 
-        /** The delay value is the time between frames in hundredths of a second */
-        public Builder setDelay(int delay){
+        /**
+         * The delay value is the time between frames in hundredths of a second
+         */
+        public Builder setDelay(int delay) {
             this.delay = delay;
             return this;
         }
 
-        /** set the output gif path */
-        public Builder setOutputPath(@NonNull File gif){
+        /**
+         * set the output gif path
+         */
+        public Builder setOutputPath(@NonNull File gif) {
             this.path = gif;
             return this;
         }
 
-        /** set the output gif path */
-        public Builder setOutputPath(@NonNull String gif){
+        /**
+         * set the output gif path
+         */
+        public Builder setOutputPath(@NonNull String gif) {
             this.path = new File(gif);
             return this;
         }
 
-        /** destroy lottie when gif created */
-        public Builder setDestroyable(boolean destroyable){
-            this.destroyable =destroyable;
+        /**
+         * destroy lottie when gif created
+         */
+        public Builder setDestroyable(boolean destroyable) {
+            this.destroyable = destroyable;
             return this;
         }
 
-        public Builder setBackgroundTask(boolean enabled){
+        public Builder setBackgroundTask(boolean enabled) {
             async = enabled;
             return this;
         }
 
-        /** Implements Floyd-Steinberg dithering, writes palette value to alpha */
-        public Builder setDithering(boolean enabled){
+        /**
+         * Implements Floyd-Steinberg dithering, writes palette value to alpha
+         */
+        public Builder setDithering(boolean enabled) {
             dither = enabled;
             return this;
         }
 
-        public Builder setBitDepth(int bit){
+        public Builder setBitDepth(int bit) {
             bitDepth = bit;
             return this;
         }
 
-        public Builder setFrameStartAt(int frameStart){
+        public Builder setFrameStartAt(int frameStart) {
             this.frameStart = frameStart;
             return this;
         }
 
-        public Builder setFrameEndAt(int frameEnd){
+        public Builder setFrameEndAt(int frameEnd) {
             this.frameEnd = frameEnd;
             return this;
         }
 
-        public Builder setCancelable(boolean cancelable){
+        public Builder setCancelable(boolean cancelable) {
             this.cancelable = cancelable;
             return this;
         }
 
-        public AXrLottie2Gif build(){
-            if (path==null){
+        public AXrLottie2Gif build() {
+            if (path == null) {
                 throw new RuntimeException("output gif path can't be null!");
             }
-            if (w<=0 || h<=0){
+            if (w <= 0 || h <= 0) {
                 throw new RuntimeException("output gif width and height must be > 0");
             }
 

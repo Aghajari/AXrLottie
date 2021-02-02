@@ -18,32 +18,37 @@
 
 package com.aghajari.rlottie.network;
 
+import com.aghajari.rlottie.AXrLottie;
 
-import androidx.annotation.NonNull;
-
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
-public abstract class AXrLottieNetworkFetcher {
+/**
+ * Helpers for known Lottie downloader file types.
+ */
+public abstract class AXrFileExtension {
 
-    public abstract AXrLottieFetchResult fetchSync(@NonNull String url) throws IOException;
+    public final String extension;
 
-    private int connectTimeout = 10_000;
-    private int readTimeout = 10_000;
-
-    public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
+    public AXrFileExtension(String extension) {
+        this.extension = extension;
     }
 
-    public int getConnectTimeout() {
-        return connectTimeout;
+    public String tempExtension() {
+        return ".temp" + extension;
     }
 
-    public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
+    public boolean canParseContent(String contentType) {
+        return false;
     }
 
-    public int getReadTimeout() {
-        return readTimeout;
+    public File saveAsTempFile(String url, InputStream stream) throws IOException {
+        return AXrLottie.getLottieCacheManager().writeTempCacheFile(url, stream, this);
     }
 
+    @Override
+    public String toString() {
+        return extension;
+    }
 }

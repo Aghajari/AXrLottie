@@ -55,6 +55,7 @@ class DispatchQueue extends Thread {
             start();
         }
     }
+
     public void cancelRunnable(Runnable runnable) {
         try {
             syncLatch.await();

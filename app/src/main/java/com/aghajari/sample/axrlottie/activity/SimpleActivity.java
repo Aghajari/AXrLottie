@@ -2,10 +2,8 @@ package com.aghajari.sample.axrlottie.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 
-import com.aghajari.rlottie.AXrLottieProperty;
 import com.aghajari.sample.axrlottie.R;
 
 import com.aghajari.rlottie.AXrLottie;
@@ -20,7 +18,7 @@ public class SimpleActivity extends AppCompatActivity {
 
         final AXrLottieImageView lottieView = findViewById(R.id.lottie_view);
 
-       lottieView.setLottieDrawable(AXrLottie.createFromAssets(this, "emoji_simple.json",
+       lottieView.setLottieDrawable(AXrLottie.Loader.createFromAssets(this, "emoji_simple.json",
                 "emoji", 256, 256));
        lottieView.playAnimation();
 

@@ -19,9 +19,9 @@
 package com.aghajari.rlottie;
 
 /**
- *  Markers exported form AE are used to describe a segment of an animation {comment/tag , startFrame, endFrame}
- *  Marker can be use to divide a resource in to separate animations by tagging the segment with comment string ,
- *  start frame and duration of that segment.
+ * Markers exported form AE are used to describe a segment of an animation {comment/tag , startFrame, endFrame}
+ * Marker can be use to divide a resource in to separate animations by tagging the segment with comment string ,
+ * start frame and duration of that segment.
  */
 public class AXrLottieMarker {
 
@@ -40,7 +40,7 @@ public class AXrLottieMarker {
         }
     }
 
-    public AXrLottieMarker(String marker,int inFrame,int outFrame){
+    public AXrLottieMarker(String marker, int inFrame, int outFrame) {
         this.marker = marker;
         this.inFrame = inFrame;
         this.outFrame = outFrame;

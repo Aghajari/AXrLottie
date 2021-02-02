@@ -1,10 +1,31 @@
-package com.aghajari.sample.axrlottie;
+/*
+ * Copyright (C) 2021 - Amir Hossein Aghajari
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */package com.aghajari.sample.axrlottie;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.aghajari.rlottie.AXrLottie;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.aghajari.rlottie.network.AXrLottieFetchResult;
 import com.aghajari.rlottie.network.AXrLottieNetworkFetcher;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -19,34 +40,62 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
         return new OkHttpNetworkFetcher();
     }
 
+    @NonNull
     @Override
-    protected void fetchFromNetwork(final Context context) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    OkHttpClient.Builder builder = new OkHttpClient.Builder();
-                    builder.followRedirects(true).followSslRedirects(true);
-                    builder.connectTimeout(AXrLottie.getNetworkTimeOut(), TimeUnit.MILLISECONDS);
-                    builder.readTimeout(AXrLottie.getNetworkTimeOut(), TimeUnit.MILLISECONDS);
+    public AXrLottieFetchResult fetchSync(@NonNull String url) throws IOException {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.followRedirects(true).followSslRedirects(true);
+        builder.connectTimeout(getConnectTimeout(), TimeUnit.MILLISECONDS);
+        builder.readTimeout(getReadTimeout(), TimeUnit.MILLISECONDS);
 
-                    Request request = new Request.Builder().url(getURL()).build();
-                    Response response = builder.build().newCall(request).execute();
+        Request request = new Request.Builder().url(url).build();
+        Response response = builder.build().newCall(request).execute();
 
-                    if (response.isSuccessful()) {
-                        String contentType = null;
-                        if (response.body().contentType()!=null)
-                            contentType = response.body().contentType().toString();
+        return new OkHttpNetworkFetchResult(response);
+    }
 
-                        parseStream(context,response.body().byteStream(),contentType);
-                    } else
-                        onError(new Exception(response.message()+" : code="+response.code()));
+    public static class OkHttpNetworkFetchResult implements AXrLottieFetchResult {
 
-                } catch (Exception e) {
-                    onError(e);
-                }
-            }
-        });
-        thread.start();
+        @NonNull
+        private final Response response;
+
+        public OkHttpNetworkFetchResult(@NonNull Response response) {
+            this.response = response;
+        }
+
+        @Override
+        public boolean isSuccessful() {
+            return response.isSuccessful();
+        }
+
+        @NonNull
+        @Override
+        public InputStream bodyByteStream() throws IOException {
+            return response.body().byteStream();
+        }
+
+        @Nullable
+        @Override
+        public String contentType() {
+            String contentType = null;
+            if (response.body().contentType()!=null)
+                contentType = response.body().contentType().toString();
+            return contentType;
+        }
+
+        @Nullable
+        @Override
+        public String error() {
+            return isSuccessful() ? null :
+                    "Unable to fetch " + response.request().url() +
+                            ". Failed with " + response.code() + "\n" +
+                            response.message();
+        }
+
+        @Override
+        public void close() {
+            response.close();
+        }
+
     }
 }

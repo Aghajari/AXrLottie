@@ -30,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AXrLottie.init(this);
+        AXrLottie.setNetworkFetcher(OkHttpNetworkFetcher.create());
+
         initEmojiView();
-
         setContentView(R.layout.activity_main);
-
     }
 
     public void simpleActivity(View view){

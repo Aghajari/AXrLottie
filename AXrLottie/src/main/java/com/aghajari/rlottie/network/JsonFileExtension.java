@@ -18,9 +18,16 @@
 
 package com.aghajari.rlottie.network;
 
-public class ParserException extends Exception{
+public class JsonFileExtension extends AXrFileExtension {
 
-    public ParserException (Exception e){
-        super(e);
+    public static final JsonFileExtension JSON = new JsonFileExtension();
+
+    JsonFileExtension() {
+        super(".json");
+    }
+
+    @Override
+    public boolean canParseContent(String contentType) {
+        return contentType.toLowerCase().contains("application/json");
     }
 }
