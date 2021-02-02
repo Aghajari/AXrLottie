@@ -49,6 +49,7 @@ What is **AXrLottie**?
 - LoadFromURL Bug fixed.
 - Supportage for NetworkFetcher and FileExtension added.
 - [OkHttpNetworkFetcher](https://github.com/Aghajari/AXrLottie/blob/master/app/src/main/java/com/aghajari/sample/axrlottie/OkHttpNetworkFetcher.java) (based on [OkHttp](https://square.github.io/okhttp/)) added to project.
+- Cache system updated.
 
 **1.0.2 :**
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
@@ -282,27 +283,32 @@ AXrLottieDrawable.fromURL(URL)
 	.build()
 ```
 
-Using a custom NetworkFetcher gives you more access like onError, onLoad, supportedExtensions, fetchFromCache, fetchFromNetwork, ...
+AXrLottie has a default network fetching stack built on {@link java.net.HttpURLConnection}. However, if you would like to hook into your own network stack for performance, caching, or analytics, you may replace the internal stack with your own.
 
 - [OkHttpNetworkFetcher](https://github.com/Aghajari/AXrLottie/blob/master/app/src/main/java/com/aghajari/sample/axrlottie/OkHttpNetworkFetcher.java) (based on [OkHttp](https://square.github.io/okhttp/)) added to project.
+
 ```java
-AXrLottieDrawable.fromURL(URL,OkHttpNetworkFetcher.create())
+AXrLottie.setNetworkFetcher(OkHttpNetworkFetcher.create());
+
+AXrLottieDrawable.fromURL(URL)
 	.build()
 ```
 
 [Back to contents](#table-of-contents)
 
-### NetworkFetcher-FileExtension
+### FileExtension
 FileExtension specifies which type of files can be used in lottie. 
 
 As default, AXrLottie supports **JSON** and **ZIP** (must have a json file).
 
-You can add more FileExtensions (such as .7z) using a custom NetworkFetcher.
+You can add more FileExtensions (such as .7z).
 
 Example :
 
 ```java
-public class X7ZipFileExtension extends FileExtension {
+AXrLottie.addFileExtension(new X7ZipFileExtension());   
+
+public class X7ZipFileExtension extends AXrFileExtension {
 
     public X7ZipFileExtension() {
         super(".7z");
@@ -315,30 +321,13 @@ public class X7ZipFileExtension extends FileExtension {
     }
 
     @Override
-    public File saveAsTempFile(Context context, String cacheName, InputStream stream) throws IOException {
-        File file = NetworkCache.writeTempCacheFile(context,cacheName, stream, this);
+    public File saveAsTempFile(String url, InputStream stream) throws IOException {
+        File file = AXrLottie.getLottieCacheManager().writeTempCacheFile(url, stream, this);
 	// parse file as a 7zip file and save it.
 	// file = ...
 	return file;
     }
 }
-
-public class CustomNetworkFetcher extends SimpleNetworkFetcher {
-
-    private CustomNetworkFetcher(){}
-
-    public static CustomNetworkFetcher create(){
-        return new CustomNetworkFetcher();
-    }
-    
-    public FileExtension[] getSupportedExtensions() {
-        return new FileExtension[]{
-		new X7ZipFileExtension(),
-                FileExtension.ZIP(),
-                FileExtension.JSON()
-        };
-    }
-}    
 ```
 
 [Back to contents](#table-of-contents)
