@@ -679,6 +679,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     public void recycle() {
         if (isRunning && listener != null) listener.onRecycle();
 
+        cancelNetworkTask();
         isRunning = false;
         isRecycled = true;
         checkRunningTasks();
