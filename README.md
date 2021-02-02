@@ -322,8 +322,8 @@ public class X7ZipFileExtension extends AXrFileExtension {
 
     @Override
     public File saveAsTempFile(String url, InputStream stream) throws IOException {
-        File file = AXrLottie.getLottieCacheManager().writeTempCacheFile(url, stream, this);
-	// parse file as a 7zip file and save it.
+        File file = super.saveAsTempFile(url,stream);
+	// read 7zip file and extract animation.
 	// file = ...
 	return file;
     }
