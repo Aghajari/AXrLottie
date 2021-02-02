@@ -38,13 +38,17 @@ What is **AXrLottie**?
   - [Markers](#markers)
   - [Lottie2Gif](#lottie2gif)
   - [Listeners](#listeners)
+  - [NetworkFetcher](#networkfetcher)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
 
 ## Changelogs
-**1.0.3 :**
+**1.0.4 :**
+- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie) (Fix crash when path animation data is empty)
 - LoadFromURL Bug fixed.
+- Supportage for NetworkFetcher and FileExtension added.
+- OkHttpNetworkFetcher added to project.
 
 **1.0.2 :**
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
@@ -61,7 +65,7 @@ AXrLottie is available in the JCenter, so you just need to add it as a dependenc
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.3'
+implementation 'com.aghajari.rlottie:AXrLottie:1.0.4'
 ```
 
 Maven
@@ -69,7 +73,7 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <type>pom</type>
 </dependency>
 ```
@@ -265,6 +269,76 @@ OnFrameRenderListener:
 ```java
 void onUpdate(AXrLottieDrawable drawable, int frame, long timeDiff, boolean force);
 Bitmap renderFrame(AXrLottieDrawable drawable, Bitmap bitmap, int frame);
+```
+
+[Back to contents](#table-of-contents)
+
+## NetworkFetcher
+NetworkFetcher will manage lottie downloader.
+
+Simple way to load lottie from URL (SimpleNetworkFetcher) :
+```java
+AXrLottieDrawable.fromURL(URL)
+	.build()
+```
+
+Using a custom NetworkFetcher gives you more access like onError, onLoad, supportedExtensions, fetchFromCache, fetchFromNetwork, ...
+
+- [OkHttpNetworkFetcher](https://github.com/Aghajari/AXrLottie/blob/master/app/src/main/java/com/aghajari/sample/axrlottie/OkHttpNetworkFetcher.java) (based on [OkHttp](https://square.github.io/okhttp/)) added to project.
+```java
+AXrLottieDrawable.fromURL(URL,OkHttpNetworkFetcher.create())
+	.build()
+```
+
+[Back to contents](#table-of-contents)
+
+### NetworkFetcher-FileExtension
+FileExtension specifies which type of files can be used in lottie. 
+
+As default, AXrLottie supports **JSON** and **ZIP** (must have a json file).
+
+You can add more FileExtensions (such as .7z) using a custom NetworkFetcher.
+
+Example :
+
+```java
+public class X7ZipFileExtension extends FileExtension {
+
+    public X7ZipFileExtension() {
+        super(".7z");
+    }
+
+    @Override
+    public boolean canParseContent(String contentType) {
+    	// check content-type
+        return contentType.contains("application/x-7z-compressed");
+    }
+
+    @Override
+    public File saveAsTempFile(Context context, String cacheName, InputStream stream) throws IOException {
+        File file = NetworkCache.writeTempCacheFile(context,cacheName, stream, this);
+	// parse file as a 7zip file and save it.
+	// file = ...
+	return file;
+    }
+}
+
+public class CustomNetworkFetcher extends SimpleNetworkFetcher {
+
+    private CustomNetworkFetcher(){}
+
+    public static CustomNetworkFetcher create(){
+        return new CustomNetworkFetcher();
+    }
+    
+    public FileExtension[] getSupportedExtensions() {
+        return new FileExtension[]{
+		new X7ZipFileExtension(),
+                FileExtension.ZIP(),
+                FileExtension.JSON()
+        };
+    }
+}    
 ```
 
 [Back to contents](#table-of-contents)
