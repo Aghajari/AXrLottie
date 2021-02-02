@@ -63,16 +63,14 @@ public class AXrLottieCacheManager {
     }
 
     public File fetchLocalFromCache(final String json, final String name) {
-        File f = new File(localCacheDir, name + ".cache");
+        File f = new File(getLocalCacheParent(), name + ".cache");
         if (f.exists()) return f;
         return writeLocalCache(json, name);
     }
 
     private File writeLocalCache(final String json, final String name) {
         try {
-            File f = new File(AXrLottie.context.getCacheDir(), "lottie");
-            if (!f.mkdir()) return null;
-            File f2 = new File(f, name + ".cache");
+            File f2 = new File(getLocalCacheParent(), name + ".cache");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(f2));
             outputStreamWriter.write(json);
             outputStreamWriter.close();
