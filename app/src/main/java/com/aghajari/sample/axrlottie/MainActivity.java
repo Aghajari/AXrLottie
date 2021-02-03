@@ -23,6 +23,7 @@ import com.aghajari.sample.axrlottie.activity.Lottie2GifActivity;
 import com.aghajari.sample.axrlottie.activity.LottieEditorActivity;
 import com.aghajari.sample.axrlottie.activity.MarkerActivity;
 import com.aghajari.sample.axrlottie.activity.SimpleActivity;
+import com.aghajari.sample.axrlottie.activity.SimpleNetworkActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void simpleActivity(View view){
         startActivity(new Intent(this, SimpleActivity.class));
+    }
+
+    public void simpleNetworkActivity(View view){
+        startActivity(new Intent(this, SimpleNetworkActivity.class));
     }
 
     public void colorLayerActivity(View view){

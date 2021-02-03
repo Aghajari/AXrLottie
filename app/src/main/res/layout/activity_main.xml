@@ -17,6 +17,12 @@
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:onClick="simpleNetworkActivity"
+        android:text="Simple Network Activity" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
         android:onClick="colorLayerActivity"
         android:text="Color Layer Activity" />
 

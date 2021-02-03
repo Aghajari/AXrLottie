@@ -83,7 +83,6 @@ public class AXrNetworkFetcher {
     @WorkerThread
     protected AXrLottieResult<File> parseStream(InputStream inputStream, String contentType, String url) {
         try {
-            File file;
             if (contentType == null) {
                 // Assume JSON for best effort parsing. If it fails, it will just deliver the parse exception
                 // in the result which is more useful than failing here.
@@ -97,10 +96,11 @@ public class AXrNetworkFetcher {
                 }
                 if (parsed) break;
             }
-            if (!parsed)
+            if (!parsed){
                 JsonFileExtension.JSON.saveAsTempFile(url, inputStream);
+            }
 
-            file = AXrLottie.getLottieCacheManager().loadTempFile(url);
+            File file = AXrLottie.getLottieCacheManager().loadTempFile(url);
 
             return new AXrLottieResult<>(file);
         } catch (Exception e) {

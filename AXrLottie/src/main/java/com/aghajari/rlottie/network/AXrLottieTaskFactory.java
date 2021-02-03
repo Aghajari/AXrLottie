@@ -18,6 +18,8 @@
 
 package com.aghajari.rlottie.network;
 
+import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 
 import com.aghajari.rlottie.AXrLottie;
@@ -54,7 +56,7 @@ public class AXrLottieTaskFactory {
      */
     public static AXrLottieTask<File> fromUrl(final String url, final boolean cache) {
         final String cacheKey = "url_" + url;
-        return cache(cacheKey, new Callable<AXrLottieResult<File>>() {
+        return cache(cache, cacheKey, new Callable<AXrLottieResult<File>>() {
             @Override
             public AXrLottieResult<File> call() {
                 AXrLottieResult<File> result = AXrLottie.getNetworkFetcher().fetchSync(url, cache);
@@ -71,17 +73,19 @@ public class AXrLottieTaskFactory {
      * If not, create a new task for the callable.
      * Then, add the new task to the task cache and set up listeners so it gets cleared when done.
      */
-    private static AXrLottieTask<File> cache(
-            @Nullable final String cacheKey, Callable<AXrLottieResult<File>> callable) {
-        final File cachedFile = cacheKey == null ? null : AXrLottieTaskCache.getInstance().get(cacheKey);
-        if (cachedFile != null) {
-            return new AXrLottieTask<>(new Callable<AXrLottieResult<File>>() {
-                @Override
-                public AXrLottieResult<File> call() {
-                    return new AXrLottieResult<>(cachedFile);
-                }
-            });
+    private static AXrLottieTask<File> cache(final boolean cache, @Nullable final String cacheKey, Callable<AXrLottieResult<File>> callable) {
+        if (cache && !TextUtils.isEmpty(cacheKey)) {
+            final File cachedFile = AXrLottieTaskCache.getInstance().get(cacheKey);
+            if (cachedFile != null) {
+                return new AXrLottieTask<>(new Callable<AXrLottieResult<File>>() {
+                    @Override
+                    public AXrLottieResult<File> call() {
+                        return new AXrLottieResult<>(cachedFile);
+                    }
+                });
+            }
         }
+
         if (cacheKey != null && taskCache.containsKey(cacheKey)) {
             return taskCache.get(cacheKey);
         }

@@ -18,6 +18,8 @@
 
 package com.aghajari.rlottie.network;
 
+import android.util.Log;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +31,8 @@ import androidx.annotation.WorkerThread;
 
 
 class ZipCompositionFactory {
+
+    public static final String TAG = ZipCompositionFactory.class.getSimpleName();
 
     public static boolean isZipContent(String contentType) {
         return contentType.toLowerCase().contains("application/zip") ||
@@ -68,6 +72,7 @@ class ZipCompositionFactory {
                 fout.close();
             }
         } catch (IOException e) {
+            Log.e(TAG, "toFile: ", e);
             return null;
         }
         if (f.exists()) {
@@ -101,6 +106,7 @@ class ZipCompositionFactory {
                 entry = inputStream.getNextEntry();
             }
         } catch (IOException e) {
+            Log.e(TAG, "fromZipStreamSyncInternal: ", e);
             e.printStackTrace();
         }
         closeQuietly(inputStream);
