@@ -28,6 +28,7 @@
         <activity android:name=".activity.LottieEditorActivity" />
         <activity android:name=".activity.MarkerActivity" />
         <activity android:name=".activity.SimpleActivity" />
+        <activity android:name=".activity.SimpleNetworkActivity" />
 
         <activity
             android:name=".activity.AXEmojiViewActivity"

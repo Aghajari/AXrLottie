@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- */package com.aghajari.sample.axrlottie;
-
-import android.content.Context;
-import android.util.Log;
+ */
+package com.aghajari.sample.axrlottie;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,23 +32,24 @@ import okhttp3.Response;
 
 public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
 
-    private OkHttpNetworkFetcher(){}
+    private final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .followRedirects(true).followSslRedirects(true)
+            .connectTimeout(getConnectTimeout(), TimeUnit.MILLISECONDS)
+            .readTimeout(getReadTimeout(), TimeUnit.MILLISECONDS)
+            .build();
 
-    public static OkHttpNetworkFetcher create(){
+    private OkHttpNetworkFetcher() {
+    }
+
+    public static OkHttpNetworkFetcher create() {
         return new OkHttpNetworkFetcher();
     }
 
     @NonNull
     @Override
     public AXrLottieFetchResult fetchSync(@NonNull String url) throws IOException {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.followRedirects(true).followSslRedirects(true);
-        builder.connectTimeout(getConnectTimeout(), TimeUnit.MILLISECONDS);
-        builder.readTimeout(getReadTimeout(), TimeUnit.MILLISECONDS);
-
         Request request = new Request.Builder().url(url).build();
-        Response response = builder.build().newCall(request).execute();
-
+        Response response = okHttpClient.newCall(request).execute();
         return new OkHttpNetworkFetchResult(response);
     }
 
@@ -78,8 +77,9 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
         @Override
         public String contentType() {
             String contentType = null;
-            if (response.body().contentType()!=null)
+            if (response.body().contentType() != null){
                 contentType = response.body().contentType().toString();
+            }
             return contentType;
         }
 

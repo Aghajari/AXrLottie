@@ -34,11 +34,13 @@ public class AXrLottieTaskCache {
 
     private static final AXrLottieTaskCache INSTANCE = new AXrLottieTaskCache();
 
+    private static final int DEFAULT_CACHE_SIZE = 20;
+
     public static AXrLottieTaskCache getInstance() {
         return INSTANCE;
     }
 
-    private final LruCache<String, File> cache = new LruCache<>(20);
+    private final LruCache<String, File> cache = new LruCache<>(DEFAULT_CACHE_SIZE);
 
     @VisibleForTesting
     AXrLottieTaskCache() {
