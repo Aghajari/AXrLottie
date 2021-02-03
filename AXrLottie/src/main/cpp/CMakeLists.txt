@@ -71,6 +71,8 @@ endif()
 
 if (WIN32 AND NOT BUILD_SHARED_LIBS)
     target_compile_definitions(rlottie PUBLIC -DRLOTTIE_BUILD=0)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 endif()
 
 #declare dependancy
@@ -85,7 +87,7 @@ target_link_libraries(rlottie
 if (NOT APPLE AND NOT WIN32)
     target_link_libraries(rlottie
                         PRIVATE
-                            "-Wl,--version-script=${CMAKE_SOURCE_DIR}/rlottie.expmap"
+                            "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/rlottie.expmap"
                           )
 endif()
 
@@ -100,7 +102,7 @@ if (NOT LOTTIE_ASAN)
                             PUBLIC
                                  "-Wl, -undefined error"
                               )
-    else()
+    elseif(NOT MSVC)
         target_link_libraries(rlottie
                             PUBLIC
                                  "-Wl,--no-undefined"
