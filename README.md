@@ -39,12 +39,16 @@ What is **AXrLottie**?
   - [Lottie2Gif](#lottie2gif)
   - [Listeners](#listeners)
   - [NetworkFetcher](#networkfetcher)
-    - [FileExtension](#fileextension)
+  - [FileExtension](#fileextension)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
 
 ## Changelogs
+**1.0.5 :**
+- FileExtension supports Local files now.
+- GZipFileExtension added.
+
 **1.0.4 :**
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie) (Fix crash when path animation data is empty)
 - LoadFromURL Bug fixed.
@@ -296,10 +300,10 @@ AXrLottieDrawable.fromURL(URL)
 
 [Back to contents](#table-of-contents)
 
-### FileExtension
+## FileExtension
 FileExtension specifies which type of files can be used in lottie. 
 
-As default, AXrLottie supports **JSON** and **ZIP** (must have a json file).
+As default, AXrLottie supports **JSON** , **ZIP** (must have a json file) , **GZIP** (just like `.tgs`).
 
 You can add more FileExtensions (such as .7z).
 
@@ -328,6 +332,12 @@ public class X7ZipFileExtension extends AXrFileExtension {
 	return file;
     }
 }
+```
+
+Add Telegram Animated Stickers support :
+
+```java
+AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
 ```
 
 [Back to contents](#table-of-contents)
