@@ -64,7 +64,7 @@ public class AXrLottieCacheManager {
 
     public File fetchLocalFromCache(final String json, final String name) {
         File f = new File(getLocalCacheParent(),
-                findCacheName(name, JsonFileExtension.JSON, false, false) + ".cache");
+        findCacheName(name, JsonFileExtension.JSON, false, false) + ".cache");
         if (f.exists()) return f;
         return writeLocalCache(json, f);
     }
