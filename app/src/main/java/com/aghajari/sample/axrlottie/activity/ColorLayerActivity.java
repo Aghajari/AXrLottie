@@ -27,7 +27,7 @@ public class ColorLayerActivity extends AppCompatActivity {
 
         lottieView = findViewById(R.id.lottie_view);
 
-        lottieView.setLottieDrawable(AXrLottie.createFromAssets(this, "tractor.json",
+        lottieView.setLottieDrawable(AXrLottie.Loader.createFromAssets(this, "tractor.json",
                 "tractor", 512, 512, false, false));
 
         lottieView.playAnimation();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 - Amir Hossein Aghajari
+ * Copyright (C) 2021 - Amir Hossein Aghajari
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,18 @@
  */
 
 
-package com.aghajari.rlottie;
+package com.aghajari.rlottie.network;
 
-import android.graphics.Bitmap;
+public class JsonFileExtension extends AXrFileExtension {
 
-public class AXrLottieFrame {
-    int frame;
-    Bitmap bitmap;
-    boolean loaded;
+    public static final JsonFileExtension JSON = new JsonFileExtension();
 
-    AXrLottieFrame() {
+    JsonFileExtension() {
+        super(".json");
     }
 
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
-
-    public boolean hasLoaded() {
-        return loaded;
-    }
-
-    public int getFrameIndex() {
-        return frame;
+    @Override
+    public boolean canParseContent(String contentType) {
+        return contentType.toLowerCase().contains("application/json");
     }
 }

@@ -15,6 +15,7 @@
  *
  */
 
+
 package com.aghajari.rlottie;
 
 import android.content.Context;
@@ -28,7 +29,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -43,9 +43,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.aghajari.rlottie.network.AXrLottieListener;
 import com.aghajari.rlottie.network.AXrLottieTask;
 import com.aghajari.rlottie.network.AXrLottieTaskFactory;
+import com.aghajari.rlottie.network.AXrNetworkFetcher;
 
 import static com.aghajari.rlottie.AXrLottieNative.destroy;
 import static com.aghajari.rlottie.AXrLottieNative.create;
@@ -55,10 +55,10 @@ import static com.aghajari.rlottie.AXrLottieNative.getFrame;
 
 public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
 
-    public static final String TAG = AXrLottieDrawable.class.getSimpleName();
+    private static final String TAG = AXrLottieDrawable.class.getSimpleName();
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
     private final int[] metaData = new int[3];
     private int timeBetweenFrames;
     private float speed = 1f;
@@ -120,6 +120,26 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     private OnFrameRenderListener render = null;
     private OnLottieLoaderListener loaderListener = null;
 
+    @Nullable
+    private AXrLottieTask<File> networkTask;
+
+    private final AXrLottieTask.Listener<File> networkLoadedListener = new AXrLottieTask.Listener<File>() {
+        @Override
+        public void onResult(File file) {
+            if (file != null && !hasLoaded()) {
+                initFromNetwork(file);
+            }
+        }
+    };
+
+    private final AXrLottieTask.Listener<Throwable> networkFailureListener = new AXrLottieTask.Listener<Throwable>() {
+        @Override
+        public void onResult(Throwable result) {
+            // Failure Listener
+            Log.e(TAG,result.toString());
+        }
+    };
+
     public interface OnFrameChangedListener {
         void onFrameChanged(AXrLottieDrawable drawable, int frame);
 
@@ -142,7 +162,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         void onLoaded(AXrLottieDrawable drawable);
     }
 
-    private final Runnable uiRunnableNoFrame = new Runnable() {
+    private Runnable uiRunnableNoFrame = new Runnable() {
         @Override
         public void run() {
             loadFrameTask = null;
@@ -150,7 +170,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         }
     };
 
-    private final Runnable uiRunnableCacheFinished = new Runnable() {
+    private Runnable uiRunnableCacheFinished = new Runnable() {
         @Override
         public void run() {
             cacheGenerateTask = null;
@@ -158,7 +178,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         }
     };
 
-    private final Runnable uiRunnable = new Runnable() {
+    private Runnable uiRunnable = new Runnable() {
         @Override
         public void run() {
             singleFrameDecoded = true;
@@ -167,7 +187,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         }
     };
 
-    private final Runnable uiRunnableGenerateCache = new Runnable() {
+    private Runnable uiRunnableGenerateCache = new Runnable() {
         @Override
         public void run() {
             if (!isRecycled && !destroyWhenDone && nativePtr != 0) {
@@ -227,7 +247,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         }
     }
 
-    private final Runnable loadFrameRunnable = new Runnable() {
+    private Runnable loadFrameRunnable = new Runnable() {
         @Override
         public void run() {
             if (isRecycled) {
@@ -370,9 +390,8 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     protected int findEndFrame() {
-        if (getSelectedMarker() != null && getSelectedMarker().getOutFrame() > 0) {
+        if (getSelectedMarker() != null && getSelectedMarker().getOutFrame() > 0)
             return Math.min(getSelectedMarker().getOutFrame(), metaData[0]);
-        }
 
         return customEndFrame > 0 ? customEndFrame : metaData[0];
     }
@@ -392,79 +411,70 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
 
     public AXrLottieDrawable(Builder builder) {
         this.builder = builder;
-        if (builder.loaderListener != null) {
+        if (builder.loaderListener != null)
             setOnLottieLoaderListener(loaderListener);
-        }
+
+        this.width = builder.w;
+        this.height = builder.h;
+        shouldLimitFps = builder.limitFps;
+        this.cacheName = builder.cacheName;
+        getPaint().setFlags(Paint.FILTER_BITMAP_FLAG);
 
         switch (builder.type) {
             case FILE:
-                initFromFile(builder.file, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps);
+                initFromFile(builder.file, builder.cache);
                 break;
             case JSON:
-                initFromJson(builder.json, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps, builder.startDecode);
+                initFromJson(builder.json, builder.cache, builder.startDecode);
                 break;
             case URL:
-                initFromUrl(builder.url, builder.w, builder.h, builder.cache);
+                initFromNetwork(builder.url, builder.cache);
                 break;
         }
 
-        if (builder.customEndFrame != DEFAULT) {
+        if (builder.customEndFrame != DEFAULT)
             setCustomEndFrame(builder.customEndFrame);
-        }
 
-        if (builder.customStartFrame != DEFAULT) {
+        if (builder.customStartFrame != DEFAULT)
             setCustomStartFrame(builder.customStartFrame);
-        }
 
-        if (builder.autoRepeat != DEFAULT) {
+        if (builder.autoRepeat != DEFAULT)
             setAutoRepeat(builder.autoRepeat);
-        }
 
-        if (builder.repeatMode != DEFAULT) {
+        if (builder.repeatMode != DEFAULT)
             setAutoRepeatMode(builder.repeatMode);
-        }
 
-        if (builder.speed > 0) {
+        if (builder.speed > 0)
             setSpeed(builder.speed);
-        }
 
         if (builder.properties != null) {
             if (newPropertyUpdates == null) newPropertyUpdates = new ArrayList<>();
             newPropertyUpdates.addAll(builder.properties);
         }
 
-        if (builder.listener != null) {
+        if (builder.listener != null)
             setOnFrameChangedListener(builder.listener);
-        }
 
-        if (builder.render != null) {
+        if (builder.render != null)
             setOnFrameRenderListener(render);
-        }
 
-        if (builder.selectedMarker != null) {
+        if (builder.selectedMarker != null)
             selectMarker(builder.selectedMarker);
-        }
 
-        if (builder.autoStart) {
+        if (builder.autoStart)
             start();
-        }
     }
 
-    private void initFromJson(String json, String name, int width, int height, boolean cache, boolean limitFps, boolean startDecode) {
+    private void initFromJson(String json, boolean cache, boolean startDecode) {
         if (cache) {
-            File f = CacheWriter.load(json, name);
+            File f = AXrLottie.getLottieCacheManager().fetchLocalFromCache(json, getCacheName());
             if (f != null) {
-                initFromFile(f, name, width, height, true, limitFps);
+                initFromFile(f, true);
                 return;
             }
         }
 
-        this.width = width;
-        this.height = height;
-        shouldLimitFps = limitFps;
-        this.cacheName = name;
-        getPaint().setFlags(Paint.FILTER_BITMAP_FLAG);
-        nativePtr = createWithJson(json, name, metaData);
+        nativePtr = createWithJson(json, getCacheName(), metaData);
         timeBetweenFrames = Math.max(shouldLimitFps ? 33 : 16, (int) (1000.0f / metaData[1]));
         if (startDecode) {
             setAllowDecodeSingleFrame(true);
@@ -472,13 +482,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         lottieLoaded();
     }
 
-    private void initFromFile(File file, String name, int width, int height, boolean precache, boolean limitFps) {
-        this.width = width;
-        this.height = height;
-        shouldLimitFps = limitFps;
-        this.cacheName = name;
-        getPaint().setFlags(Paint.FILTER_BITMAP_FLAG);
-
+    private void initFromFile(File file, boolean precache) {
         nativePtr = create(file.getAbsolutePath(), width, height, metaData, precache, shouldLimitFps);
         if (precache && lottieCacheGenerateQueue == null) {
             lottieCacheGenerateQueue = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
@@ -490,48 +494,39 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         lottieLoaded();
     }
 
-    @Nullable
-    private AXrLottieTask<File> fromUrlLoaderTask;
+    private void initFromNetwork(String url, boolean cache) {
+        cancelNetworkTask();
 
-    private final AXrLottieListener<File> loadedListener = new AXrLottieListener<File>() {
-        @Override
-        public void onResult(File file) {
-            if (file != null && !hasLoaded()) {
-                load(file);
+        networkTask = AXrLottieTaskFactory.fromUrl(url, cache);
+        networkTask.addListener(networkLoadedListener)
+                .addFailureListener(networkFailureListener);
+    }
+
+    private void cancelNetworkTask() {
+        if (networkTask != null) {
+            networkTask.removeListener(networkLoadedListener);
+            networkTask.removeFailureListener(networkFailureListener);
+        }
+    }
+
+    /**
+     * called when animation loaded from {@link com.aghajari.rlottie.network.AXrNetworkFetcher}
+     */
+    private void initFromNetwork(File file) {
+        if (hasLoaded()) return;
+
+        initFromFile(file, builder.cache);
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (isRunning) {
+                    isRunning = false;
+                    start();
+                } else {
+                    invalidateInternal();
+                }
             }
-        }
-    };
-
-    private final AXrLottieListener<Throwable> wrappedFailureListener = new AXrLottieListener<Throwable>() {
-        @Override
-        public void onResult(Throwable result) {
-//            if (fallbackResource != 0) {
-//                setImageResource(fallbackResource);
-//            }
-            Log.e(TAG, "AXrLottieListener: ", result);
-        }
-    };
-
-    private void initFromUrl(String url, int width, int height, boolean cache) {
-        this.width = width;
-        this.height = height;
-
-        AXrLottieTask<File> task = AXrLottieTaskFactory.fromUrl(url, cache);
-        setFromUrlLoaderTask(task);
-    }
-
-    private void setFromUrlLoaderTask(AXrLottieTask<File> fromUrlLoaderTask) {
-        cancelLoaderTask();
-        this.fromUrlLoaderTask = fromUrlLoaderTask
-                .addListener(loadedListener)
-                .addFailureListener(wrappedFailureListener);
-    }
-
-    private void cancelLoaderTask() {
-        if (fromUrlLoaderTask != null) {
-            fromUrlLoaderTask.removeListener(loadedListener);
-            fromUrlLoaderTask.removeFailureListener(wrappedFailureListener);
-        }
+        });
     }
 
     public AXrLottieDrawable newDrawable() {
@@ -613,13 +608,8 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         playInDirectionOfCustomEndFrame = value;
     }
 
-    /**
-     * https://github.com/DrKLO/Telegram/commit/77bbe5baec7610d8b19fa3dbc63a07479992cb36
-     *
-     * @param frame
-     */
     public void setCustomEndFrame(int frame) {
-        if (customEndFrame == frame || frame > metaData[0]) {
+        if (customEndFrame > metaData[0]) {
             return;
         }
         customEndFrame = frame;
@@ -689,6 +679,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     public void recycle() {
         if (isRunning && listener != null) listener.onRecycle();
 
+        cancelNetworkTask();
         isRunning = false;
         isRecycled = true;
         checkRunningTasks();
@@ -953,7 +944,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         }
         singleFrameDecoded = true;
         waitingForNextTask = false;
-        if (AXrL.getScreenRefreshRate() <= 60) {
+        if (AXrLottie.getScreenRefreshRate() <= 60) {
             lastFrameTime = now;
         } else {
             lastFrameTime = now - Math.min(16, timeDiff - timeCheck);
@@ -974,7 +965,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         long now = SystemClock.elapsedRealtime();
         long timeDiff = Math.abs(now - lastFrameTime);
         int timeCheck;
-        if (AXrL.getScreenRefreshRate() <= 60) {
+        if (AXrLottie.getScreenRefreshRate() <= 60) {
             timeCheck = (int) (findTimeBetweenFrames() - 6);
         } else {
             timeCheck = (int) findTimeBetweenFrames();
@@ -1205,21 +1196,6 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         if (loaderListener != null) loaderListener.onLoaded(this);
     }
 
-    public void load(File file) {
-        initFromFile(file, builder.cacheName, builder.w, builder.h, builder.cache, builder.limitFps);
-        uiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (isRunning) {
-                    isRunning = false;
-                    start();
-                } else {
-                    invalidateInternal();
-                }
-            }
-        });
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -1237,7 +1213,6 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     private static ThreadLocal<byte[]> readBufferLocal = new ThreadLocal<>();
-
     private static ThreadLocal<byte[]> bufferLocal = new ThreadLocal<>();
 
     private static String readRes(Context context, Object asset, int rawRes) {
@@ -1256,6 +1231,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
 
     private static String readStream(InputStream inputStream) {
         if (inputStream == null) return null;
+
         int totalRead = 0;
         byte[] readBuffer = readBufferLocal.get();
         if (readBuffer == null) {
@@ -1327,7 +1303,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         JSON, FILE, URL
     }
 
-    private final static int DEFAULT = -100;
+    private static final int DEFAULT = -100;
 
     public static class Builder {
         private final BuilderType type;
@@ -1335,8 +1311,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         private final String json;
         private final String url;
         private String cacheName;
-        private int w = 200;
-        private int h = 200;
+        private int w = 200, h = 200;
         private boolean cache = true;
         private boolean limitFps = false;
         private boolean startDecode = true;
@@ -1375,6 +1350,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             this.file = null;
             this.json = null;
             this.url = url;
+            this.cacheName = "lottie_cache_" + url.replaceAll("\\W+", "");
             this.type = BuilderType.URL;
         }
 
@@ -1382,7 +1358,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
          * will be used to cache the JSON string data and compare drawables.
          */
         public Builder setCacheName(String cacheName) {
-            if (TextUtils.isEmpty(cacheName)) {
+            if (cacheName == null || cacheName.isEmpty()) {
                 throw new NullPointerException("lottie name (cacheName) can not be null!");
             }
             this.cacheName = cacheName;
@@ -1483,6 +1459,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             this.repeatMode = autoRepeatMode;
             return this;
         }
+
 
         public Builder setAutoStart(boolean autoStart) {
             this.autoStart = autoStart;

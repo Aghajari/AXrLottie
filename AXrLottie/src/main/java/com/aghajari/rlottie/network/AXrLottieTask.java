@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2021 - Amir Hossein Aghajari
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+
 package com.aghajari.rlottie.network;
 
 import android.os.Handler;
@@ -21,8 +39,8 @@ import java.util.concurrent.FutureTask;
  * @since 29/01/2021
  * <p>
  * Helper to run asynchronous tasks with a result.
- * Results can be obtained with {@link #addListener(AXrLottieListener)}.
- * Failures can be obtained with {@link #addFailureListener(AXrLottieListener)}.
+ * Results can be obtained with {@link #addListener(Listener)}.
+ * Failures can be obtained with {@link #addFailureListener(Listener)}.
  * <p>
  * A task will produce a single result or a single failure.
  */
@@ -38,8 +56,8 @@ public class AXrLottieTask<T> {
     public static Executor EXECUTOR = Executors.newCachedThreadPool();
 
     /* Preserve add order. */
-    private final Set<AXrLottieListener<T>> successListeners = new LinkedHashSet<>(1);
-    private final Set<AXrLottieListener<Throwable>> failureListeners = new LinkedHashSet<>(1);
+    private final Set<Listener<T>> successListeners = new LinkedHashSet<>(1);
+    private final Set<Listener<Throwable>> failureListeners = new LinkedHashSet<>(1);
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Nullable
@@ -79,7 +97,7 @@ public class AXrLottieTask<T> {
      *
      * @return the task for call chaining.
      */
-    public synchronized AXrLottieTask<T> addListener(AXrLottieListener<T> listener) {
+    public synchronized AXrLottieTask<T> addListener(Listener<T> listener) {
         if (result != null && result.getValue() != null) {
             listener.onResult(result.getValue());
         }
@@ -94,7 +112,7 @@ public class AXrLottieTask<T> {
      *
      * @return the task for call chaining.
      */
-    public synchronized AXrLottieTask<T> removeListener(AXrLottieListener<T> listener) {
+    public synchronized AXrLottieTask<T> removeListener(Listener<T> listener) {
         successListeners.remove(listener);
         return this;
     }
@@ -105,7 +123,7 @@ public class AXrLottieTask<T> {
      *
      * @return the task for call chaining.
      */
-    public synchronized AXrLottieTask<T> addFailureListener(AXrLottieListener<Throwable> listener) {
+    public synchronized AXrLottieTask<T> addFailureListener(Listener<Throwable> listener) {
         if (result != null && result.getException() != null) {
             listener.onResult(result.getException());
         }
@@ -120,7 +138,7 @@ public class AXrLottieTask<T> {
      *
      * @return the task for call chaining.
      */
-    public synchronized AXrLottieTask<T> removeFailureListener(AXrLottieListener<Throwable> listener) {
+    public synchronized AXrLottieTask<T> removeFailureListener(Listener<Throwable> listener) {
         failureListeners.remove(listener);
         return this;
     }
@@ -147,8 +165,8 @@ public class AXrLottieTask<T> {
     private synchronized void notifySuccessListeners(T value) {
         // Allows listeners to remove themselves in onResult.
         // Otherwise we risk ConcurrentModificationException.
-        List<AXrLottieListener<T>> listenersCopy = new ArrayList<>(successListeners);
-        for (AXrLottieListener<T> l : listenersCopy) {
+        List<Listener<T>> listenersCopy = new ArrayList<>(successListeners);
+        for (Listener<T> l : listenersCopy) {
             l.onResult(value);
         }
     }
@@ -156,12 +174,12 @@ public class AXrLottieTask<T> {
     private synchronized void notifyFailureListeners(Throwable e) {
         // Allows listeners to remove themselves in onResult.
         // Otherwise we risk ConcurrentModificationException.
-        List<AXrLottieListener<Throwable>> listenersCopy = new ArrayList<>(failureListeners);
+        List<Listener<Throwable>> listenersCopy = new ArrayList<>(failureListeners);
         if (listenersCopy.isEmpty()) {
             return;
         }
 
-        for (AXrLottieListener<Throwable> l : listenersCopy) {
+        for (Listener<Throwable> l : listenersCopy) {
             l.onResult(e);
         }
     }
@@ -184,5 +202,12 @@ public class AXrLottieTask<T> {
                 setResult(new AXrLottieResult<T>(e));
             }
         }
+    }
+
+    /**
+     * Receive a result with either the value or exception for a {@link AXrLottieTask}
+     */
+    public interface Listener<T> {
+        void onResult(T result);
     }
 }

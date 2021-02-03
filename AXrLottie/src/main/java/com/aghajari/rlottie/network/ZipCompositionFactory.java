@@ -15,6 +15,7 @@
  *
  */
 
+
 package com.aghajari.rlottie.network;
 
 import java.io.Closeable;
@@ -26,14 +27,16 @@ import java.util.zip.ZipInputStream;
 
 import androidx.annotation.WorkerThread;
 
+
 class ZipCompositionFactory {
 
     public static boolean isZipContent(String contentType) {
-        return contentType.contains("application/zip") || contentType.contains("application/x-zip-compressed");
+        return contentType.toLowerCase().contains("application/zip") ||
+                contentType.toLowerCase().contains("application/x-zip-compressed");
     }
 
     @WorkerThread
-    public static void closeQuietly(Closeable closeable) {
+    static void closeQuietly(Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
@@ -87,13 +90,13 @@ class ZipCompositionFactory {
                         closeQuietly(inputStream);
                         return f;
                     }
-                } else if (entryName.contains(".png") || entryName.contains(".webp")) {
-                } else {
-                    File f = toFile(file, output, inputStream, entry);
-                    if (f != null) {
-                        closeQuietly(inputStream);
-                        return f;
-                    }
+                    /**} else if (entryName.contains(".png") || entryName.contains(".webp")) {
+                     } else {
+                     File f = toFile(file, output, inputStream, entry);
+                     if (f != null) {
+                     closeQuietly(inputStream);
+                     return f;
+                     } */
                 }
                 entry = inputStream.getNextEntry();
             }

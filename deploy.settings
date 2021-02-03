@@ -1,6 +1,6 @@
 siteUrl = https://github.com/Aghajari/AXrLottie
 gitUrl = https://github.com/Aghajari/AXrLottie.git
-version = 1.0.3
+version = 1.0.4
 groupId = com.aghajari.rlottie
 licenses = ['Apache-2.0']
 id = AXrLottie

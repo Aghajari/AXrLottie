@@ -38,13 +38,19 @@ What is **AXrLottie**?
   - [Markers](#markers)
   - [Lottie2Gif](#lottie2gif)
   - [Listeners](#listeners)
+  - [NetworkFetcher](#networkfetcher)
+    - [FileExtension](#fileextension)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
 
 ## Changelogs
-**1.0.3 :**
+**1.0.4 :**
+- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie) (Fix crash when path animation data is empty)
 - LoadFromURL Bug fixed.
+- Supportage for NetworkFetcher and FileExtension added.
+- [OkHttpNetworkFetcher](https://github.com/Aghajari/AXrLottie/blob/master/app/src/main/java/com/aghajari/sample/axrlottie/OkHttpNetworkFetcher.java) (based on [OkHttp](https://square.github.io/okhttp/)) added to project.
+- Cache system updated.
 
 **1.0.2 :**
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
@@ -61,7 +67,7 @@ AXrLottie is available in the JCenter, so you just need to add it as a dependenc
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.3'
+implementation 'com.aghajari.rlottie:AXrLottie:1.0.4'
 ```
 
 Maven
@@ -69,7 +75,7 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <type>pom</type>
 </dependency>
 ```
@@ -265,6 +271,63 @@ OnFrameRenderListener:
 ```java
 void onUpdate(AXrLottieDrawable drawable, int frame, long timeDiff, boolean force);
 Bitmap renderFrame(AXrLottieDrawable drawable, Bitmap bitmap, int frame);
+```
+
+[Back to contents](#table-of-contents)
+
+## NetworkFetcher
+
+Simple way to load lottie from URL (SimpleNetworkFetcher) :
+```java
+AXrLottieDrawable.fromURL(URL)
+	.build()
+```
+
+AXrLottie has a default network fetching stack built on HttpURLConnection. However, if you would like to hook into your own network stack for performance, caching, or analytics, you may replace the internal stack with your own.
+
+- [OkHttpNetworkFetcher](https://github.com/Aghajari/AXrLottie/blob/master/app/src/main/java/com/aghajari/sample/axrlottie/OkHttpNetworkFetcher.java) (based on [OkHttp](https://square.github.io/okhttp/)) added to project.
+
+```java
+AXrLottie.setNetworkFetcher(OkHttpNetworkFetcher.create());
+
+AXrLottieDrawable.fromURL(URL)
+	.build()
+```
+
+[Back to contents](#table-of-contents)
+
+### FileExtension
+FileExtension specifies which type of files can be used in lottie. 
+
+As default, AXrLottie supports **JSON** and **ZIP** (must have a json file).
+
+You can add more FileExtensions (such as .7z).
+
+Example :
+
+```java
+AXrLottie.addFileExtension(new X7ZipFileExtension());   
+
+public class X7ZipFileExtension extends AXrFileExtension {
+
+    public X7ZipFileExtension() {
+        super(".7z");
+    }
+
+    @Override
+    public boolean canParseContent(String contentType) {
+    	// check content-type
+        return contentType.contains("application/x-7z-compressed");
+    }
+
+    @Override
+    public File saveAsTempFile(String url, InputStream stream) throws IOException {
+        File file = super.saveAsTempFile(url,stream);
+	// read 7zip file and extract animation.
+	// file = ...
+	return file;
+    }
+}
 ```
 
 [Back to contents](#table-of-contents)

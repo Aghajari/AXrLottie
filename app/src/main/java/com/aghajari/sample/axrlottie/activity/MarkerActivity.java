@@ -1,6 +1,5 @@
 package com.aghajari.sample.axrlottie.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,16 +13,12 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aghajari.rlottie.AXrLottie;
 import com.aghajari.rlottie.AXrLottieDrawable;
 import com.aghajari.rlottie.AXrLottieImageView;
-import com.aghajari.rlottie.AXrLottieLayerInfo;
 import com.aghajari.rlottie.AXrLottieMarker;
-import com.aghajari.rlottie.AXrLottieProperty;
 import com.aghajari.sample.axrlottie.R;
 
 import java.util.List;
-import java.util.Random;
 
 public class MarkerActivity extends AppCompatActivity {
     AXrLottieImageView lottieView;

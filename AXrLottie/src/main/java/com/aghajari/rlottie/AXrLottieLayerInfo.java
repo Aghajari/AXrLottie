@@ -15,6 +15,7 @@
  *
  */
 
+
 package com.aghajari.rlottie;
 
 public class AXrLottieLayerInfo {

@@ -36,7 +36,7 @@ public class LottieEditorActivity extends AppCompatActivity {
         lottieView = findViewById(R.id.lottie_view);
         rv = findViewById(R.id.rv);
 
-        lottieView.setLottieDrawable(AXrLottie.createFromAssets(this, "mountain.json",
+        lottieView.setLottieDrawable(AXrLottie.Loader.createFromAssets(this, "mountain.json",
                 "editor", 512, 512, false, false));
         lottieView.playAnimation();
 

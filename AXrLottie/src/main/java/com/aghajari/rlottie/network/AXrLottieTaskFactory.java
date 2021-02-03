@@ -1,8 +1,26 @@
+/*
+ * Copyright (C) 2021 - Amir Hossein Aghajari
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+
 package com.aghajari.rlottie.network;
 
 import androidx.annotation.Nullable;
 
-import com.aghajari.rlottie.AXrL;
+import com.aghajari.rlottie.AXrLottie;
 
 import java.io.File;
 import java.util.HashMap;
@@ -22,18 +40,9 @@ public class AXrLottieTaskFactory {
      */
     private static final Map<String, AXrLottieTask<File>> taskCache = new HashMap<>();
 
-    /**
-     * Set the maximum number of compositions to keep cached in memory.
-     * This must be {@literal >} 0.
-     */
-    public static void setMaxCacheSize(int size) {
-        AXrLottieTaskCache.getInstance().resize(size);
-    }
-
     public static void clearCache() {
         taskCache.clear();
         AXrLottieTaskCache.getInstance().clear();
-        AXrL.networkCache().clear();
     }
 
     /**
@@ -48,7 +57,7 @@ public class AXrLottieTaskFactory {
         return cache(cacheKey, new Callable<AXrLottieResult<File>>() {
             @Override
             public AXrLottieResult<File> call() {
-                AXrLottieResult<File> result = AXrL.networkFetcher().fetchSync(url, cache);
+                AXrLottieResult<File> result = AXrLottie.getNetworkFetcher().fetchSync(url, cache);
                 if (cacheKey != null && result.getValue() != null) {
                     AXrLottieTaskCache.getInstance().put(cacheKey, result.getValue());
                 }
@@ -79,13 +88,13 @@ public class AXrLottieTaskFactory {
 
         AXrLottieTask<File> task = new AXrLottieTask<>(callable);
         if (cacheKey != null) {
-            task.addListener(new AXrLottieListener<File>() {
+            task.addListener(new AXrLottieTask.Listener<File>() {
                 @Override
                 public void onResult(File result) {
                     taskCache.remove(cacheKey);
                 }
             });
-            task.addFailureListener(new AXrLottieListener<Throwable>() {
+            task.addFailureListener(new AXrLottieTask.Listener<Throwable>() {
                 @Override
                 public void onResult(Throwable result) {
                     taskCache.remove(cacheKey);

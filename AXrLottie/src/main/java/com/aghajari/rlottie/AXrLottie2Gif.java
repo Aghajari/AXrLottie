@@ -15,6 +15,7 @@
  *
  */
 
+
 package com.aghajari.rlottie;
 
 import android.graphics.Bitmap;
@@ -40,8 +41,7 @@ public class AXrLottie2Gif {
     private boolean successful;
     private boolean destroyed = false;
     private Builder builder;
-    private int mFrame;
-    private int mTotalFrame;
+    private int mFrame, mTotalFrame;
 
     private Lottie2GifListener listener = new Lottie2GifListener() {
         @Override
@@ -183,9 +183,8 @@ public class AXrLottie2Gif {
         public Builder(@NonNull AXrLottieDrawable animation) {
             this.lottie = animation.getNativePtr();
             float density = 1;
-            if (AXrL.applicationContext != null) {
-                density = AXrL.applicationContext.getResources().getDisplayMetrics().density;
-            }
+            if (AXrLottie.context != null)
+                density = AXrLottie.context.getResources().getDisplayMetrics().density;
             setSize((int) (animation.getMinimumWidth() / density), (int) (animation.getMinimumHeight() / density));
         }
 
