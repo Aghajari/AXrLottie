@@ -88,7 +88,7 @@ Maven
 Let's START! :smiley:
 
 ## Install AXrLottie 
-First step, you should install AXrLottie
+First step, you should initialize AXrLottie
 
 ```java
 AXrLottie.init(this);
