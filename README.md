@@ -310,11 +310,11 @@ You can add more FileExtensions (such as .7z).
 Example :
 
 ```java
-AXrLottie.addFileExtension(new X7ZipFileExtension());   
+AXrLottie.addFileExtension(new SevenZipFileExtension());   
 
-public class X7ZipFileExtension extends AXrFileExtension {
+public class SevenZipFileExtension extends AXrFileExtension {
 
-    public X7ZipFileExtension() {
+    public SevenZipFileExtension() {
         super(".7z");
     }
 
