@@ -61,7 +61,7 @@ public class AXrSimpleNetworkFetcher extends AXrLottieNetworkFetcher {
         @Override
         public boolean isSuccessful() {
             try {
-                return connection.getErrorStream() != null && connection.getResponseCode() / 100 == 2;
+                return connection.getErrorStream() == null && connection.getResponseCode() / 100 == 2;
             } catch (IOException e) {
                 return false;
             }
