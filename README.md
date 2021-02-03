@@ -325,11 +325,9 @@ public class X7ZipFileExtension extends AXrFileExtension {
     }
 
     @Override
-    public File saveAsTempFile(String url, InputStream stream) throws IOException {
-        File file = super.saveAsTempFile(url,stream);
-	// read 7zip file and extract animation.
-	// file = ...
-	return file;
+    public File toFile(String cache, File input, boolean fromNetwork) throws IOException {
+    	File output; // read 7zip file and extract animation.
+	return output;
     }
 }
 ```
