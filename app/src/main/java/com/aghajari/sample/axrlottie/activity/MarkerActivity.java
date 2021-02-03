@@ -32,9 +32,9 @@ public class MarkerActivity extends AppCompatActivity {
         lottieView = findViewById(R.id.lottie_view);
         rv = findViewById(R.id.rv);
 
-        lottieView.setLottieDrawable(AXrLottieDrawable.fromAssets(this,"marker.json")
+        lottieView.setLottieDrawable(AXrLottieDrawable.fromAssets(this, "marker.json")
                 .setCacheName("marker")
-                .setSize(512,512)
+                .setSize(512, 512)
                 .setCacheEnabled(false)
                 .setAutoRepeatMode(AXrLottieDrawable.REPEAT_MODE_REVERSE)
                 .setAutoRepeat(true)
@@ -49,24 +49,24 @@ public class MarkerActivity extends AppCompatActivity {
     }
 
 
-    private class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder>{
+    private class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.ViewHolder> {
 
         List<AXrLottieMarker> list;
         AXrLottieDrawable drawable;
         int selected;
 
-        public void setAnimation(AXrLottieDrawable drawable){
+        public void setAnimation(AXrLottieDrawable drawable) {
             this.drawable = drawable;
             drawable.selectMarker(null);
 
             list = drawable.getMarkers();
             // markers
-            Log.i("AXrLottie","Markers : ");
+            Log.i("AXrLottie", "Markers : ");
             for (AXrLottieMarker marker : list) {
                 Log.i("AXrLottie", marker.toString());
             }
 
-            list.add(0,new AXrLottieMarker("default",-1,-1));
+            list.add(0, new AXrLottieMarker("default", -1, -1));
             selected = 0;
             notifyDataSetChanged();
         }
@@ -74,20 +74,20 @@ public class MarkerActivity extends AppCompatActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_marker_info,parent,false));
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_marker_info, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.onBind(drawable,this,position,list.get(position));
+            holder.onBind(drawable, this, position, list.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return list!=null ? list.size() : 0;
+            return list != null ? list.size() : 0;
         }
 
-        private class ViewHolder extends RecyclerView.ViewHolder{
+        private class ViewHolder extends RecyclerView.ViewHolder {
 
             TextView markerName;
             AppCompatButton button;
@@ -99,12 +99,12 @@ public class MarkerActivity extends AppCompatActivity {
                 button = ((ViewGroup) itemView).findViewById(R.id.btn);
             }
 
-            public void onBind(final AXrLottieDrawable drawable,final MarkerAdapter adapter,
-                               final int position,final AXrLottieMarker marker){
+            public void onBind(final AXrLottieDrawable drawable, final MarkerAdapter adapter,
+                               final int position, final AXrLottieMarker marker) {
 
                 markerName.setText(marker.getMarker());
                 button.setEnabled(adapter.selected != position);
-                button.setText(button.isEnabled()?"SELECT":"SELECTED");
+                button.setText(button.isEnabled() ? "SELECT" : "SELECTED");
 
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override

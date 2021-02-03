@@ -53,7 +53,7 @@ public abstract class AXrLottieNetworkFetcher {
         return readTimeout;
     }
 
-    protected void updateClient(){
+    protected void updateClient() {
     }
 
 }

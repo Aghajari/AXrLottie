@@ -77,6 +77,6 @@ public class GZipFileExtension extends AXrFileExtension {
     @Override
     public File toFile(String cache, InputStream stream, boolean fromNetwork) {
         return toFile(stream,
-                AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, fromNetwork,true));
+                AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, fromNetwork, true));
     }
 }

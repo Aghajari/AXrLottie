@@ -47,17 +47,17 @@ public class LottieEditorActivity extends AppCompatActivity {
     }
 
 
-    private class LayerAdapter extends RecyclerView.Adapter<LayerAdapter.ViewHolder>{
+    private class LayerAdapter extends RecyclerView.Adapter<LayerAdapter.ViewHolder> {
 
         List<AXrLottieLayerInfo> list;
         AXrLottieDrawable drawable;
 
-        public void setAnimation(AXrLottieDrawable drawable){
+        public void setAnimation(AXrLottieDrawable drawable) {
             this.drawable = drawable;
             list = drawable.getLayers();
             notifyDataSetChanged();
 
-            Log.i("AXrLottie","Layers : ");
+            Log.i("AXrLottie", "Layers : ");
             for (AXrLottieLayerInfo layerInfo : list) {
                 Log.i("AXrLottie", layerInfo.toString());
             }
@@ -66,20 +66,20 @@ public class LottieEditorActivity extends AppCompatActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_layer_info,parent,false));
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_layer_info, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.onBind(drawable,list.get(position).getName());
+            holder.onBind(drawable, list.get(position).getName());
         }
 
         @Override
         public int getItemCount() {
-            return list!=null ? list.size() : 0;
+            return list != null ? list.size() : 0;
         }
 
-        private class ViewHolder extends RecyclerView.ViewHolder{
+        private class ViewHolder extends RecyclerView.ViewHolder {
 
             TextView layerName;
             AppCompatButton button;
@@ -91,12 +91,12 @@ public class LottieEditorActivity extends AppCompatActivity {
                 button = ((ViewGroup) itemView).findViewById(R.id.btn);
             }
 
-            public void onBind(final AXrLottieDrawable drawable,final String layer){
+            public void onBind(final AXrLottieDrawable drawable, final String layer) {
                 layerName.setText(layer);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        drawable.setLayerProperty(layer+".**",AXrLottieProperty.fillColorProperty(findColor()));
+                        drawable.setLayerProperty(layer + ".**", AXrLottieProperty.fillColorProperty(findColor()));
                     }
                 });
             }

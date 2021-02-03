@@ -18,10 +18,11 @@ public class SimpleNetworkActivity extends AppCompatActivity {
         final AXrLottieImageView lottieView = findViewById(R.id.lottie_view);
 
         //https://image-1.gapo.vn/images/AnimatedSticker.tgs
-       lottieView.setLottieDrawable(
-               AXrLottieDrawable.fromURL("https://image-1.gapo.vn/images/kienht-gapo-sticker2.zip")
-               .setAutoStart(true)
-               .build());
+        lottieView.setLottieDrawable(
+                AXrLottieDrawable.fromURL("https://image-1.gapo.vn/images/kienht-gapo-sticker2.zip")
+                        .setAutoStart(true)
+                        .build()
+        );
 
     }
 }

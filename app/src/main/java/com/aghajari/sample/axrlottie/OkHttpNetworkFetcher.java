@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- */package com.aghajari.sample.axrlottie;
+ */
+package com.aghajari.sample.axrlottie;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,9 +35,10 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
 
     OkHttpClient client = null;
 
-    private OkHttpNetworkFetcher(){}
+    private OkHttpNetworkFetcher() {
+    }
 
-    public static OkHttpNetworkFetcher create(){
+    public static OkHttpNetworkFetcher create() {
         return new OkHttpNetworkFetcher();
     }
 
@@ -83,7 +85,7 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
         @Override
         public String contentType() {
             String contentType = null;
-            if (response.body().contentType()!=null)
+            if (response.body().contentType() != null)
                 contentType = response.body().contentType().toString();
             return contentType;
         }
@@ -102,7 +104,7 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
             try {
                 response.body().close();
                 response.close();
-            }catch(Exception ignore){
+            } catch (Exception ignore) {
             }
         }
 

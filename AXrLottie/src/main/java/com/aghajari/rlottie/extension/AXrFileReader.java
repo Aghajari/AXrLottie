@@ -35,17 +35,17 @@ import java.io.InputStream;
  */
 public class AXrFileReader {
 
-    public static File fromFile(File input){
-        String cache = "lottie_cache_"+input.getName();
-        File file = AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, false,true);
-        if (file!=null && file.exists())
+    public static File fromFile(File input) {
+        String cache = "lottie_cache_" + input.getName();
+        File file = AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, false, true);
+        if (file != null && file.exists())
             return file;
 
         for (AXrFileExtension extension : AXrLottie.getSupportedFileExtensions().values()) {
             if (extension.canParseFile(input)) {
                 try {
-                    File f = extension.toFile(cache,input,false);
-                    if (f!=null) return f;
+                    File f = extension.toFile(cache, input, false);
+                    if (f != null) return f;
                 } catch (IOException ignore) {
                 }
             }
@@ -53,23 +53,23 @@ public class AXrFileReader {
         return input;
     }
 
-    public static String fromRes(Context context,int rawRes){
-        String cache = "lottie_cache_"+context.getResources().getResourceName(rawRes);
-        return read(cache,context,null,rawRes);
+    public static String fromRes(Context context, int rawRes) {
+        String cache = "lottie_cache_" + context.getResources().getResourceName(rawRes);
+        return read(cache, context, null, rawRes);
     }
 
-    public static String fromAssets(Context context,String fileName){
-        String cache = "lottie_cache_"+fileName;
-        return read(cache,context,fileName,0);
+    public static String fromAssets(Context context, String fileName) {
+        String cache = "lottie_cache_" + fileName;
+        return read(cache, context, fileName, 0);
     }
 
-    public static String fromInputStream(InputStream stream){
+    public static String fromInputStream(InputStream stream) {
         return readStream(stream);
     }
 
-    private static String read(String cache,Context context,@Nullable String asset, int rawRes){
-        File file = AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, false,true);
-        if (file!=null && file.exists()) {
+    private static String read(String cache, Context context, @Nullable String asset, int rawRes) {
+        File file = AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, false, true);
+        if (file != null && file.exists()) {
             try {
                 return readStream(new FileInputStream(file));
             } catch (FileNotFoundException ignore) {
@@ -80,27 +80,27 @@ public class AXrFileReader {
             File input = null;
             for (AXrFileExtension extension : AXrLottie.getSupportedFileExtensions().values()) {
                 if (extension.canParseFile(cache)) {
-                    if (input == null){
-                        input = AXrLottie.getLottieCacheManager().writeTempCacheFile(cache,readRes(context,asset,rawRes),extension,false);
+                    if (input == null) {
+                        input = AXrLottie.getLottieCacheManager().writeTempCacheFile(cache, readRes(context, asset, rawRes), extension, false);
                     }
                     try {
-                        File f = extension.toFile(cache,input,false);
-                        if (f!=null) return readStream(new FileInputStream(f));
+                        File f = extension.toFile(cache, input, false);
+                        if (f != null) return readStream(new FileInputStream(f));
                     } catch (IOException ignore) {
                     }
-                    if (input!=null && input.exists()) input.delete();
+                    if (input != null && input.exists()) input.delete();
                 }
             }
         } catch (Exception ignore) {
         }
-        return readResAsString(context,asset,rawRes);
+        return readResAsString(context, asset, rawRes);
     }
 
     private static ThreadLocal<byte[]> readBufferLocal = new ThreadLocal<>();
     private static ThreadLocal<byte[]> bufferLocal = new ThreadLocal<>();
 
     private static String readResAsString(Context context, String asset, int rawRes) {
-        return readStream(readRes(context,asset,rawRes));
+        return readStream(readRes(context, asset, rawRes));
     }
 
     private static InputStream readRes(Context context, @Nullable String asset, int rawRes) {

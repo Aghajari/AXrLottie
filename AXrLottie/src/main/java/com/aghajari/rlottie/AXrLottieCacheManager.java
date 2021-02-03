@@ -64,7 +64,7 @@ public class AXrLottieCacheManager {
 
     public File fetchLocalFromCache(final String json, final String name) {
         File f = new File(getLocalCacheParent(),
-                findCacheName(name,JsonFileExtension.JSON,false,false) + ".cache");
+                findCacheName(name, JsonFileExtension.JSON, false, false) + ".cache");
         if (f.exists()) return f;
         return writeLocalCache(json, f);
     }
@@ -93,7 +93,7 @@ public class AXrLottieCacheManager {
     private Pair<AXrFileExtension, File> fetch(String url) {
         File cachedFile = null;
         for (AXrFileExtension extension : AXrLottie.getSupportedFileExtensions().values()) {
-            File file = new File(getNetworkCacheParent(), findCacheName(url, extension, true,false));
+            File file = new File(getNetworkCacheParent(), findCacheName(url, extension, true, false));
             if (file.exists()) {
                 cachedFile = file;
                 break;
@@ -116,12 +116,12 @@ public class AXrLottieCacheManager {
      * to an composition, {@link #loadTempFile(String, boolean)}  should be called to move the file
      * to its final location for future cache hits.
      */
-    public File writeTempCacheFile(String cache, InputStream stream, AXrFileExtension extension,boolean fromNetwork) throws IOException {
-        return writeCacheFile(cache,stream,extension,fromNetwork,true);
+    public File writeTempCacheFile(String cache, InputStream stream, AXrFileExtension extension, boolean fromNetwork) throws IOException {
+        return writeCacheFile(cache, stream, extension, fromNetwork, true);
     }
 
-    public File writeCacheFile(String cache, InputStream stream, AXrFileExtension extension,boolean fromNetwork,boolean isTemp) throws IOException {
-        String fileName = findCacheName(cache, extension, fromNetwork,isTemp);
+    public File writeCacheFile(String cache, InputStream stream, AXrFileExtension extension, boolean fromNetwork, boolean isTemp) throws IOException {
+        String fileName = findCacheName(cache, extension, fromNetwork, isTemp);
         File file = new File(getParent(fromNetwork), fileName);
         try {
             OutputStream output = new FileOutputStream(file);
@@ -152,8 +152,8 @@ public class AXrLottieCacheManager {
      * If the file created by {@link #writeTempCacheFile(String, InputStream, AXrFileExtension, boolean)} was successfully parsed,
      * this should be called to remove the temporary part of its name which will allow it to be a cache hit in the future.
      */
-    public File loadTempFile(String cache,boolean fromNetwork) {
-        String fileName = findCacheName(cache, JsonFileExtension.JSON, fromNetwork,true);
+    public File loadTempFile(String cache, boolean fromNetwork) {
+        String fileName = findCacheName(cache, JsonFileExtension.JSON, fromNetwork, true);
         File file = new File(getParent(fromNetwork), fileName);
         String newFileName = file.getAbsolutePath().replace(".temp", "");
         File newFile = new File(newFileName);
@@ -169,7 +169,7 @@ public class AXrLottieCacheManager {
         return new File(getParent(fromNetwork), findCacheName(cache, extension, fromNetwork, isTemp));
     }
 
-    private File getParent(boolean fromNetwork){
+    private File getParent(boolean fromNetwork) {
         return fromNetwork ? getNetworkCacheParent() : getLocalCacheParent();
     }
 
@@ -196,6 +196,6 @@ public class AXrLottieCacheManager {
     }
 
     private String findCacheName(String url, AXrFileExtension extension, boolean fromNetwork, boolean isTemp) {
-        return (fromNetwork?"lottie_cache_":"") + url.replaceAll("\\W+", "") + (isTemp ? extension.tempExtension() : extension.extension);
+        return (fromNetwork ? "lottie_cache_" : "") + url.replaceAll("\\W+", "") + (isTemp ? extension.tempExtension() : extension.extension);
     }
 }
