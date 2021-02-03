@@ -23,6 +23,11 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 
+/**
+ * AXrLottie has a default network fetching {@link AXrSimpleNetworkFetcher} stack built on {@link java.net.HttpURLConnection}.
+ * However, if you would like to hook into your own network stack for performance,
+ * caching, or analytics, you may replace the internal stack with your own.
+ */
 public abstract class AXrLottieNetworkFetcher {
 
     public abstract AXrLottieFetchResult fetchSync(@NonNull String url) throws IOException;
@@ -32,6 +37,7 @@ public abstract class AXrLottieNetworkFetcher {
 
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
+        updateClient();
     }
 
     public int getConnectTimeout() {
@@ -40,10 +46,14 @@ public abstract class AXrLottieNetworkFetcher {
 
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+        updateClient();
     }
 
     public int getReadTimeout() {
         return readTimeout;
+    }
+
+    protected void updateClient(){
     }
 
 }

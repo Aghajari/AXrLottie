@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- */
-package com.aghajari.sample.axrlottie;
+ */package com.aghajari.sample.axrlottie;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +23,7 @@ import com.aghajari.rlottie.network.AXrLottieNetworkFetcher;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -32,24 +32,30 @@ import okhttp3.Response;
 
 public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
 
-    private final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .followRedirects(true).followSslRedirects(true)
-            .connectTimeout(getConnectTimeout(), TimeUnit.MILLISECONDS)
-            .readTimeout(getReadTimeout(), TimeUnit.MILLISECONDS)
-            .build();
+    OkHttpClient client = null;
 
-    private OkHttpNetworkFetcher() {
+    private OkHttpNetworkFetcher(){}
+
+    public static OkHttpNetworkFetcher create(){
+        return new OkHttpNetworkFetcher();
     }
 
-    public static OkHttpNetworkFetcher create() {
-        return new OkHttpNetworkFetcher();
+    @Override
+    protected void updateClient() {
+        client = new OkHttpClient.Builder()
+                .followRedirects(true).followSslRedirects(true)
+                .connectTimeout(getConnectTimeout(), TimeUnit.MILLISECONDS)
+                .readTimeout(getReadTimeout(), TimeUnit.MILLISECONDS).build();
     }
 
     @NonNull
     @Override
     public AXrLottieFetchResult fetchSync(@NonNull String url) throws IOException {
+        if (client == null) updateClient();
+
         Request request = new Request.Builder().url(url).build();
-        Response response = okHttpClient.newCall(request).execute();
+        Response response = client.newCall(request).execute();
+
         return new OkHttpNetworkFetchResult(response);
     }
 
@@ -77,9 +83,8 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
         @Override
         public String contentType() {
             String contentType = null;
-            if (response.body().contentType() != null){
+            if (response.body().contentType()!=null)
                 contentType = response.body().contentType().toString();
-            }
             return contentType;
         }
 
@@ -94,7 +99,11 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
 
         @Override
         public void close() {
-            response.close();
+            try {
+                response.body().close();
+                response.close();
+            }catch(Exception ignore){
+            }
         }
 
     }

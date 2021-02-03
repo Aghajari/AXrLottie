@@ -13,10 +13,11 @@ import android.view.View;
 import com.aghajari.emojiview.AXEmojiManager;
 import com.aghajari.emojiview.emoji.iosprovider.AXIOSEmojiProvider;
 import com.aghajari.emojiview.listener.StickerViewCreatorListener;
-import com.aghajari.emojiview.sticker.RecentStickerManager;
 import com.aghajari.emojiview.sticker.StickerCategory;
 import com.aghajari.rlottie.AXrLottie;
 import com.aghajari.rlottie.AXrLottieImageView;
+import com.aghajari.rlottie.extension.GZipFileExtension;
+
 import com.aghajari.sample.axrlottie.activity.AXEmojiViewActivity;
 import com.aghajari.sample.axrlottie.activity.ColorLayerActivity;
 import com.aghajari.sample.axrlottie.activity.Lottie2GifActivity;
@@ -30,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         AXrLottie.init(this);
         AXrLottie.setNetworkFetcher(OkHttpNetworkFetcher.create());
+        AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
 
         initEmojiView();
         setContentView(R.layout.activity_main);
