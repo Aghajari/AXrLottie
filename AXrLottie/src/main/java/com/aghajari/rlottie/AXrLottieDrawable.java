@@ -137,7 +137,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         @Override
         public void onResult(Throwable result) {
             // Failure Listener
-            Log.e(TAG,result.toString());
+            Log.e(TAG, result.toString());
         }
     };
 
@@ -1226,23 +1226,23 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         return new Builder(url);
     }
 
-    public static Builder fromJson(@NonNull String JSON,@NonNull String cacheName) {
+    public static Builder fromJson(@NonNull String JSON, @NonNull String cacheName) {
         return new Builder(JSON, cacheName);
     }
 
-    public static Builder fromAssets(@NonNull Context context,@NonNull String fileName) {
+    public static Builder fromAssets(@NonNull Context context, @NonNull String fileName) {
         return fromAssets(context, fileName, fileName.replaceAll("\\W+", ""));
     }
 
-    public static Builder fromAssets(@NonNull Context context,@NonNull String fileName,@NonNull String cacheName) {
+    public static Builder fromAssets(@NonNull Context context, @NonNull String fileName, @NonNull String cacheName) {
         return new Builder(AXrFileReader.fromAssets(context, fileName), cacheName);
     }
 
-    public static Builder fromRes(@NonNull Context context, int res,@NonNull String cacheName) {
+    public static Builder fromRes(@NonNull Context context, int res, @NonNull String cacheName) {
         return new Builder(AXrFileReader.fromRes(context, res), cacheName);
     }
 
-    public static Builder fromInputStream(@NonNull InputStream inputStream,@NonNull String cacheName) {
+    public static Builder fromInputStream(@NonNull InputStream inputStream, @NonNull String cacheName) {
         return new Builder(AXrFileReader.fromInputStream(inputStream), cacheName);
     }
 

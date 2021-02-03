@@ -18,6 +18,8 @@
 
 package com.aghajari.rlottie.extension;
 
+import android.text.TextUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,6 +35,9 @@ public abstract class AXrFileExtension {
     public final String extension;
 
     public AXrFileExtension(String extension) {
+        if (TextUtils.isEmpty(extension)) {
+            throw new IllegalArgumentException("extension can not be null!");
+        }
         this.extension = extension;
     }
 
@@ -46,13 +51,13 @@ public abstract class AXrFileExtension {
 
     public File toFile(String cache, File input, boolean fromNetwork) throws IOException {
         if (willReadStream()) {
-            return toFile(cache,new FileInputStream(input),fromNetwork);
-        }else {
+            return toFile(cache, new FileInputStream(input), fromNetwork);
+        } else {
             return input;
         }
     }
 
-    public boolean willReadStream(){
+    public boolean willReadStream() {
         return false;
     }
 
@@ -60,11 +65,11 @@ public abstract class AXrFileExtension {
         return false;
     }
 
-    public boolean canParseFile (File file){
+    public boolean canParseFile(File file) {
         return canParseFile(file.getAbsolutePath());
     }
 
-    public boolean canParseFile (String fileName){
+    public boolean canParseFile(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".")).equalsIgnoreCase(extension);
     }
 
@@ -75,11 +80,8 @@ public abstract class AXrFileExtension {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         AXrFileExtension that = (AXrFileExtension) o;
-
-        return extension != null ? extension.equals(that.extension) : that.extension == null;
+        return extension.equals(that.extension);
     }
 }

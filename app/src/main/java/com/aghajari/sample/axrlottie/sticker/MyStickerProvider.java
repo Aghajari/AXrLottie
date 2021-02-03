@@ -15,11 +15,11 @@ public class MyStickerProvider implements StickerProvider {
 
     StickerCategory[] categories;
 
-    public MyStickerProvider(){
+    public MyStickerProvider() {
         categories = new StickerCategory[]{
-                new AnimatedStickerCategoty("HotCherry",23),
-                new AnimatedStickerCategoty("KangarooFighter",26),
-                new AnimatedStickerCategoty("ValentineCat",15),
+                new AnimatedStickerCategoty("HotCherry", 23),
+                new AnimatedStickerCategoty("KangarooFighter", 26),
+                new AnimatedStickerCategoty("ValentineCat", 15),
         };
     }
 
@@ -38,8 +38,8 @@ public class MyStickerProvider implements StickerProvider {
                 if (view instanceof AXrLottieImageView && sticker instanceof AnimatedSticker) {
                     AXrLottieImageView lottieImageView = (AXrLottieImageView) view;
                     AnimatedSticker animatedSticker = (AnimatedSticker) sticker;
-                    if (animatedSticker.drawable==null){
-                        animatedSticker.drawable = Utils.createFromSticker(view.getContext(),animatedSticker,100);
+                    if (animatedSticker.drawable == null) {
+                        animatedSticker.drawable = Utils.createFromSticker(view.getContext(), animatedSticker, 100);
                     }
                     lottieImageView.setLottieDrawable(animatedSticker.drawable);
                     lottieImageView.playAnimation();
@@ -51,8 +51,8 @@ public class MyStickerProvider implements StickerProvider {
                 if (view instanceof AXrLottieImageView) {
                     AXrLottieImageView lottieImageView = (AXrLottieImageView) view;
                     AnimatedSticker animatedSticker = (AnimatedSticker) stickerCategory.getCategoryData();
-                    if (animatedSticker.drawable==null){
-                        animatedSticker.drawable = Utils.createFromSticker(view.getContext(),animatedSticker,50);
+                    if (animatedSticker.drawable == null) {
+                        animatedSticker.drawable = Utils.createFromSticker(view.getContext(), animatedSticker, 50);
                     }
                     lottieImageView.setLottieDrawable(animatedSticker.drawable);
                     //lottieImageView.playAnimation();

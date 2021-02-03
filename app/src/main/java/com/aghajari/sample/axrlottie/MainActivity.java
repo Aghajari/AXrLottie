@@ -31,11 +31,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        AXrLottie.init(this);
-        AXrLottie.setNetworkFetcher(OkHttpNetworkFetcher.create());
-        AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
-
         initEmojiView();
         setContentView(R.layout.activity_main);
     }

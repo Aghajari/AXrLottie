@@ -54,7 +54,7 @@ public class ZipFileExtension extends AXrFileExtension {
     @Override
     public File toFile(String cache, File input, boolean fromNetwork) throws IOException {
         return fromZipStream(input,
-                AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, fromNetwork,true),
+                AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, fromNetwork, true),
                 new ZipInputStream(new FileInputStream(input)));
     }
 

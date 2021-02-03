@@ -83,7 +83,7 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
         @Override
         public String contentType() {
             String contentType = null;
-            if (response.body().contentType()!=null)
+            if (response.body().contentType() != null)
                 contentType = response.body().contentType().toString();
             return contentType;
         }
@@ -102,7 +102,7 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
             try {
                 response.body().close();
                 response.close();
-            }catch(Exception ignore){
+            } catch (Exception ignore) {
             }
         }
 

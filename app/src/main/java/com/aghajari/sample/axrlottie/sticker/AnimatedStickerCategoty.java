@@ -12,10 +12,10 @@ public class AnimatedStickerCategoty implements StickerCategory<AnimatedSticker>
 
     private AnimatedSticker[] stickers;
 
-    public AnimatedStickerCategoty(String name, int stickerCount){
+    public AnimatedStickerCategoty(String name, int stickerCount) {
         stickers = new AnimatedSticker[stickerCount];
-        for (int i=0;i<stickerCount;i++){
-            stickers[i] = new AnimatedSticker(name+"/sticker"+(i+1)+".json",name+".sticker"+(i+1));
+        for (int i = 0; i < stickerCount; i++) {
+            stickers[i] = new AnimatedSticker(name + "/sticker" + (i + 1) + ".json", name + ".sticker" + (i + 1));
         }
     }
 
@@ -27,7 +27,7 @@ public class AnimatedStickerCategoty implements StickerCategory<AnimatedSticker>
 
     @Override
     public AnimatedSticker getCategoryData() {
-        return new AnimatedSticker(stickers[0].getData(),stickers[0].name);
+        return new AnimatedSticker(stickers[0].getData(), stickers[0].name);
     }
 
     @Override
@@ -41,7 +41,8 @@ public class AnimatedStickerCategoty implements StickerCategory<AnimatedSticker>
     }
 
     @Override
-    public void bindView(View view) {}
+    public void bindView(View view) {
+    }
 
     @Override
     public View getEmptyView(ViewGroup viewGroup) {
