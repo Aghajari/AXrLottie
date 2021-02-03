@@ -16,7 +16,7 @@
  */
 
 
-package com.aghajari.rlottie.network;
+package com.aghajari.rlottie.extension;
 
 import android.util.Log;
 
@@ -29,13 +29,16 @@ import java.util.zip.ZipInputStream;
 
 import androidx.annotation.WorkerThread;
 
-
+/**
+ * Helper class to extract json animation from a zip
+ */
 class ZipCompositionFactory {
 
-    public static final String TAG = ZipCompositionFactory.class.getSimpleName();
+    private static final String TAG = ZipCompositionFactory.class.getSimpleName();
 
     public static boolean isZipContent(String contentType) {
         return contentType.toLowerCase().contains("application/zip") ||
+                contentType.toLowerCase().contains("application/x-zip") ||
                 contentType.toLowerCase().contains("application/x-zip-compressed");
     }
 
@@ -89,7 +92,7 @@ class ZipCompositionFactory {
                 final String entryName = entry.getName();
                 if (entryName.contains("__MACOSX")) {
                     inputStream.closeEntry();
-                } else if (entry.getName().contains(".json")) {
+                } else if (entry.getName().toLowerCase().contains(".json")) {
                     File f = toFile(file, output, inputStream, entry);
                     if (f != null) {
                         closeQuietly(inputStream);

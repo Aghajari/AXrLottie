@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.aghajari.rlottie.AXrLottie;
+import com.aghajari.rlottie.extension.AXrFileExtension;
+import com.aghajari.rlottie.extension.JsonFileExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +40,7 @@ public class AXrNetworkFetcher {
     private static final String TAG = AXrNetworkFetcher.class.getSimpleName();
 
     @NonNull
-    private final AXrLottieNetworkFetcher fetcher;
+    public final AXrLottieNetworkFetcher fetcher;
 
     public AXrNetworkFetcher(@NonNull AXrLottieNetworkFetcher fetcher) {
         this.fetcher = fetcher;
@@ -83,6 +85,7 @@ public class AXrNetworkFetcher {
     @WorkerThread
     protected AXrLottieResult<File> parseStream(InputStream inputStream, String contentType, String url) {
         try {
+            File file;
             if (contentType == null) {
                 // Assume JSON for best effort parsing. If it fails, it will just deliver the parse exception
                 // in the result which is more useful than failing here.
@@ -90,17 +93,23 @@ public class AXrNetworkFetcher {
             }
 
             boolean parsed = false;
+            File input = null;
             for (AXrFileExtension fileExtension : AXrLottie.getSupportedFileExtensions().values()) {
                 if (fileExtension.canParseContent(contentType)) {
-                    parsed = fileExtension.saveAsTempFile(url, inputStream) != null;
+                    if (fileExtension.willReadStream()) {
+                        parsed = fileExtension.toFile(url, inputStream, true) != null;
+                    } else {
+                        input = AXrLottie.getLottieCacheManager().writeTempCacheFile(url, inputStream, fileExtension, true);
+                        parsed = fileExtension.toFile(url, input, true) != null;
+                        if (!parsed && input != null && input.exists()) input.delete();
+                    }
                 }
                 if (parsed) break;
             }
-            if (!parsed){
-                JsonFileExtension.JSON.saveAsTempFile(url, inputStream);
-            }
+            if (!parsed)
+                AXrLottie.getLottieCacheManager().writeTempCacheFile(url, inputStream, JsonFileExtension.JSON, true);
 
-            File file = AXrLottie.getLottieCacheManager().loadTempFile(url);
+            file = AXrLottie.getLottieCacheManager().loadTempFile(url, true);
 
             return new AXrLottieResult<>(file);
         } catch (Exception e) {

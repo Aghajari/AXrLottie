@@ -6,8 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.util.Pair;
 
-import com.aghajari.rlottie.network.AXrFileExtension;
-import com.aghajari.rlottie.network.JsonFileExtension;
+import com.aghajari.rlottie.extension.AXrFileExtension;
+import com.aghajari.rlottie.extension.JsonFileExtension;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,19 +63,18 @@ public class AXrLottieCacheManager {
     }
 
     public File fetchLocalFromCache(final String json, final String name) {
-        File f = new File(getLocalCacheParent(), name + ".cache");
+        File f = new File(getLocalCacheParent(),
+                findCacheName(name,JsonFileExtension.JSON,false,false) + ".cache");
         if (f.exists()) return f;
-        return writeLocalCache(json, name);
+        return writeLocalCache(json, f);
     }
 
-    private File writeLocalCache(final String json, final String name) {
+    private File writeLocalCache(final String json, File file) {
         try {
-            File f2 = new File(getLocalCacheParent(), name + ".cache");
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(f2));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file));
             outputStreamWriter.write(json);
             outputStreamWriter.close();
-
-            return f2;
+            return file;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -85,7 +84,7 @@ public class AXrLottieCacheManager {
     /**
      * If the animation doesn't exist in the cache, null will be returned.
      * <p>
-     * Once the animation is successfully parsed, {@link #loadTempFile(String)} must be
+     * Once the animation is successfully parsed, {@link #loadTempFile(String, boolean)} must be
      * called to move the file from a temporary location to its permanent cache location so it can
      * be used in the future.
      */
@@ -94,7 +93,7 @@ public class AXrLottieCacheManager {
     private Pair<AXrFileExtension, File> fetch(String url) {
         File cachedFile = null;
         for (AXrFileExtension extension : AXrLottie.getSupportedFileExtensions().values()) {
-            File file = new File(getNetworkCacheParent(), filenameForUrl(url, extension, false));
+            File file = new File(getNetworkCacheParent(), findCacheName(url, extension, true,false));
             if (file.exists()) {
                 cachedFile = file;
                 break;
@@ -114,12 +113,16 @@ public class AXrLottieCacheManager {
 
     /**
      * Writes an InputStream from a network response to a temporary file. If the file successfully parses
-     * to an composition, {@link #loadTempFile(String)}  should be called to move the file
+     * to an composition, {@link #loadTempFile(String, boolean)}  should be called to move the file
      * to its final location for future cache hits.
      */
-    public File writeTempCacheFile(String url, InputStream stream, AXrFileExtension extension) throws IOException {
-        String fileName = filenameForUrl(url, extension, true);
-        File file = new File(getNetworkCacheParent(), fileName);
+    public File writeTempCacheFile(String cache, InputStream stream, AXrFileExtension extension,boolean fromNetwork) throws IOException {
+        return writeCacheFile(cache,stream,extension,fromNetwork,true);
+    }
+
+    public File writeCacheFile(String cache, InputStream stream, AXrFileExtension extension,boolean fromNetwork,boolean isTemp) throws IOException {
+        String fileName = findCacheName(cache, extension, fromNetwork,isTemp);
+        File file = new File(getParent(fromNetwork), fileName);
         try {
             OutputStream output = new FileOutputStream(file);
             //noinspection TryFinallyCanBeTryWithResources
@@ -133,12 +136,12 @@ public class AXrLottieCacheManager {
 
                 output.flush();
             } catch (Exception e) {
-                Log.e(TAG, "writeTempCacheFile: ", e);
+                Log.e(TAG, "writeCacheFile: ", e);
             } finally {
                 output.close();
             }
         } catch (Exception e) {
-            Log.e(TAG, "writeTempCacheFile: ", e);
+            Log.e(TAG, "writeCacheFile: ", e);
         } finally {
             stream.close();
         }
@@ -146,12 +149,12 @@ public class AXrLottieCacheManager {
     }
 
     /**
-     * If the file created by {@link #writeTempCacheFile(String, InputStream, AXrFileExtension)} was successfully parsed,
+     * If the file created by {@link #writeTempCacheFile(String, InputStream, AXrFileExtension, boolean)} was successfully parsed,
      * this should be called to remove the temporary part of its name which will allow it to be a cache hit in the future.
      */
-    public File loadTempFile(String url) {
-        String fileName = filenameForUrl(url, JsonFileExtension.JSON, true);
-        File file = new File(getNetworkCacheParent(), fileName);
+    public File loadTempFile(String cache,boolean fromNetwork) {
+        String fileName = findCacheName(cache, JsonFileExtension.JSON, fromNetwork,true);
+        File file = new File(getParent(fromNetwork), fileName);
         String newFileName = file.getAbsolutePath().replace(".temp", "");
         File newFile = new File(newFileName);
         file.renameTo(newFile);
@@ -162,8 +165,12 @@ public class AXrLottieCacheManager {
      * Returns the cache file for the given url if it exists.
      * Returns null if neither exist.
      */
-    public File getCachedFile(String url, AXrFileExtension extension, boolean isTemp) {
-        return new File(getNetworkCacheParent(), filenameForUrl(url, extension, isTemp));
+    public File getCachedFile(String cache, AXrFileExtension extension, boolean fromNetwork, boolean isTemp) {
+        return new File(getParent(fromNetwork), findCacheName(cache, extension, fromNetwork, isTemp));
+    }
+
+    private File getParent(boolean fromNetwork){
+        return fromNetwork ? getNetworkCacheParent() : getLocalCacheParent();
     }
 
     public File getNetworkCacheParent() {
@@ -188,7 +195,7 @@ public class AXrLottieCacheManager {
         return file;
     }
 
-    private String filenameForUrl(String url, AXrFileExtension extension, boolean isTemp) {
-        return "lottie_cache_" + url.replaceAll("\\W+", "") + (isTemp ? extension.tempExtension() : extension.extension);
+    private String findCacheName(String url, AXrFileExtension extension, boolean fromNetwork, boolean isTemp) {
+        return (fromNetwork?"lottie_cache_":"") + url.replaceAll("\\W+", "") + (isTemp ? extension.tempExtension() : extension.extension);
     }
 }

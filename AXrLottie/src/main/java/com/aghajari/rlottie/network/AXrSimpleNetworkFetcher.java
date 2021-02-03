@@ -31,8 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * @author kienht
- * @since 29/01/2021
+ * AXrSimpleNetworkFetcher is the default network fetching stack built on HttpURLConnection.
  */
 public class AXrSimpleNetworkFetcher extends AXrLottieNetworkFetcher {
 
@@ -50,19 +49,19 @@ public class AXrSimpleNetworkFetcher extends AXrLottieNetworkFetcher {
         return new AXrSimpleLottieFetchResult(connection);
     }
 
-    public static class AXrSimpleLottieFetchResult implements AXrLottieFetchResult {
+    static class AXrSimpleLottieFetchResult implements AXrLottieFetchResult {
 
         @NonNull
         private final HttpURLConnection connection;
 
-        public AXrSimpleLottieFetchResult(@NonNull HttpURLConnection connection) {
+        AXrSimpleLottieFetchResult(@NonNull HttpURLConnection connection) {
             this.connection = connection;
         }
 
         @Override
         public boolean isSuccessful() {
             try {
-                return connection.getResponseCode() / 100 == 2;
+                return connection.getErrorStream() == null && connection.getResponseCode() / 100 == 2;
             } catch (IOException e) {
                 return false;
             }
@@ -110,8 +109,7 @@ public class AXrSimpleNetworkFetcher extends AXrLottieNetworkFetcher {
             } finally {
                 try {
                     r.close();
-                } catch (Exception e) {
-                    // Do nothing.
+                } catch (Exception ignore) {
                 }
             }
             return error.toString();

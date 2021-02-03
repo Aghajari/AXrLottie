@@ -16,21 +16,30 @@
  */
 
 
-package com.aghajari.rlottie.network;
+package com.aghajari.rlottie.extension;
 
 import com.aghajari.rlottie.AXrLottie;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.ZipInputStream;
 
+/**
+ * ZipFileExtension
+ * File Type                       : Compressed Archive File
+ * File Type Extension             : zip
+ * MIME Type                       : application/zip
+ */
 public class ZipFileExtension extends AXrFileExtension {
     public static final ZipFileExtension ZIP = new ZipFileExtension();
 
-    ZipFileExtension() {
+    public ZipFileExtension() {
         super(".zip");
+    }
+
+    public ZipFileExtension(String extension) {
+        super(extension);
     }
 
     @Override
@@ -43,11 +52,10 @@ public class ZipFileExtension extends AXrFileExtension {
     }
 
     @Override
-    public File saveAsTempFile(String url, InputStream stream) throws IOException {
-        File file = AXrLottie.getLottieCacheManager().writeTempCacheFile(url, stream, this);
-        file = fromZipStream(file,
-                AXrLottie.getLottieCacheManager().getCachedFile(url, JsonFileExtension.JSON, true),
-                new ZipInputStream(new FileInputStream(file)));
-        return file;
+    public File toFile(String cache, File input, boolean fromNetwork) throws IOException {
+        return fromZipStream(input,
+                AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, fromNetwork,true),
+                new ZipInputStream(new FileInputStream(input)));
     }
+
 }

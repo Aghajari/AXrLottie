@@ -16,14 +16,24 @@
  */
 
 
-package com.aghajari.rlottie.network;
+package com.aghajari.rlottie.extension;
 
+/**
+ * JsonFileExtension
+ * File Type                       : JavaScript Object Notation
+ * File Type Extension             : json
+ * MIME Type                       : application/json
+ */
 public class JsonFileExtension extends AXrFileExtension {
 
     public static final JsonFileExtension JSON = new JsonFileExtension();
 
-    JsonFileExtension() {
+    public JsonFileExtension() {
         super(".json");
+    }
+
+    public JsonFileExtension(String extension) {
+        super(extension);
     }
 
     @Override

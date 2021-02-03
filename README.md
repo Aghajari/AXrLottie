@@ -39,12 +39,16 @@ What is **AXrLottie**?
   - [Lottie2Gif](#lottie2gif)
   - [Listeners](#listeners)
   - [NetworkFetcher](#networkfetcher)
-    - [FileExtension](#fileextension)
+  - [FileExtension](#fileextension)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
 
 ## Changelogs
+**1.0.5 :**
+- FileExtension supports Local files now.
+- GZipFileExtension added.
+
 **1.0.4 :**
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie) (Fix crash when path animation data is empty)
 - LoadFromURL Bug fixed.
@@ -67,7 +71,7 @@ AXrLottie is available in the JCenter, so you just need to add it as a dependenc
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.4'
+implementation 'com.aghajari.rlottie:AXrLottie:1.0.5'
 ```
 
 Maven
@@ -75,7 +79,7 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <type>pom</type>
 </dependency>
 ```
@@ -84,7 +88,7 @@ Maven
 Let's START! :smiley:
 
 ## Install AXrLottie 
-First step, you should install AXrLottie
+First step, you should initialize AXrLottie
 
 ```java
 AXrLottie.init(this);
@@ -296,10 +300,10 @@ AXrLottieDrawable.fromURL(URL)
 
 [Back to contents](#table-of-contents)
 
-### FileExtension
+## FileExtension
 FileExtension specifies which type of files can be used in lottie. 
 
-As default, AXrLottie supports **JSON** and **ZIP** (must have a json file).
+As default, AXrLottie supports **JSON** , **ZIP** (must have a json file) , **GZIP** (just like `.tgs`).
 
 You can add more FileExtensions (such as .7z).
 
@@ -321,13 +325,17 @@ public class X7ZipFileExtension extends AXrFileExtension {
     }
 
     @Override
-    public File saveAsTempFile(String url, InputStream stream) throws IOException {
-        File file = super.saveAsTempFile(url,stream);
-	// read 7zip file and extract animation.
-	// file = ...
-	return file;
+    public File toFile(String cache, File input, boolean fromNetwork) throws IOException {
+    	File output; // read 7zip file and extract animation.
+	return output;
     }
 }
+```
+
+Add Telegram Animated Stickers support :
+
+```java
+AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
 ```
 
 [Back to contents](#table-of-contents)

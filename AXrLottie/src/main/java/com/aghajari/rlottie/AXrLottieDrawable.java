@@ -43,6 +43,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.aghajari.rlottie.extension.AXrFileReader;
 import com.aghajari.rlottie.network.AXrLottieTask;
 import com.aghajari.rlottie.network.AXrLottieTaskFactory;
 import com.aghajari.rlottie.network.AXrNetworkFetcher;
@@ -609,14 +610,14 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     public void setCustomEndFrame(int frame) {
-        if (customEndFrame > metaData[0]) {
+        if (frame > metaData[0]) {
             return;
         }
         customEndFrame = frame;
     }
 
     public void setCustomStartFrame(int frame) {
-        if (customStartFrame > metaData[0]) {
+        if (frame > metaData[0]) {
             return;
         }
         customStartFrame = Math.max(frame, 0);
@@ -1212,91 +1213,37 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         return cacheName.equals(that.cacheName);
     }
 
-    private static ThreadLocal<byte[]> readBufferLocal = new ThreadLocal<>();
-    private static ThreadLocal<byte[]> bufferLocal = new ThreadLocal<>();
 
-    private static String readRes(Context context, Object asset, int rawRes) {
-        InputStream inputStream = null;
-        try {
-            if (asset != null) {
-                inputStream = context.getAssets().open(String.valueOf(asset));
-            } else {
-                inputStream = context.getResources().openRawResource(rawRes);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return readStream(inputStream);
+    public static Builder fromPath(@NonNull String path) {
+        return fromFile(new File(path));
     }
 
-    private static String readStream(InputStream inputStream) {
-        if (inputStream == null) return null;
-
-        int totalRead = 0;
-        byte[] readBuffer = readBufferLocal.get();
-        if (readBuffer == null) {
-            readBuffer = new byte[64 * 1024];
-            readBufferLocal.set(readBuffer);
-        }
-        try {
-            int readLen;
-            byte[] buffer = bufferLocal.get();
-            if (buffer == null) {
-                buffer = new byte[4096];
-                bufferLocal.set(buffer);
-            }
-            while ((readLen = inputStream.read(buffer, 0, buffer.length)) >= 0) {
-                if (readBuffer.length < totalRead + readLen) {
-                    byte[] newBuffer = new byte[readBuffer.length * 2];
-                    System.arraycopy(readBuffer, 0, newBuffer, 0, totalRead);
-                    readBuffer = newBuffer;
-                    readBufferLocal.set(readBuffer);
-                }
-                if (readLen > 0) {
-                    System.arraycopy(buffer, 0, readBuffer, totalRead, readLen);
-                    totalRead += readLen;
-                }
-            }
-        } catch (Throwable e) {
-            return null;
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (Throwable ignore) {
-            }
-        }
-
-        return new String(readBuffer, 0, totalRead);
+    public static Builder fromFile(@NonNull File file) {
+        return new Builder(AXrFileReader.fromFile(file));
     }
 
-    public static Builder fromPath(String path) {
-        return new Builder(new File(path));
-    }
-
-    public static Builder fromFile(File file) {
-        return new Builder(file);
-    }
-
-    public static Builder fromURL(String url) {
+    public static Builder fromURL(@NonNull String url) {
         return new Builder(url);
     }
 
-    public static Builder fromJson(String JSON, String cacheName) {
+    public static Builder fromJson(@NonNull String JSON,@NonNull String cacheName) {
         return new Builder(JSON, cacheName);
     }
 
-    public static Builder fromAssets(@NonNull Context context, String fileName) {
-        return new Builder(readRes(context, fileName, 0), fileName.replaceAll("\\W+", ""));
+    public static Builder fromAssets(@NonNull Context context,@NonNull String fileName) {
+        return fromAssets(context, fileName, fileName.replaceAll("\\W+", ""));
     }
 
-    public static Builder fromRes(@NonNull Context context, int res, String cacheName) {
-        return new Builder(readRes(context, null, res), cacheName);
+    public static Builder fromAssets(@NonNull Context context,@NonNull String fileName,@NonNull String cacheName) {
+        return new Builder(AXrFileReader.fromAssets(context, fileName), cacheName);
     }
 
-    public static Builder fromInputStream(@NonNull InputStream inputStream, String cacheName) {
-        return new Builder(readStream(inputStream), cacheName);
+    public static Builder fromRes(@NonNull Context context, int res,@NonNull String cacheName) {
+        return new Builder(AXrFileReader.fromRes(context, res), cacheName);
+    }
+
+    public static Builder fromInputStream(@NonNull InputStream inputStream,@NonNull String cacheName) {
+        return new Builder(AXrFileReader.fromInputStream(inputStream), cacheName);
     }
 
     private enum BuilderType {

@@ -30,9 +30,9 @@ import com.aghajari.rlottie.network.AXrLottieTaskCache;
 import com.aghajari.rlottie.network.AXrLottieTaskFactory;
 import com.aghajari.rlottie.network.AXrNetworkFetcher;
 import com.aghajari.rlottie.network.AXrSimpleNetworkFetcher;
-import com.aghajari.rlottie.network.AXrFileExtension;
-import com.aghajari.rlottie.network.JsonFileExtension;
-import com.aghajari.rlottie.network.ZipFileExtension;
+import com.aghajari.rlottie.extension.AXrFileExtension;
+import com.aghajari.rlottie.extension.JsonFileExtension;
+import com.aghajari.rlottie.extension.ZipFileExtension;
 
 import java.io.File;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ import java.util.Map;
 
 /**
  * @author Amir Hossein Aghajari
- * @version 1.0.4
+ * @version 1.0.5
  */
 public class AXrLottie {
     static {
@@ -239,7 +239,7 @@ public class AXrLottie {
         }
 
         public static AXrLottieDrawable createFromAssets(Context context, String fileName, String name, int width, int height, boolean cache, boolean limitFps) {
-            return AXrLottieDrawable.fromAssets(context, fileName)
+            return AXrLottieDrawable.fromAssets(context, fileName, name)
                     .setCacheName(name)
                     .setSize(width, height)
                     .setCacheEnabled(cache)
@@ -248,7 +248,7 @@ public class AXrLottie {
         }
 
         public static AXrLottieDrawable createFromAssets(Context context, String fileName, String name, int width, int height, boolean startDecode) {
-            return AXrLottieDrawable.fromAssets(context, fileName)
+            return AXrLottieDrawable.fromAssets(context, fileName, name)
                     .setCacheName(name)
                     .setSize(width, height)
                     .setCacheEnabled(false)
