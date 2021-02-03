@@ -71,7 +71,7 @@ AXrLottie is available in the JCenter, so you just need to add it as a dependenc
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.4'
+implementation 'com.aghajari.rlottie:AXrLottie:1.0.5'
 ```
 
 Maven
@@ -79,7 +79,7 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <type>pom</type>
 </dependency>
 ```
