@@ -610,7 +610,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     public void setCustomEndFrame(int frame) {
-        if (customEndFrame > metaData[0]) {
+        if (frame > metaData[0]) {
             return;
         }
         customEndFrame = frame;
