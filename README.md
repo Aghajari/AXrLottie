@@ -50,11 +50,9 @@ What is **AXrLottie**?
 - DynamicProperties added to AXrLottieProperty!
 - Some improvements & Bugs fixed
 
-**1.0.5 :**
+**1.0.4, 1.0.5 :**
 - FileExtension supports Local files now.
 - GZipFileExtension added.
-
-**1.0.4 :**
 - Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie) (Fix crash when path animation data is empty)
 - LoadFromURL Bug fixed.
 - Supportage for NetworkFetcher and FileExtension added.
@@ -76,7 +74,7 @@ AXrLottie is available in the JCenter, so you just need to add it as a dependenc
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.5'
+implementation 'com.aghajari.rlottie:AXrLottie:1.0.6'
 ```
 
 Maven
@@ -84,7 +82,7 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <type>pom</type>
 </dependency>
 ```
