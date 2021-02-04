@@ -171,7 +171,7 @@ Keypath should contains object names separated by (.) and can handle globe(`**`)
 - TrRotation
 - TrScale
 
-## DynamicProperties
+### DynamicProperties
 Since v1.0.6 you can set dynamic properties to a layer!
 
 Example :
