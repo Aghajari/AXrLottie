@@ -9,7 +9,7 @@ import com.aghajari.rlottie.extension.GZipFileExtension;
  * @author kienht
  * @since 03/02/2021
  */
-class AXrLottieApplication extends Application {
+public class AXrLottieApplication extends Application {
 
     @Override
     public void onCreate() {

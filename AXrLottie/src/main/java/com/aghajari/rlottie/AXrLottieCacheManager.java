@@ -48,23 +48,31 @@ public class AXrLottieCacheManager {
     }
 
     /**
-     * Returns null if the animation doesn't exist in the cache.
+     * If the animation doesn't exist in the cache, null will be returned.
+     * <p>
+     * Once the animation is successfully parsed, {@link #loadTempFile(String, boolean)} must be
+     * called to move the file from a temporary location to its permanent cache location so it can
+     * be used in the future.
      */
     @Nullable
     @WorkerThread
     public File fetchURLFromCache(String url) {
-        Pair<AXrFileExtension, File> cacheResult = fetch(url);
-        if (cacheResult == null) {
+        File jsonFile = getCachedFile(url, JsonFileExtension.JSON, true, false);
+        if (jsonFile.exists()) {
+            return jsonFile;
+        } else {
+            for (AXrFileExtension extension : AXrLottie.getSupportedFileExtensions().values()) {
+                File file = getCachedFile(url, extension, true, false);
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
             return null;
         }
-        File f = cacheResult.second;
-        if (f == null || !f.exists()) return null;
-        return f;
     }
 
     public File fetchLocalFromCache(final String json, final String name) {
-        File f = new File(getLocalCacheParent(),
-        findCacheName(name, JsonFileExtension.JSON, false, false) + ".cache");
+        File f = new File(getLocalCacheParent(), findCacheName(name, JsonFileExtension.JSON, false, false) + ".cache");
         if (f.exists()) return f;
         return writeLocalCache(json, f);
     }
@@ -79,36 +87,6 @@ public class AXrLottieCacheManager {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * If the animation doesn't exist in the cache, null will be returned.
-     * <p>
-     * Once the animation is successfully parsed, {@link #loadTempFile(String, boolean)} must be
-     * called to move the file from a temporary location to its permanent cache location so it can
-     * be used in the future.
-     */
-    @Nullable
-    @WorkerThread
-    private Pair<AXrFileExtension, File> fetch(String url) {
-        File cachedFile = null;
-        for (AXrFileExtension extension : AXrLottie.getSupportedFileExtensions().values()) {
-            File file = new File(getNetworkCacheParent(), findCacheName(url, extension, true, false));
-            if (file.exists()) {
-                cachedFile = file;
-                break;
-            }
-        }
-        if (cachedFile == null) {
-            return null;
-        }
-
-        AXrFileExtension extension = AXrLottie.getSupportedFileExtensions().get(cachedFile.getAbsolutePath().substring(cachedFile.getAbsolutePath().lastIndexOf(".")).toLowerCase());
-        if (extension == null)
-            extension = new AXrFileExtension(cachedFile.getAbsolutePath().substring(cachedFile.getAbsolutePath().lastIndexOf("."))) {
-            };
-
-        return new Pair<>(extension, cachedFile);
     }
 
     /**

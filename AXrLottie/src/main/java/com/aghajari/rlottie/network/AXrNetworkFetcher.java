@@ -85,7 +85,6 @@ public class AXrNetworkFetcher {
     @WorkerThread
     protected AXrLottieResult<File> parseStream(InputStream inputStream, String contentType, String url) {
         try {
-            File file;
             if (contentType == null) {
                 // Assume JSON for best effort parsing. If it fails, it will just deliver the parse exception
                 // in the result which is more useful than failing here.
@@ -93,23 +92,23 @@ public class AXrNetworkFetcher {
             }
 
             boolean parsed = false;
-            File input = null;
             for (AXrFileExtension fileExtension : AXrLottie.getSupportedFileExtensions().values()) {
                 if (fileExtension.canParseContent(contentType)) {
                     if (fileExtension.willReadStream()) {
                         parsed = fileExtension.toFile(url, inputStream, true) != null;
                     } else {
-                        input = AXrLottie.getLottieCacheManager().writeTempCacheFile(url, inputStream, fileExtension, true);
+                        File input = AXrLottie.getLottieCacheManager().writeTempCacheFile(url, inputStream, fileExtension, true);
                         parsed = fileExtension.toFile(url, input, true) != null;
                         if (!parsed && input != null && input.exists()) input.delete();
                     }
                 }
                 if (parsed) break;
             }
-            if (!parsed)
+            if (!parsed) {
                 AXrLottie.getLottieCacheManager().writeTempCacheFile(url, inputStream, JsonFileExtension.JSON, true);
+            }
 
-            file = AXrLottie.getLottieCacheManager().loadTempFile(url, true);
+            File file = AXrLottie.getLottieCacheManager().loadTempFile(url, true);
 
             return new AXrLottieResult<>(file);
         } catch (Exception e) {
