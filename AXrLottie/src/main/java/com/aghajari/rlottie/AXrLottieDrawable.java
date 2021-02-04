@@ -499,8 +499,10 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         cancelNetworkTask();
 
         networkTask = AXrLottieTaskFactory.fromUrl(url, cache);
-        networkTask.addListener(networkLoadedListener)
-                .addFailureListener(networkFailureListener);
+        if (networkTask != null) {
+            networkTask.addListener(networkLoadedListener)
+                    .addFailureListener(networkFailureListener);
+        }
     }
 
     private void cancelNetworkTask() {

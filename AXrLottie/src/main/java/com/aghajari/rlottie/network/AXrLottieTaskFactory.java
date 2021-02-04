@@ -55,13 +55,15 @@ public class AXrLottieTaskFactory {
      * To skip the cache, add null as a third parameter.
      */
     public static AXrLottieTask<File> fromUrl(final String url, final boolean cache) {
+        if (TextUtils.isEmpty(url)) return null;
         final String cacheKey = "url_" + url;
         return cache(cache, cacheKey, new Callable<AXrLottieResult<File>>() {
             @Override
             public AXrLottieResult<File> call() {
                 AXrLottieResult<File> result = AXrLottie.getNetworkFetcher().fetchSync(url, cache);
-                if (cacheKey != null && result.getValue() != null) {
-                    AXrLottieTaskCache.getInstance().put(cacheKey, result.getValue());
+                File resultFile = result.getValue();
+                if (resultFile != null) {
+                    AXrLottieTaskCache.getInstance().put(cacheKey, resultFile);
                 }
                 return result;
             }
