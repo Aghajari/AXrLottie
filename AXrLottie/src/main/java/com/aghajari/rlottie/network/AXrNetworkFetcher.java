@@ -99,7 +99,8 @@ public class AXrNetworkFetcher {
                     } else {
                         File input = AXrLottie.getLottieCacheManager().writeTempCacheFile(url, inputStream, fileExtension, true);
                         parsed = fileExtension.toFile(url, input, true) != null;
-                        if (!parsed && input != null && input.exists()) input.delete();
+                        if (!parsed && input != null && input.exists())
+                            input.delete();
                     }
                 }
                 if (parsed) break;
@@ -109,7 +110,6 @@ public class AXrNetworkFetcher {
             }
 
             File file = AXrLottie.getLottieCacheManager().loadTempFile(url, true);
-
             return new AXrLottieResult<>(file);
         } catch (Exception e) {
             return new AXrLottieResult<>(e);

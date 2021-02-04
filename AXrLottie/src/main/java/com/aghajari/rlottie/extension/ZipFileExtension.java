@@ -32,6 +32,7 @@ import java.util.zip.ZipInputStream;
  * MIME Type                       : application/zip
  */
 public class ZipFileExtension extends AXrFileExtension {
+
     public static final ZipFileExtension ZIP = new ZipFileExtension();
 
     public ZipFileExtension() {

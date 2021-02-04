@@ -80,8 +80,11 @@ public abstract class AXrFileExtension {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         AXrFileExtension that = (AXrFileExtension) o;
-        return extension.equals(that.extension);
+
+        return extension != null ? extension.equals(that.extension) : that.extension == null;
     }
 }

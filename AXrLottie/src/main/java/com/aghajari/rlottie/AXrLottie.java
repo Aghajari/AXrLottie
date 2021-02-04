@@ -41,7 +41,7 @@ import java.util.Map;
 
 /**
  * @author Amir Hossein Aghajari
- * @version 1.0.5
+ * @version 1.0.6
  */
 public class AXrLottie {
     static {
@@ -113,7 +113,7 @@ public class AXrLottie {
      * for performance, caching, or analytics, you may replace the internal stack with your own.
      */
     public static void setNetworkFetcher(@Nullable AXrLottieNetworkFetcher networkFetcher) {
-        AXrLottie.networkFetcher = new AXrNetworkFetcher(networkFetcher!=null ? networkFetcher : new AXrSimpleNetworkFetcher());
+        AXrLottie.networkFetcher = new AXrNetworkFetcher(networkFetcher != null ? networkFetcher : new AXrSimpleNetworkFetcher());
     }
 
     /**

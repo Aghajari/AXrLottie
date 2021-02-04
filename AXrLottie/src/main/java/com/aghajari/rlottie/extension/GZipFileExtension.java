@@ -35,7 +35,6 @@ import java.util.zip.GZIPInputStream;
  * MIME Type                       : application/x-gzip
  */
 public class GZipFileExtension extends AXrFileExtension {
-    public static final GZipFileExtension GZIP = new GZipFileExtension();
 
     public GZipFileExtension() {
         super(".gz");

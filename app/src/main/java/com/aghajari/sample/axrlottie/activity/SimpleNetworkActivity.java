@@ -21,8 +21,7 @@ public class SimpleNetworkActivity extends AppCompatActivity {
         lottieView.setLottieDrawable(
                 AXrLottieDrawable.fromURL("https://image-1.gapo.vn/images/kienht-gapo-sticker2.zip")
                         .setAutoStart(true)
-                        .build()
-        );
+                        .build());
 
     }
 }

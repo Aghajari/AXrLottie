@@ -377,6 +377,33 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerColor(JNIEnv *env, jclass
     }
 }
 
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerColor(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)Ljava/lang/Integer;");
+
+    info->animation->setValue<Property::FillColor>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                    jobject colorObj = env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+                    jclass cls = env->GetObjectClass(colorObj);
+                    jmethodID integerToInt = env->GetMethodID(cls, "intValue", "()I");
+                    jint color = env->CallIntMethod(colorObj, integerToInt);
+
+                    return rlottie::Color(((color >> 16) & 0xff) / 255.0f,
+                                          ((color >> 8) & 0xff) / 255.0f,
+                                          ((color) & 0xff) / 255.0f);
+    });
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
 void Java_com_aghajari_rlottie_AXrLottieNative_setLayerStrokeColor(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jint color) {
     if (ptr == NULL || layer == nullptr) {
         return;
@@ -384,6 +411,33 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerStrokeColor(JNIEnv *env, 
     LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
     char const *layerString = env->GetStringUTFChars(layer, 0);
     info->animation->setValue<Property::StrokeColor>(layerString, rlottie::Color(((color >> 16) & 0xff) / 255.0f, ((color >> 8) & 0xff) / 255.0f, ((color) & 0xff) / 255.0f));
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerStrokeColor(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)Ljava/lang/Integer;");
+
+    info->animation->setValue<Property::StrokeColor>(layerString,
+                                                   [mth_update,store_Wlistener,env](const FrameInfo& info) {
+                                                       jobject colorObj = env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+                                                       jclass cls = env->GetObjectClass(colorObj);
+                                                       jmethodID integerToInt = env->GetMethodID(cls, "intValue", "()I");
+                                                       jint color = env->CallIntMethod(colorObj, integerToInt);
+
+                                                       return rlottie::Color(((color >> 16) & 0xff) / 255.0f,
+                                                                             ((color >> 8) & 0xff) / 255.0f,
+                                                                             ((color) & 0xff) / 255.0f);
+                                                   });
     if (layerString != 0) {
         env->ReleaseStringUTFChars(layer, layerString);
     }
@@ -401,6 +455,31 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerFillOpacity(JNIEnv *env, 
     }
 }
 
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerFillOpacity(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)Ljava/lang/Float;");
+
+    info->animation->setValue<Property::FillOpacity>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                jobject obj = env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+                jclass cls = env->GetObjectClass(obj);
+                jmethodID FloatToF = env->GetMethodID(cls, "floatValue", "()F");
+                jfloat value = env->CallFloatMethod(obj, FloatToF);
+
+                return (float) value;
+            });
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
 void Java_com_aghajari_rlottie_AXrLottieNative_setLayerStrokeOpacity(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jfloat value) {
     if (ptr == NULL || layer == nullptr) {
         return;
@@ -408,6 +487,31 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerStrokeOpacity(JNIEnv *env
     LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
     char const *layerString = env->GetStringUTFChars(layer, 0);
     info->animation->setValue<Property::StrokeOpacity>(layerString,(float) value);
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerStrokeOpacity(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)Ljava/lang/Float;");
+
+    info->animation->setValue<Property::StrokeOpacity>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                jobject obj = env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+                jclass cls = env->GetObjectClass(obj);
+                jmethodID FloatToF = env->GetMethodID(cls, "floatValue", "()F");
+                jfloat value = env->CallFloatMethod(obj, FloatToF);
+
+                return (float) value;
+            });
     if (layerString != 0) {
         env->ReleaseStringUTFChars(layer, layerString);
     }
@@ -425,6 +529,31 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerStrokeWidth(JNIEnv *env, 
     }
 }
 
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerStrokeWidth(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)Ljava/lang/Float;");
+
+    info->animation->setValue<Property::StrokeWidth>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                jobject obj = env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+                jclass cls = env->GetObjectClass(obj);
+                jmethodID FloatToF = env->GetMethodID(cls, "floatValue", "()F");
+                jfloat value = env->CallFloatMethod(obj, FloatToF);
+
+                return (float) value;
+            });
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
 void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrRotation(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jfloat value) {
     if (ptr == NULL || layer == nullptr) {
         return;
@@ -432,6 +561,31 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrRotation(JNIEnv *env, j
     LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
     char const *layerString = env->GetStringUTFChars(layer, 0);
     info->animation->setValue<Property::TrRotation>(layerString,(float) value);
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerTrRotation(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)Ljava/lang/Float;");
+
+    info->animation->setValue<Property::TrRotation>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                jobject obj = env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+                jclass cls = env->GetObjectClass(obj);
+                jmethodID FloatToF = env->GetMethodID(cls, "floatValue", "()F");
+                jfloat value = env->CallFloatMethod(obj, FloatToF);
+
+                return (float) value;
+            });
     if (layerString != 0) {
         env->ReleaseStringUTFChars(layer, layerString);
     }
@@ -449,6 +603,31 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrOpacity(JNIEnv *env, jc
     }
 }
 
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerTrOpacity(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)Ljava/lang/Float;");
+
+    info->animation->setValue<Property::TrOpacity>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                jobject obj = env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+                jclass cls = env->GetObjectClass(obj);
+                jmethodID FloatToF = env->GetMethodID(cls, "floatValue", "()F");
+                jfloat value = env->CallFloatMethod(obj, FloatToF);
+
+                return (float) value;
+            });
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
 void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrAnchor(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jfloat x, jfloat y) {
     if (ptr == NULL || layer == nullptr) {
         return;
@@ -456,6 +635,36 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrAnchor(JNIEnv *env, jcl
     LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
     char const *layerString = env->GetStringUTFChars(layer, 0);
     info->animation->setValue<Property::TrAnchor>(layerString, Point((float)x,(float)y));
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerTrAnchor(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)[Ljava/lang/Float;");
+
+    info->animation->setValue<Property::TrAnchor>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                auto obj = (jobjectArray) env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+
+                jobject xObj = env->GetObjectArrayElement(obj, 0);
+                jobject yObj = env->GetObjectArrayElement(obj, 1);
+                jclass cls = env->GetObjectClass(xObj);
+                jmethodID FloatToF = env->GetMethodID(cls, "floatValue", "()F");
+
+                jfloat x = env->CallFloatMethod(xObj, FloatToF);
+                jfloat y = env->CallFloatMethod(yObj, FloatToF);
+
+                return Point((float)x,(float)y);
+            });
     if (layerString != 0) {
         env->ReleaseStringUTFChars(layer, layerString);
     }
@@ -473,6 +682,36 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrPosition(JNIEnv *env, j
     }
 }
 
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerTrPosition(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)[Ljava/lang/Float;");
+
+    info->animation->setValue<Property::TrPosition>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                auto obj = (jobjectArray) env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+
+                jobject xObj = env->GetObjectArrayElement(obj, 0);
+                jobject yObj = env->GetObjectArrayElement(obj, 1);
+                jclass cls = env->GetObjectClass(xObj);
+                jmethodID FloatToF = env->GetMethodID(cls, "floatValue", "()F");
+
+                jfloat x = env->CallFloatMethod(xObj, FloatToF);
+                jfloat y = env->CallFloatMethod(yObj, FloatToF);
+
+                return Point((float)x,(float)y);
+            });
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
 void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrScale(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jfloat w, jfloat h) {
     if (ptr == NULL || layer == nullptr) {
         return;
@@ -484,6 +723,37 @@ void Java_com_aghajari_rlottie_AXrLottieNative_setLayerTrScale(JNIEnv *env, jcla
         env->ReleaseStringUTFChars(layer, layerString);
     }
 }
+
+void Java_com_aghajari_rlottie_AXrLottieNative_setDynamicLayerTrScale(JNIEnv *env, jclass clazz, jlong ptr, jstring layer, jobject listener) {
+    if (listener == NULL || ptr == NULL || layer == nullptr) {
+        return;
+    }
+    LottieInfo *info = (LottieInfo *) (intptr_t) ptr;
+    char const *layerString = env->GetStringUTFChars(layer, 0);
+
+    jweak store_Wlistener = env->NewWeakGlobalRef(listener);
+    jclass lclazz = env->GetObjectClass(store_Wlistener);
+    jmethodID mth_update = env->GetMethodID(lclazz, "getValue", "(I)[Ljava/lang/Float;");
+
+    info->animation->setValue<Property::TrScale>
+            (layerString,[mth_update,store_Wlistener,env](const FrameInfo& info) {
+                auto obj = (jobjectArray) env->CallObjectMethod(store_Wlistener, mth_update, (jint) (info.curFrame()));
+
+                jobject xObj = env->GetObjectArrayElement(obj, 0);
+                jobject yObj = env->GetObjectArrayElement(obj, 1);
+                jclass cls = env->GetObjectClass(xObj);
+                jmethodID FloatToF = env->GetMethodID(cls, "floatValue", "()F");
+
+                jfloat x = env->CallFloatMethod(xObj, FloatToF);
+                jfloat y = env->CallFloatMethod(yObj, FloatToF);
+
+                return Size((float)x,(float)y);
+            });
+    if (layerString != 0) {
+        env->ReleaseStringUTFChars(layer, layerString);
+    }
+}
+
 
 void Java_com_aghajari_rlottie_AXrLottieNative_configureModelCacheSize(JNIEnv *env, jclass clazz, jint cacheSize) {
     rlottie::configureModelCacheSize((size_t )cacheSize);

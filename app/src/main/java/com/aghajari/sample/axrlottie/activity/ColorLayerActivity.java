@@ -46,15 +46,15 @@ public class ColorLayerActivity extends AppCompatActivity {
     }
 
     public void changeBgColor(View v) {
-        lottieView.setLayerProperty("BG Outlines.**", AXrLottieProperty.fillColorProperty(findColor()));
+        lottieView.setLayerProperty("BG Outlines.**", AXrLottieProperty.fillColor(findColor()));
     }
 
     public void changeCloudsColor(View v) {
         int color = findColor();
-        lottieView.setLayerProperty("Cloud 1 Outlines.**", AXrLottieProperty.fillColorProperty(color));
-        lottieView.setLayerProperty("Cloud 2 Outlines.**", AXrLottieProperty.fillColorProperty(color));
-        lottieView.setLayerProperty("Cloud 3 Outlines.**", AXrLottieProperty.fillColorProperty(color));
-        lottieView.setLayerProperty("Cloud 4 Outlines.**", AXrLottieProperty.fillColorProperty(color));
+        lottieView.setLayerProperty("Cloud 1 Outlines.**", AXrLottieProperty.fillColor(color));
+        lottieView.setLayerProperty("Cloud 2 Outlines.**", AXrLottieProperty.fillColor(color));
+        lottieView.setLayerProperty("Cloud 3 Outlines.**", AXrLottieProperty.fillColor(color));
+        lottieView.setLayerProperty("Cloud 4 Outlines.**", AXrLottieProperty.fillColor(color));
     }
 
     Random rnd = new Random();
