@@ -34,6 +34,7 @@ What is **AXrLottie**?
   - [LayerProperty](#layerproperty)
     - [KeyPath](#keypath)
     - [Properties](#properties)
+    - [DynamicProperties](#dynamicproperties)
   - [Layers](#layers)
   - [Markers](#markers)
   - [Lottie2Gif](#lottie2gif)
@@ -45,6 +46,10 @@ What is **AXrLottie**?
 - [License](#license)
 
 ## Changelogs
+**1.0.6 :**
+- DynamicProperties added to AXrLottieProperty!
+- Some improvements & Bugs fixed
+
 **1.0.5 :**
 - FileExtension supports Local files now.
 - GZipFileExtension added.
@@ -137,8 +142,9 @@ To update a property at runtime, you need 3 things:
 3. setLayerProperty(KeyPath, AXrLottieProperty)
 
 ```java
-lottieDrawable.setLayerProperty("**" /**KeyPath*/, AXrLottieProperty.colorProperty(color) /**AXrLottieProperty*/);
+lottieDrawable.setLayerProperty("**" /**KeyPath*/, AXrLottieProperty.fillColor(color) /**AXrLottieProperty*/);
 ```
+
 ### Output
 <img src="./images/layer.gif" width=300 title="Screen">
 
@@ -166,6 +172,23 @@ Keypath should contains object names separated by (.) and can handle globe(`**`)
 - TrPosition
 - TrRotation
 - TrScale
+
+## DynamicProperties
+Since v1.0.6 you can set dynamic properties to a layer!
+
+Example :
+```java
+lottieDrawable.setLayerProperty("**" /**KeyPath*/,
+        AXrLottieProperty.dynamicFillColor(new AXrLottieProperty.DynamicProperty<Integer>() {
+            @Override
+            public Integer getValue(int frame) {
+                if (frame > 40)
+                    return Color.RED;
+                else
+                    return Color.BLUE;
+            }
+        }));
+```
 
 [Back to contents](#table-of-contents)
 
