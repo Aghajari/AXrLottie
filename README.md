@@ -50,7 +50,7 @@ What is **AXrLottie**?
 - DynamicProperties added to AXrLottieProperty!
 - Some improvements & Bugs fixed
 
-(Other versions changelog)[https://github.com/Aghajari/AXrLottie/wiki/Changelogs]
+[Other versions changelog](https://github.com/Aghajari/AXrLottie/wiki/Changelogs)
 
 ## Installation
 AXrLottie is available in the JCenter, so you just need to add it as a dependency (Module gradle)
