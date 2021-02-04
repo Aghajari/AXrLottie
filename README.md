@@ -308,9 +308,13 @@ As default, AXrLottie supports **JSON** , **ZIP** (must have a json file) , **GZ
 You can add more FileExtensions (such as .7z).
 
 Example :
-
 ```java
 AXrLottie.addFileExtension(new SevenZipFileExtension());   
+```
+
+```java
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 
 public class SevenZipFileExtension extends AXrFileExtension {
 
@@ -326,8 +330,22 @@ public class SevenZipFileExtension extends AXrFileExtension {
 
     @Override
     public File toFile(String cache, File input, boolean fromNetwork) throws IOException {
-    	File output; // read 7zip file and extract animation.
-	return output;
+    	// read 7zip file and extract animation.
+        SevenZFile sevenZFile = new SevenZFile(input);
+        SevenZArchiveEntry entry = sevenZFile.getNextEntry();
+        if (((List<SevenZArchiveEntry>) sevenZFile.getEntries()).size() > 1) {
+            throw new IllegalArgumentException("7zip file must contains only one json file!");
+        }
+        File output = AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, fromNetwork, false);
+        if (entry != null) {
+            FileOutputStream out = new FileOutputStream(output);
+            byte[] content = new byte[(int) entry.getSize()];
+            sevenZFile.read(content, 0, content.length);
+            out.write(content);
+            out.close();
+        }
+        sevenZFile.close();
+        return output;
     }
 }
 ```
