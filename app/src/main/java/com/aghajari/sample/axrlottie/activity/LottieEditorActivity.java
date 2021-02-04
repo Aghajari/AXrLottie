@@ -46,7 +46,6 @@ public class LottieEditorActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
     }
 
-
     private class LayerAdapter extends RecyclerView.Adapter<LayerAdapter.ViewHolder> {
 
         List<AXrLottieLayerInfo> list;
@@ -96,7 +95,7 @@ public class LottieEditorActivity extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        drawable.setLayerProperty(layer + ".**", AXrLottieProperty.fillColorProperty(findColor()));
+                        drawable.setLayerProperty(layer + ".**", AXrLottieProperty.fillColor(findColor()));
                     }
                 });
             }

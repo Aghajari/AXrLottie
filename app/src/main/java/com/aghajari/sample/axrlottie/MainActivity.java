@@ -31,64 +31,35 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initEmojiView();
+
         setContentView(R.layout.activity_main);
     }
 
-    public void simpleActivity(View view){
+    public void simpleActivity(View view) {
         startActivity(new Intent(this, SimpleActivity.class));
     }
 
-    public void simpleNetworkActivity(View view){
+    public void simpleNetworkActivity(View view) {
         startActivity(new Intent(this, SimpleNetworkActivity.class));
     }
 
-    public void colorLayerActivity(View view){
+    public void colorLayerActivity(View view) {
         startActivity(new Intent(this, ColorLayerActivity.class));
     }
 
-    public void editorActivity(View view){
+    public void editorActivity(View view) {
         startActivity(new Intent(this, LottieEditorActivity.class));
     }
 
-    public void markerActivity(View view){
+    public void markerActivity(View view) {
         startActivity(new Intent(this, MarkerActivity.class));
     }
 
-    public void emojiViewActivity(View view){
+    public void emojiViewActivity(View view) {
         startActivity(new Intent(this, AXEmojiViewActivity.class));
     }
 
-    public void lottie2gifActivity(View view){
+    public void lottie2gifActivity(View view) {
         startActivity(new Intent(this, Lottie2GifActivity.class));
-    }
-
-    public void initEmojiView(){
-        AXEmojiManager.install(this, new AXIOSEmojiProvider(this));
-
-        AXEmojiManager.setStickerViewCreatorListener(new StickerViewCreatorListener() {
-            @Override
-            public View onCreateStickerView(@NonNull Context context, @Nullable StickerCategory category, boolean isRecent) {
-                return new AXrLottieImageView(context);
-            }
-
-            @Override
-            public View onCreateCategoryView(@NonNull Context context) {
-                return new AXrLottieImageView(context);
-            }
-        });
-
-        AXEmojiManager.getEmojiViewTheme().setFooterEnabled(true);
-        AXEmojiManager.getEmojiViewTheme().setFooterSelectedItemColor(0xffFF4081);
-        AXEmojiManager.getEmojiViewTheme().setSelectionColor(Color.TRANSPARENT);
-        AXEmojiManager.getEmojiViewTheme().setSelectedColor(0xffFF4081);
-        AXEmojiManager.getEmojiViewTheme().setCategoryColor(Color.WHITE);
-        AXEmojiManager.getEmojiViewTheme().setFooterBackgroundColor(Color.WHITE);
-        AXEmojiManager.getEmojiViewTheme().setAlwaysShowDivider(true);
-
-        AXEmojiManager.getStickerViewTheme().setSelectionColor(0xffFF4081);
-        AXEmojiManager.getStickerViewTheme().setSelectedColor(0xffFF4081);
-        AXEmojiManager.getStickerViewTheme().setCategoryColor(Color.WHITE);
-        AXEmojiManager.getStickerViewTheme().setAlwaysShowDivider(true);
     }
 }
