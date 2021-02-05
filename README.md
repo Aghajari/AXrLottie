@@ -41,14 +41,16 @@ What is **AXrLottie**?
   - [Listeners](#listeners)
   - [NetworkFetcher](#networkfetcher)
   - [FileExtension](#fileextension)
+- [AXrLottieGlideDecoder](#axrlottieglidedecoder)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
 
 ## Changelogs
-**1.0.6 :**
-- DynamicProperties added to AXrLottieProperty!
-- Some improvements & Bugs fixed
+**1.1.0 :**
+- New Optional library! [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder)
+- SetDefaultOptions added to AXrLottie
+- OnError,OnLoaded added to OnLottieLoaderListener
 
 [Other versions changelog](https://github.com/Aghajari/AXrLottie/wiki/Changelogs)
 
@@ -57,7 +59,7 @@ AXrLottie is available in the JCenter, so you just need to add it as a dependenc
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.6'
+implementation 'com.aghajari.rlottie:AXrLottie:1.1.0'
 ```
 
 Maven
@@ -65,7 +67,7 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.6</version>
+  <version>1.1.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -359,6 +361,11 @@ Add Telegram Animated Stickers support :
 ```java
 AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
 ```
+
+[Back to contents](#table-of-contents)
+
+## [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder)
+[AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder) is a [Glide](https://github.com/bumptech/glide) integration library for displaying AXrLottieDrawable.
 
 [Back to contents](#table-of-contents)
 
