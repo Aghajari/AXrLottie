@@ -367,6 +367,16 @@ AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
 ## [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder)
 [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder) is a [Glide](https://github.com/bumptech/glide) integration library for displaying AXrLottieDrawable.
 
+Example :
+```java
+Glide.with(this)
+        .load(Uri.parse("file:///android_asset/loader.json"))
+        .set(AXrLottieGlideOptions.ENABLED, true)
+        .set(AXrLottieGlideOptions.NAME, "loader.json")
+        .set(AXrLottieGlideOptions.NETWORK, false)
+        .into(imageView);
+```
+
 [Back to contents](#table-of-contents)
 
 ## AnimatedSticker - AXEmojiView
