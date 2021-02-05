@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 - Amir Hossein Aghajari
+ * Copyright (C) 2021 - Amir Hossein Aghajari
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,15 @@
  */
 
 
-package com.aghajari.rlottie.extension;
+package com.aghajari.rlottie.decoder;
 
 import android.content.Context;
 
 import androidx.annotation.Nullable;
 
 import com.aghajari.rlottie.AXrLottie;
+import com.aghajari.rlottie.extension.AXrFileExtension;
+import com.aghajari.rlottie.extension.JsonFileExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,6 +47,24 @@ public class AXrFileReader {
             if (extension.canParseFile(input)) {
                 try {
                     File f = extension.toFile(cache, input, false);
+                    if (f != null) return f;
+                } catch (IOException ignore) {
+                }
+            }
+        }
+        return input;
+    }
+
+    public static File fromFile(File input,boolean fromNetwork,String name) {
+        String cache = "lottie_cache_" + name;
+        File file = AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, fromNetwork, true);
+        if (file != null && file.exists())
+            return file;
+
+        for (AXrFileExtension extension : AXrLottie.getSupportedFileExtensions().values()) {
+            if (extension.canParseFile(name)) {
+                try {
+                    File f = extension.toFile(cache, input, fromNetwork);
                     if (f != null) return f;
                 } catch (IOException ignore) {
                 }

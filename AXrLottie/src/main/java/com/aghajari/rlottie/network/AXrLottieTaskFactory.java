@@ -23,6 +23,7 @@ import android.text.TextUtils;
 import androidx.annotation.Nullable;
 
 import com.aghajari.rlottie.AXrLottie;
+import com.aghajari.rlottie.decoder.AXrLottieResult;
 
 import java.io.File;
 import java.util.HashMap;

@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.aghajari.rlottie.AXrLottie;
+import com.aghajari.rlottie.decoder.AXrLottieResult;
+import com.aghajari.rlottie.decoder.AXrStreamParser;
 import com.aghajari.rlottie.extension.AXrFileExtension;
 import com.aghajari.rlottie.extension.JsonFileExtension;
 
@@ -64,7 +66,7 @@ public class AXrNetworkFetcher {
                     InputStream inputStream = fetchResult.bodyByteStream();
                     String contentType = fetchResult.contentType();
 
-                    return parseStream(inputStream, contentType, url);
+                    return AXrStreamParser.parseStream(inputStream, contentType, url, true);
                 } else {
                     return new AXrLottieResult<>(new IllegalArgumentException(fetchResult.error()));
                 }
@@ -79,40 +81,6 @@ public class AXrNetworkFetcher {
                     Log.e(TAG, "LottieFetchResult close failed ", e);
                 }
             }
-        }
-    }
-
-    @WorkerThread
-    protected AXrLottieResult<File> parseStream(InputStream inputStream, String contentType, String url) {
-        try {
-            if (contentType == null) {
-                // Assume JSON for best effort parsing. If it fails, it will just deliver the parse exception
-                // in the result which is more useful than failing here.
-                contentType = "application/json";
-            }
-
-            boolean parsed = false;
-            for (AXrFileExtension fileExtension : AXrLottie.getSupportedFileExtensions().values()) {
-                if (fileExtension.canParseContent(contentType)) {
-                    if (fileExtension.willReadStream()) {
-                        parsed = fileExtension.toFile(url, inputStream, true) != null;
-                    } else {
-                        File input = AXrLottie.getLottieCacheManager().writeTempCacheFile(url, inputStream, fileExtension, true);
-                        parsed = fileExtension.toFile(url, input, true) != null;
-                        if (!parsed && input != null && input.exists())
-                            input.delete();
-                    }
-                }
-                if (parsed) break;
-            }
-            if (!parsed) {
-                AXrLottie.getLottieCacheManager().writeTempCacheFile(url, inputStream, JsonFileExtension.JSON, true);
-            }
-
-            File file = AXrLottie.getLottieCacheManager().loadTempFile(url, true);
-            return new AXrLottieResult<>(file);
-        } catch (Exception e) {
-            return new AXrLottieResult<>(e);
         }
     }
 

@@ -1,3 +1,4 @@
+include ':AXrLottieGlideDecoder'
 include ':AXrLottie'
 include ':app'
 rootProject.name = "AXrLottie-app"

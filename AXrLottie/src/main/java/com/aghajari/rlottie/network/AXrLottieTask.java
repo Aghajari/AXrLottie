@@ -24,6 +24,8 @@ import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 
+import com.aghajari.rlottie.decoder.AXrLottieResult;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
