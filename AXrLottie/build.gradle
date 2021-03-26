@@ -13,6 +13,7 @@ android {
         consumerProguardFiles "consumer-rules.pro"
         externalNativeBuild {
             cmake {
+                arguments "-DANDROID_ARM_NEON=OFF"
                 cppFlags "-std=c++14"
             }
         }
