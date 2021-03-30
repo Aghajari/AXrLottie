@@ -84,6 +84,7 @@ public class AXrLottieCacheManager {
             outputStreamWriter.close();
             return file;
         } catch (IOException e) {
+            if (file.exists()) file.delete();
             e.printStackTrace();
             return null;
         }
@@ -114,11 +115,13 @@ public class AXrLottieCacheManager {
 
                 output.flush();
             } catch (Exception e) {
+                if (file.exists()) file.delete();
                 Log.e(TAG, "writeCacheFile: ", e);
             } finally {
                 output.close();
             }
         } catch (Exception e) {
+            if (file.exists()) file.delete();
             Log.e(TAG, "writeCacheFile: ", e);
         } finally {
             stream.close();
@@ -133,6 +136,7 @@ public class AXrLottieCacheManager {
     public File loadTempFile(String cache, boolean fromNetwork) {
         String fileName = findCacheName(cache, JsonFileExtension.JSON, fromNetwork, true);
         File file = new File(getParent(fromNetwork), fileName);
+        if (!file.exists()) return null;
         String newFileName = file.getAbsolutePath().replace(".temp", "");
         File newFile = new File(newFileName);
         file.renameTo(newFile);

@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.aghajari.rlottie.AXrLottie;
+import com.aghajari.rlottie.decoder.AXrLottieResult;
+import com.aghajari.rlottie.decoder.AXrStreamParser;
 import com.aghajari.rlottie.extension.AXrFileExtension;
 import com.aghajari.rlottie.extension.JsonFileExtension;
 
@@ -64,7 +66,7 @@ public class AXrNetworkFetcher {
                     InputStream inputStream = fetchResult.bodyByteStream();
                     String contentType = fetchResult.contentType();
 
-                    return parseStream(inputStream, contentType, url);
+                    return AXrStreamParser.parseStream(inputStream, contentType, url, true);
                 } else {
                     return new AXrLottieResult<>(new IllegalArgumentException(fetchResult.error()));
                 }
@@ -115,5 +117,4 @@ public class AXrNetworkFetcher {
             return new AXrLottieResult<>(e);
         }
     }
-
 }

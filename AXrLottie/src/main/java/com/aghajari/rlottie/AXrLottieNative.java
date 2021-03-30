@@ -31,13 +31,13 @@ class AXrLottieNative {
     public static native void createCache(long ptr, int w, int h);
     public static native int getFrame(long ptr, int frame, Bitmap bitmap, int w, int h, int stride);
 
-    /** Layer&Marker */
+    /** Layer & Marker */
     public static native int getMarkersCount(long ptr);
     public static native String[] getMarkerData(long ptr, int index);
     public static native int getLayersCount(long ptr);
     public static native String[] getLayerData(long ptr, int index);
 
-    /** properties */
+    /** Properties */
     public static native void setLayerColor(long ptr, String layer, int color);
     public static native void setLayerStrokeColor(long ptr, String layer, int color);
     public static native void setLayerFillOpacity(long ptr, String layer, float color);

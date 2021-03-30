@@ -16,7 +16,7 @@
  */
 
 
-package com.aghajari.rlottie.network;
+package com.aghajari.rlottie.decoder;
 
 import androidx.annotation.Nullable;
 

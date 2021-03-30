@@ -1,4 +1,6 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
     compileSdkVersion 30
@@ -11,12 +13,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-        externalNativeBuild {
-            cmake {
-                arguments "-DANDROID_ARM_NEON=OFF"
-                cppFlags "-std=c++14"
-            }
-        }
     }
 
     buildTypes {
@@ -24,26 +20,22 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-
-        externalNativeBuild {
-            cmake {
-                path "src/main/cpp/CMakeLists.txt"
-                version "3.10.2"
-            }
-        }
-
     }
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.annotation:annotation:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-}
 
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation project(':AXrLottie')
+
+    implementation "com.github.bumptech.glide:glide:4.12.0"
+    annotationProcessor "com.github.bumptech.glide:compiler:4.12.0"
+}
 
 //JCenter
 apply plugin: 'com.github.dcendents.android-maven'
@@ -60,9 +52,9 @@ install {
         pom.project {
             packaging 'aar'
             groupId artifact.groupId
-            artifactId artifact.id
+            artifactId 'AXrLottieGlideDecoder'
             version artifact.version
-            name artifact.id // pom.project.name must be same as bintray.pkg.name
+            name 'AXrLottieGlideDecoder' // pom.project.name must be same as bintray.pkg.name
             url artifact.siteUrl
             inceptionYear '2020' // HARDCODED
             licenses {

@@ -29,12 +29,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +45,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.aghajari.rlottie.extension.AXrFileReader;
+import com.aghajari.rlottie.decoder.AXrFileReader;
+import com.aghajari.rlottie.decoder.AXrSourceData;
 import com.aghajari.rlottie.network.AXrLottieTask;
 import com.aghajari.rlottie.network.AXrLottieTaskFactory;
-import com.aghajari.rlottie.network.AXrNetworkFetcher;
 
 import static com.aghajari.rlottie.AXrLottieNative.destroy;
 import static com.aghajari.rlottie.AXrLottieNative.create;
@@ -110,6 +112,9 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     private volatile boolean isRecycled;
     private volatile long nativePtr;
 
+    @Nullable
+    private volatile AXrSourceData<?> sourceData = null;
+
     private boolean invalidateOnProgressSet;
     private boolean isInvalid;
     private boolean doNotRemoveInvalidOnFrameReady;
@@ -138,6 +143,8 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         public void onResult(Throwable result) {
             // Failure Listener
             Log.e(TAG, result.toString());
+            if (loaderListener != null)
+                loaderListener.onError(AXrLottieDrawable.this, result);
         }
     };
 
@@ -161,6 +168,8 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
 
     public interface OnLottieLoaderListener {
         void onLoaded(AXrLottieDrawable drawable);
+
+        void onError(AXrLottieDrawable drawable, Throwable error);
     }
 
     private Runnable uiRunnableNoFrame = new Runnable() {
@@ -408,15 +417,15 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         return (int) (timeBetweenFrames / speed);
     }
 
-    private Builder builder;
+    private final Builder builder;
 
     public AXrLottieDrawable(Builder builder) {
         this.builder = builder;
         if (builder.loaderListener != null)
-            setOnLottieLoaderListener(loaderListener);
+            setOnLottieLoaderListener(builder.loaderListener);
 
-        this.width = builder.w;
-        this.height = builder.h;
+        this.width = builder.w == AXrLottieOptions.DEFAULT ? 200 : builder.w;
+        this.height = builder.h == AXrLottieOptions.DEFAULT ? 200 : builder.h;
         shouldLimitFps = builder.limitFps;
         this.cacheName = builder.cacheName;
         getPaint().setFlags(Paint.FILTER_BITMAP_FLAG);
@@ -433,16 +442,16 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
                 break;
         }
 
-        if (builder.customEndFrame != DEFAULT)
+        if (builder.customEndFrame != AXrLottieOptions.DEFAULT)
             setCustomEndFrame(builder.customEndFrame);
 
-        if (builder.customStartFrame != DEFAULT)
+        if (builder.customStartFrame != AXrLottieOptions.DEFAULT)
             setCustomStartFrame(builder.customStartFrame);
 
-        if (builder.autoRepeat != DEFAULT)
+        if (builder.autoRepeat != AXrLottieOptions.DEFAULT)
             setAutoRepeat(builder.autoRepeat);
 
-        if (builder.repeatMode != DEFAULT)
+        if (builder.repeatMode != AXrLottieOptions.DEFAULT)
             setAutoRepeatMode(builder.repeatMode);
 
         if (builder.speed > 0)
@@ -457,7 +466,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             setOnFrameChangedListener(builder.listener);
 
         if (builder.render != null)
-            setOnFrameRenderListener(render);
+            setOnFrameRenderListener(builder.render);
 
         if (builder.selectedMarker != null)
             selectMarker(builder.selectedMarker);
@@ -475,6 +484,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             }
         }
 
+        sourceData = new AXrSourceData<String>(json);
         nativePtr = createWithJson(json, getCacheName(), metaData);
         timeBetweenFrames = Math.max(shouldLimitFps ? 33 : 16, (int) (1000.0f / metaData[1]));
         if (startDecode) {
@@ -484,6 +494,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     private void initFromFile(File file, boolean precache) {
+        sourceData = new AXrSourceData<File>(file);
         nativePtr = create(file.getAbsolutePath(), width, height, metaData, precache, shouldLimitFps);
         if (precache && lottieCacheGenerateQueue == null) {
             lottieCacheGenerateQueue = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
@@ -1196,7 +1207,12 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
      * lottie will call this when animation loaded
      */
     protected void lottieLoaded() {
-        if (loaderListener != null) loaderListener.onLoaded(this);
+        if (loaderListener != null) {
+            if (hasLoaded())
+                loaderListener.onLoaded(this);
+            else
+                loaderListener.onError(this, new RuntimeException("Couldn't load lottie!"));
+        }
     }
 
     @Override
@@ -1215,6 +1231,22 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         return cacheName.equals(that.cacheName);
     }
 
+    @Nullable
+    public AXrSourceData<?> getSourceData() {
+        return sourceData;
+    }
+
+    public boolean exportJson(File output) {
+        if (sourceData != null) {
+            try {
+                sourceData.export(output);
+                return true;
+            } catch (IOException e) {
+                Log.w(TAG, "Failed to encode drawable json", e);
+            }
+        }
+        return false;
+    }
 
     public static Builder fromPath(@NonNull String path) {
         return fromFile(new File(path));
@@ -1252,42 +1284,28 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         JSON, FILE, URL
     }
 
-    private static final int DEFAULT = -100;
-
-    public static class Builder {
+    public static class Builder extends AXrLottieOptions {
         private final BuilderType type;
         private final File file;
         private final String json;
         private final String url;
-        private String cacheName;
-        private int w = 200, h = 200;
-        private boolean cache = true;
-        private boolean limitFps = false;
-        private boolean startDecode = true;
-        private List<AXrLottieProperty.PropertyUpdate> properties = null;
-        private int customEndFrame = DEFAULT;
-        private int customStartFrame = DEFAULT;
-        private int repeatMode = DEFAULT;
-        private int autoRepeat = DEFAULT;
-        private OnFrameChangedListener listener = null;
-        private OnFrameRenderListener render = null;
-        private OnLottieLoaderListener loaderListener = null;
-        private boolean autoStart;
-        private AXrLottieMarker selectedMarker = null;
-        private float speed = -1;
 
         public Builder(File file) {
+            super();
             if (file == null) {
                 throw new NullPointerException("lottie file can't be null!");
             }
             this.file = file;
-            this.cacheName = file.getAbsolutePath();
             this.json = null;
             this.url = null;
             this.type = BuilderType.FILE;
+            setCacheName(file.getAbsolutePath());
         }
 
         public Builder(String json, String cacheName) {
+            super();
+            if (TextUtils.isEmpty(json))
+                throw new NullPointerException("json can't be empty!");
             this.file = null;
             this.json = json;
             this.url = null;
@@ -1296,140 +1314,17 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         }
 
         public Builder(String url) {
+            super();
+            if (TextUtils.isEmpty(url))
+                throw new NullPointerException("url can't be empty!");
             this.file = null;
             this.json = null;
             this.url = url;
-            this.cacheName = "lottie_cache_" + url.replaceAll("\\W+", "");
             this.type = BuilderType.URL;
+            setCacheName("lottie_cache_" + url.replaceAll("\\W+", ""));
         }
 
-        /**
-         * will be used to cache the JSON string data and compare drawables.
-         */
-        public Builder setCacheName(String cacheName) {
-            if (cacheName == null || cacheName.isEmpty()) {
-                throw new NullPointerException("lottie name (cacheName) can not be null!");
-            }
-            this.cacheName = cacheName;
-            return this;
-        }
-
-        /**
-         * set lottie min width and height
-         */
-        public Builder setSize(int w, int h) {
-            if (w <= 0 || h <= 0) {
-                throw new RuntimeException("lottie width and height must be > 0");
-            }
-            this.w = w;
-            this.h = h;
-            return this;
-        }
-
-        /**
-         * set lottie cache enabled
-         */
-        public Builder setCacheEnabled(boolean enabled) {
-            this.cache = enabled;
-            return this;
-        }
-
-        public Builder setSpeed(float speed) {
-            this.speed = speed;
-            return this;
-        }
-
-        /**
-         * set lottie frame rate limit
-         */
-        public Builder setFpsLimit(boolean limitFps) {
-            this.limitFps = limitFps;
-            return this;
-        }
-
-        public Builder setAllowDecodeSingleFrame(boolean startDecode) {
-            this.startDecode = startDecode;
-            return this;
-        }
-
-        /**
-         * Sets property value for the specified layer. layer can resolve
-         * to multiple contents. In that case, the callback's value will apply to all of them.
-         * <p>
-         * keyPath should contain object names separated by (.) and can handle globe(**) or wildchar(*).
-         */
-        public Builder addLayerProperty(String keyPath, AXrLottieProperty property) {
-            if (properties == null) properties = new ArrayList<>();
-            properties.add(new AXrLottieProperty.PropertyUpdate(property, keyPath));
-            return this;
-        }
-
-        public Builder setCustomEndFrame(int customEndFrame) {
-            this.customEndFrame = customEndFrame;
-            return this;
-        }
-
-        public Builder setCustomStartFrame(int customStartFrame) {
-            this.customStartFrame = customStartFrame;
-            return this;
-        }
-
-        public Builder setSelectedMarker(AXrLottieMarker marker) {
-            this.selectedMarker = marker;
-            return this;
-        }
-
-        /**
-         * Set auto repeat count
-         *
-         * @see AXrLottieDrawable#AUTO_REPEAT_INFINITE
-         */
-        public Builder setAutoRepeat(int repeatCount) {
-            autoRepeat = repeatCount;
-            return this;
-        }
-
-        /**
-         * Enable infinite auto repeat
-         *
-         * @see AXrLottieDrawable#setAutoRepeat(int)
-         */
-        public Builder setAutoRepeat(boolean enabled) {
-            return setAutoRepeat(enabled ? AUTO_REPEAT_INFINITE : 0);
-        }
-
-        /**
-         * Set repeat mode
-         *
-         * @see AXrLottieDrawable#REPEAT_MODE_RESTART
-         * @see AXrLottieDrawable#REPEAT_MODE_REVERSE
-         */
-        public Builder setAutoRepeatMode(int autoRepeatMode) {
-            this.repeatMode = autoRepeatMode;
-            return this;
-        }
-
-
-        public Builder setAutoStart(boolean autoStart) {
-            this.autoStart = autoStart;
-            return this;
-        }
-
-        public Builder setOnFrameChangedListener(OnFrameChangedListener listener) {
-            this.listener = listener;
-            return this;
-        }
-
-        public Builder setOnFrameRenderListener(OnFrameRenderListener render) {
-            this.render = render;
-            return this;
-        }
-
-        public Builder setOnLottieLoaderListener(OnLottieLoaderListener loaderListener) {
-            this.loaderListener = loaderListener;
-            return this;
-        }
-
+        @Override
         public AXrLottieDrawable build() {
             return new AXrLottieDrawable(this);
         }
