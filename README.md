@@ -41,40 +41,25 @@ What is **AXrLottie**?
   - [Listeners](#listeners)
   - [NetworkFetcher](#networkfetcher)
   - [FileExtension](#fileextension)
+- [AXrLottieGlideDecoder](#axrlottieglidedecoder)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
 
 ## Changelogs
-**1.0.6 :**
-- DynamicProperties added to AXrLottieProperty!
-- Some improvements & Bugs fixed
+**1.1.0 :**
+- New Optional library! [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder)
+- SetDefaultOptions added to AXrLottie
+- OnError,OnLoaded added to OnLottieLoaderListener
 
-**1.0.4, 1.0.5 :**
-- FileExtension supports Local files now.
-- GZipFileExtension added.
-- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie) (Fix crash when path animation data is empty)
-- LoadFromURL Bug fixed.
-- Supportage for NetworkFetcher and FileExtension added.
-- [OkHttpNetworkFetcher](https://github.com/Aghajari/AXrLottie/blob/master/app/src/main/java/com/aghajari/sample/axrlottie/OkHttpNetworkFetcher.java) (based on [OkHttp](https://square.github.io/okhttp/)) added to project.
-- Cache system updated.
-
-**1.0.2 :**
-- Updated to the latest version of [rlottie](https://github.com/Samsung/rlottie)
-- [AXrLottieMarker](#markers) added.
-- StrokeColor added to AXrLottieProperty.
-- configureModelCacheSize added to AXrLottie. (Method)
-- Now AXrLottieLayerInfo contains the type of layer.
-- Speed, RepeatMode(RESTART,REVERSE), AutoRepeatCount, CustomStartFrame, Marker added to AXrLottieDrawable.
-- onRepeat, onStart, onStop, onRecycle added to listener.
-- Some improvements & Bugs fixed
+[Other versions changelog](https://github.com/Aghajari/AXrLottie/wiki/Changelogs)
 
 ## Installation
 AXrLottie is available in the JCenter, so you just need to add it as a dependency (Module gradle)
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.6'
+implementation 'com.aghajari.rlottie:AXrLottie:1.1.0'
 ```
 
 Maven
@@ -82,7 +67,7 @@ Maven
 <dependency>
   <groupId>com.aghajari.rlottie</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.6</version>
+  <version>1.1.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -375,6 +360,21 @@ Add Telegram Animated Stickers support :
 
 ```java
 AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
+```
+
+[Back to contents](#table-of-contents)
+
+## [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder)
+[AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder) is a [Glide](https://github.com/bumptech/glide) integration library for displaying AXrLottieDrawable.
+
+Example :
+```java
+Glide.with(this)
+        .load(Uri.parse("file:///android_asset/loader.json"))
+        .set(AXrLottieGlideOptions.ENABLED, true)
+        .set(AXrLottieGlideOptions.NAME, "loader.json")
+        .set(AXrLottieGlideOptions.NETWORK, false)
+        .into(imageView);
 ```
 
 [Back to contents](#table-of-contents)

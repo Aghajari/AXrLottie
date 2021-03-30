@@ -60,6 +60,7 @@ public class LottieEditorActivity extends AppCompatActivity {
             for (AXrLottieLayerInfo layerInfo : list) {
                 Log.i("AXrLottie", layerInfo.toString());
             }
+
         }
 
         @NonNull

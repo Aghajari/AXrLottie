@@ -3,6 +3,7 @@ package com.aghajari.sample.axrlottie;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -13,7 +14,9 @@ import com.aghajari.emojiview.emoji.iosprovider.AXIOSEmojiProvider;
 import com.aghajari.emojiview.listener.StickerViewCreatorListener;
 import com.aghajari.emojiview.sticker.StickerCategory;
 import com.aghajari.rlottie.AXrLottie;
+import com.aghajari.rlottie.AXrLottieDrawable;
 import com.aghajari.rlottie.AXrLottieImageView;
+import com.aghajari.rlottie.AXrLottieOptions;
 import com.aghajari.rlottie.extension.GZipFileExtension;
 
 /**
@@ -31,6 +34,18 @@ public class AXrLottieApplication extends Application {
         AXrLottie.setNetworkFetcher(OkHttpNetworkFetcher.create());
         AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
 
+        AXrLottie.setDefaultOptions(new AXrLottieOptions()
+                .setOnLottieLoaderListener(new AXrLottieDrawable.OnLottieLoaderListener() {
+                    @Override
+                    public void onLoaded(AXrLottieDrawable drawable) {
+                        Log.d("AXrLottie", "AnimationLoaded : " + drawable.getCacheName());
+                    }
+
+                    @Override
+                    public void onError(AXrLottieDrawable drawable, Throwable error) {
+                        Log.e("AXrLottie", "Error : " + drawable.getCacheName(), error);
+                    }
+                }));
         initEmojiView();
     }
 

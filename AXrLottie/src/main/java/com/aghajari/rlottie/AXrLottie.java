@@ -41,7 +41,7 @@ import java.util.Map;
 
 /**
  * @author Amir Hossein Aghajari
- * @version 1.0.6
+ * @version 1.1.0
  */
 public class AXrLottie {
     static {
@@ -65,6 +65,9 @@ public class AXrLottie {
 
     private static final Map<String, AXrFileExtension> fileExtensions = new HashMap<>();
 
+    @Nullable
+    private static AXrLottieOptions defaultOptions = null;
+
     public static void init(Context context) {
         AXrLottie.context = context.getApplicationContext();
         loadScreenRefreshRate(context);
@@ -87,6 +90,15 @@ public class AXrLottie {
 
     public static void configureModelCacheSize(int cacheSize) {
         AXrLottieNative.configureModelCacheSize(cacheSize);
+    }
+
+    @Nullable
+    public static AXrLottieOptions getDefaultOptions() {
+        return defaultOptions;
+    }
+
+    public static void setDefaultOptions(@Nullable AXrLottieOptions defaultOptions) {
+        AXrLottie.defaultOptions = defaultOptions;
     }
 
     public static void loadScreenRefreshRate(Context context) {

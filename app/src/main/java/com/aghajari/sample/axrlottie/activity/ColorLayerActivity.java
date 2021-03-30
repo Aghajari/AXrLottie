@@ -37,12 +37,6 @@ public class ColorLayerActivity extends AppCompatActivity {
         for (AXrLottieLayerInfo layerInfo : lottieView.getLottieDrawable().getLayers()) {
             Log.i("AXrLottie", layerInfo.toString());
         }
-
-        // markers
-        Log.i("AXrLottie", "Markers : ");
-        for (AXrLottieMarker marker : lottieView.getLottieDrawable().getMarkers()) {
-            Log.i("AXrLottie", marker.toString());
-        }
     }
 
     public void changeBgColor(View v) {
