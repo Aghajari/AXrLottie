@@ -126,8 +126,11 @@ public class AXrLottieTask<T> {
      * @return the task for call chaining.
      */
     public synchronized AXrLottieTask<T> addFailureListener(Listener<Throwable> listener) {
-        if (result != null && result.getException() != null) {
-            listener.onResult(result.getException());
+        if (result != null) {
+            Throwable throwable = result.getException();
+            if (throwable != null) {
+                listener.onResult(throwable);
+            }
         }
 
         failureListeners.add(listener);
