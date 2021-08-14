@@ -5,7 +5,10 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.aghajari.rlottie.AXrLottie;
+import com.aghajari.rlottie.AXrLottieDrawable;
 import com.aghajari.rlottie.AXrLottieImageView;
+import com.aghajari.rlottie.AXrLottieOptions;
 import com.aghajari.rlottie.glide.AXrLottieGlideOptions;
 import com.aghajari.sample.axrlottie.R;
 import com.bumptech.glide.Glide;

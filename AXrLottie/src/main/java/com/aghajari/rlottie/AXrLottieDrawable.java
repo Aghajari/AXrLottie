@@ -142,7 +142,10 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
         @Override
         public void onResult(Throwable result) {
             // Failure Listener
-            Log.e(TAG, result.toString());
+
+            if (result != null)
+                Log.e(TAG, result.toString());
+
             if (loaderListener != null)
                 loaderListener.onError(AXrLottieDrawable.this, result);
         }

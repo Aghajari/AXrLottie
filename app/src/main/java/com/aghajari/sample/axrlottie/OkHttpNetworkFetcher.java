@@ -24,7 +24,6 @@ import com.aghajari.rlottie.network.AXrLottieNetworkFetcher;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;

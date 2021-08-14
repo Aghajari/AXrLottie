@@ -1,22 +1,11 @@
 package com.aghajari.sample.axrlottie;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
-import com.aghajari.emojiview.AXEmojiManager;
-import com.aghajari.emojiview.emoji.iosprovider.AXIOSEmojiProvider;
-import com.aghajari.emojiview.listener.StickerViewCreatorListener;
-import com.aghajari.emojiview.sticker.StickerCategory;
-import com.aghajari.rlottie.AXrLottie;
-import com.aghajari.rlottie.AXrLottieImageView;
-import com.aghajari.rlottie.extension.GZipFileExtension;
 
 import com.aghajari.sample.axrlottie.activity.AXEmojiViewActivity;
 import com.aghajari.sample.axrlottie.activity.ColorLayerActivity;

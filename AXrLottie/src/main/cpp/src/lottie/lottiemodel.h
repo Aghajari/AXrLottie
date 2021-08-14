@@ -688,7 +688,9 @@ class Layer : public Group {
         int     inFrame() const noexcept { return mInFrame; }
         int     outFrame() const noexcept { return mOutFrame; }
         int     startFrame() const noexcept { return mStartFrame; }
-        Color   solidColor() const noexcept { return mExtra->mSolidColor; }
+        Color   solidColor() const noexcept {
+            return mExtra ? mExtra->mSolidColor : Color();
+        }
         bool    autoOrient() const noexcept { return mAutoOrient; }
         int     timeRemap(int frameNo) const;
         VSize   layerSize() const { return mLayerSize; }
@@ -705,10 +707,7 @@ class Layer : public Group {
         {
             return mTransform ? mTransform->opacity(frameNo) : 1.0f;
         }
-        Asset *asset() const
-        {
-            return (mExtra && mExtra->mAsset) ? mExtra->mAsset : nullptr;
-        }
+        Asset *asset() const { return mExtra ? mExtra->mAsset : nullptr; }
         struct Extra {
             Color               mSolidColor;
             std::string         mPreCompRefId;
