@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.aghajari.emojiview.AXEmojiManager;
-import com.aghajari.emojiview.emoji.iosprovider.AXIOSEmojiProvider;
+import com.aghajari.emojiview.iosprovider.AXIOSEmojiProvider;
 import com.aghajari.emojiview.listener.StickerViewCreatorListener;
 import com.aghajari.emojiview.sticker.StickerCategory;
 import com.aghajari.rlottie.AXrLottie;
@@ -19,10 +19,6 @@ import com.aghajari.rlottie.AXrLottieImageView;
 import com.aghajari.rlottie.AXrLottieOptions;
 import com.aghajari.rlottie.extension.GZipFileExtension;
 
-/**
- * @author kienht
- * @since 03/02/2021
- */
 public class AXrLottieApplication extends Application {
 
     @Override

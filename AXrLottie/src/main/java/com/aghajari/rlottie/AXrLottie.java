@@ -41,7 +41,7 @@ import java.util.Map;
 
 /**
  * @author Amir Hossein Aghajari
- * @version 1.1.0
+ * @version 1.2.0
  */
 public class AXrLottie {
     static {

@@ -23,7 +23,7 @@ import com.bumptech.glide.load.Option;
 
 /**
  * @author Amir Hossein Aghajari
- * @version 1.1.0
+ * @version 1.2.0
  */
 public final class AXrLottieGlideOptions {
 
@@ -62,7 +62,7 @@ public final class AXrLottieGlideOptions {
             "com.aghajari.rlottie.glide#AutoStart", true);
 
     /**
-     * Customizes the size of the animation
+     * Customizes the size of the lottie drawable
      */
     public static final Option<Integer> SIZE = Option.memory(
             "com.aghajari.rlottie.glide#Size", -1);
