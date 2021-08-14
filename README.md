@@ -2,6 +2,11 @@
   <br><b>AXrLottie</b> Renders animations<br>and vectors exported in the bodymovin JSON format
   <br><a href="https://github.com/Aghajari/AXrLottie">GitHub</a> • <a href="https://github.com/Aghajari/AXrLottie/releases">Releases</a>
   <br><br><img width="40" alt="LCoders | AmirHosseinAghajari" src="https://user-images.githubusercontent.com/30867537/90538314-a0a79200-e193-11ea-8d90-0a3576e28a18.png"><br><img width="250" alt="picker" src="https://github.com/Samsung/rlottie/raw/master/.Gifs/logo.png">
+	
+[![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
+[![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.aghajari/AXrLottie.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.aghajari/AXrLottie/1.2.0/aar)
+[![Join the chat at https://gitter.im/Aghajari/community](https://badges.gitter.im/Aghajari/community.svg)](https://gitter.im/Aghajari/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 </div>
 
 
@@ -41,31 +46,39 @@ What is **AXrLottie**?
   - [Listeners](#listeners)
   - [NetworkFetcher](#networkfetcher)
   - [FileExtension](#fileextension)
+- [AXrLottieGlideDecoder](#axrlottieglidedecoder)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
 - [Author](#author)
 - [License](#license)
 
 ## Changelogs
-**1.0.6 :**
-- DynamicProperties added to AXrLottieProperty!
+**1.2.0 :**
+- Moved from JCenter to mavenCenteral
+- Synced with latest version of [rlottie](https://github.com/Samsung/rlottie)
 - Some improvements & Bugs fixed
+
+
+**1.1.0 :**
+- New Optional library! [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder)
+- SetDefaultOptions added to AXrLottie
+- OnError,OnLoaded added to OnLottieLoaderListener
 
 [Other versions changelog](https://github.com/Aghajari/AXrLottie/wiki/Changelogs)
 
 ## Installation
-AXrLottie is available in the JCenter, so you just need to add it as a dependency (Module gradle)
+AXrLottie is available in the `mavenCenteral()`, so you just need to add it as a dependency (Module gradle)
 
 Gradle
 ```gradle
-implementation 'com.aghajari.rlottie:AXrLottie:1.0.6'
+implementation 'io.github.aghajari:AXrLottie:1.2.0'
 ```
 
 Maven
 ```xml
 <dependency>
-  <groupId>com.aghajari.rlottie</groupId>
+  <groupId>io.github.aghajari</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.0.6</version>
+  <version>1.2.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -358,6 +371,21 @@ Add Telegram Animated Stickers support :
 
 ```java
 AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
+```
+
+[Back to contents](#table-of-contents)
+
+## [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder)
+[AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder) is a [Glide](https://github.com/bumptech/glide) integration library for displaying AXrLottieDrawable.
+
+Example :
+```java
+Glide.with(this)
+        .load(Uri.parse("file:///android_asset/loader.json"))
+        .set(AXrLottieGlideOptions.ENABLED, true)
+        .set(AXrLottieGlideOptions.NAME, "loader.json")
+        .set(AXrLottieGlideOptions.NETWORK, false)
+        .into(imageView);
 ```
 
 [Back to contents](#table-of-contents)
