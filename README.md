@@ -53,7 +53,7 @@ What is **AXrLottie**?
 
 ## Changelogs
 **1.2.0 :**
-- Moved from JCenter to mavenCenteral
+- Moved from JCenter to mavenCentral
 - Synced with latest version of [rlottie](https://github.com/Samsung/rlottie)
 - Some improvements & Bugs fixed
 
@@ -66,7 +66,7 @@ What is **AXrLottie**?
 [Other versions changelog](https://github.com/Aghajari/AXrLottie/wiki/Changelogs)
 
 ## Installation
-AXrLottie is available in the `mavenCenteral()`, so you just need to add it as a dependency (Module gradle)
+AXrLottie is available in the `mavenCentral()`, so you just need to add it as a dependency (Module gradle)
 
 Gradle
 ```gradle
