@@ -20,7 +20,6 @@ package com.aghajari.rlottie;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.os.SystemClock;
 
 import java.util.concurrent.CountDownLatch;
@@ -33,7 +32,8 @@ class DispatchQueue extends Thread {
     }
 
     public static void runOnUIThread(Runnable runnable, long delay) {
-        if (applicationHandler == null) applicationHandler = new Handler(Looper.getMainLooper());
+        if (applicationHandler == null)
+            applicationHandler = new Handler(Looper.getMainLooper());
         if (delay == 0) {
             applicationHandler.post(runnable);
         } else {
@@ -42,7 +42,7 @@ class DispatchQueue extends Thread {
     }
 
     private volatile Handler handler = null;
-    private CountDownLatch syncLatch = new CountDownLatch(1);
+    private final CountDownLatch syncLatch = new CountDownLatch(1);
     private long lastTaskTime;
 
     public DispatchQueue(final String threadName) {
@@ -59,18 +59,9 @@ class DispatchQueue extends Thread {
     public void cancelRunnable(Runnable runnable) {
         try {
             syncLatch.await();
+            if (handler == null)
+                return;
             handler.removeCallbacks(runnable);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void cancelRunnables(Runnable[] runnables) {
-        try {
-            syncLatch.await();
-            for (int i = 0; i < runnables.length; i++) {
-                handler.removeCallbacks(runnables[i]);
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,6 +78,7 @@ class DispatchQueue extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        validateHandler();
         if (delay <= 0) {
             return handler.post(runnable);
         } else {
@@ -97,6 +89,8 @@ class DispatchQueue extends Thread {
     public void cleanupQueue() {
         try {
             syncLatch.await();
+            if (handler == null)
+                return;
             handler.removeCallbacksAndMessages(null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,6 +102,8 @@ class DispatchQueue extends Thread {
     }
 
     public void recycle() {
+        if (handler == null)
+            return;
         handler.getLooper().quit();
     }
 
@@ -117,5 +113,10 @@ class DispatchQueue extends Thread {
         handler = new Handler();
         syncLatch.countDown();
         Looper.loop();
+    }
+
+    private void validateHandler(){
+        if (handler == null)
+            handler = new Handler();
     }
 }

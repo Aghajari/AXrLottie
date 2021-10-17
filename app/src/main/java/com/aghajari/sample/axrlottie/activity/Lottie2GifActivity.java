@@ -91,7 +91,8 @@ public class Lottie2GifActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
             file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "lottie.gif");
     }
@@ -137,8 +138,7 @@ public class Lottie2GifActivity extends AppCompatActivity {
     private int findSize() {
         if (size.getText().toString().isEmpty()) return 256;
         try {
-            int gifSize = Integer.parseInt(size.getText().toString());
-            return gifSize;
+            return Integer.parseInt(size.getText().toString());
         } catch (Exception ignore) {
             return 256;
         }

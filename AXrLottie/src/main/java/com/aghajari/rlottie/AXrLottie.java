@@ -41,12 +41,9 @@ import java.util.Map;
 
 /**
  * @author Amir Hossein Aghajari
- * @version 1.2.0
+ * @version 1.3.0
  */
 public class AXrLottie {
-    static {
-        System.loadLibrary("jlottie");
-    }
 
     private AXrLottie() {
     }
@@ -69,6 +66,7 @@ public class AXrLottie {
     private static AXrLottieOptions defaultOptions = null;
 
     public static void init(Context context) {
+        NativeLoader.initNativeLibs(context);
         AXrLottie.context = context.getApplicationContext();
         loadScreenRefreshRate(context);
 
