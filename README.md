@@ -74,7 +74,7 @@ AXrLottie is available in the `mavenCentral()`, so you just need to add it as a 
 
 Gradle
 ```gradle
-implementation 'io.github.aghajari:AXrLottie:1.2.0'
+implementation 'io.github.aghajari:AXrLottie:1.3.0'
 ```
 
 Maven
