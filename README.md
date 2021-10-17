@@ -22,7 +22,7 @@ What is [**rlottie**](https://github.com/Samsung/rlottie)?
 
 What is **AXrLottie**?
 
-**AXrLottie** includes [rlottie](https://github.com/Samsung/rlottie) into the Android. Easy A!
+**AXrLottie** includes [rlottie](https://github.com/Samsung/rlottie) into Android. Easy A!
 
 ## Lottie Examples
 <img height=200 src="https://github.com/airbnb/lottie-ios/blob/master/_Gifs/Examples1.gif">
