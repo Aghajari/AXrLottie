@@ -33,6 +33,7 @@ import com.aghajari.rlottie.network.AXrSimpleNetworkFetcher;
 import com.aghajari.rlottie.extension.AXrFileExtension;
 import com.aghajari.rlottie.extension.JsonFileExtension;
 import com.aghajari.rlottie.extension.ZipFileExtension;
+import com.getkeepsafe.relinker.ReLinker;
 
 import java.io.File;
 import java.io.InputStream;
@@ -44,6 +45,8 @@ import java.util.Map;
  * @version 1.3.0
  */
 public class AXrLottie {
+
+    private final static String LIB_NAME = "jlottie";
 
     private AXrLottie() {
     }
@@ -66,7 +69,7 @@ public class AXrLottie {
     private static AXrLottieOptions defaultOptions = null;
 
     public static void init(Context context) {
-        NativeLoader.initNativeLibs(context);
+        ReLinker.loadLibrary(context, LIB_NAME);
         AXrLottie.context = context.getApplicationContext();
         loadScreenRefreshRate(context);
 
