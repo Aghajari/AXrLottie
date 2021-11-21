@@ -5,7 +5,7 @@
 	
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.aghajari/AXrLottie.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.aghajari/AXrLottie/1.3.0/aar)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.aghajari/AXrLottie.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.aghajari/AXrLottie/1.3.1/aar)
 [![Join the chat at https://gitter.im/Aghajari/community](https://badges.gitter.im/Aghajari/community.svg)](https://gitter.im/Aghajari/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 </div>
 
@@ -52,7 +52,7 @@ What is **AXrLottie**?
 - [License](#license)
 
 ## Changelogs
-**1.3.0 :**
+**1.3.1 :**
 - Loading native library on very old devices fixed (Hopefully) ([#15](https://github.com/Aghajari/AXrLottie/issues/15))
 - [#16](https://github.com/Aghajari/AXrLottie/issues/16) Fixed
 
@@ -74,7 +74,7 @@ AXrLottie is available in the `mavenCentral()`, so you just need to add it as a 
 
 Gradle
 ```gradle
-implementation 'io.github.aghajari:AXrLottie:1.3.0'
+implementation 'io.github.aghajari:AXrLottie:1.3.1'
 ```
 
 Maven
