@@ -864,7 +864,7 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
     }
 
     public void setCurrentFrame(int frame, boolean async) {
-        setCurrentFrame(frame, true, false);
+        setCurrentFrame(frame, async, false);
     }
 
     public void setCurrentFrame(int frame, boolean async, boolean resetFrame) {
