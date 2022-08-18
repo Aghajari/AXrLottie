@@ -48,6 +48,7 @@ What is **AXrLottie**?
   - [FileExtension](#fileextension)
 - [AXrLottieGlideDecoder](#axrlottieglidedecoder)
 - [AnimatedSticker (AXEmojiView)](#animatedsticker---axemojiview)
+- [AXrLottieEmoji](#axrlottieemoji)
 - [Author](#author)
 - [License](#license)
 
@@ -448,6 +449,13 @@ and you can load your animations in StickerProvider
 
 ### Output
 <img src="./images/screen.png" width=300 title="Screen">
+
+[Back to contents](#table-of-contents)
+
+## AXrLottieEmoji
+![Preview](https://user-images.githubusercontent.com/30867537/185198934-8b4b6a67-6d2a-4987-bbd5-83ae26975709.gif)
+
+This sample appends lottie files as Emoji in TextView and EditText. [Read More & Download Sample](https://github.com/Aghajari/AXEmojiView/issues/33)
 
 [Back to contents](#table-of-contents)
 
