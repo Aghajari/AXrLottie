@@ -5,7 +5,7 @@
 	
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.aghajari/AXrLottie.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.aghajari/AXrLottie/1.3.1/aar)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.aghajari/AXrLottie.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.aghajari/AXrLottie/1.4.0/aar)
 [![Join the chat at https://gitter.im/Aghajari/community](https://badges.gitter.im/Aghajari/community.svg)](https://gitter.im/Aghajari/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 </div>
 
@@ -53,20 +53,10 @@ What is **AXrLottie**?
 - [License](#license)
 
 ## Changelogs
-**1.3.1 :**
-- Loading native library on very old devices fixed (Hopefully) ([#15](https://github.com/Aghajari/AXrLottie/issues/15))
-- [#16](https://github.com/Aghajari/AXrLottie/issues/16) Fixed
-
-**1.2.0 :**
-- Moved from JCenter to mavenCentral
-- Synced with latest version of [rlottie](https://github.com/Samsung/rlottie)
-- Some improvements & Bugs fixed
-
-
-**1.1.0 :**
-- New Optional library! [AXrLottieGlideDecoder](https://github.com/Aghajari/AXrLottie/wiki/AXrLottieGlideDecoder)
-- SetDefaultOptions added to AXrLottie
-- OnError,OnLoaded added to OnLottieLoaderListener
+**1.4.0 :**
+- Updated to the latest version of rlottie (1 Oct, 2022)
+- [#20](https://github.com/Aghajari/AXrLottie/issues/20) Fixed
+- [#19](https://github.com/Aghajari/AXrLottie/issues/19) Fixed
 
 [Other versions changelog](https://github.com/Aghajari/AXrLottie/wiki/Changelogs)
 
@@ -75,7 +65,7 @@ AXrLottie is available in the `mavenCentral()`, so you just need to add it as a 
 
 Gradle
 ```gradle
-implementation 'io.github.aghajari:AXrLottie:1.3.1'
+implementation 'io.github.aghajari:AXrLottie:1.4.0'
 ```
 
 Maven
@@ -83,7 +73,7 @@ Maven
 <dependency>
   <groupId>io.github.aghajari</groupId>
   <artifactId>AXrLottie</artifactId>
-  <version>1.3.1</version>
+  <version>1.4.0</version>
   <type>pom</type>
 </dependency>
 ```
