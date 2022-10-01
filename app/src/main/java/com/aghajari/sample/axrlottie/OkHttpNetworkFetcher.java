@@ -77,7 +77,7 @@ public class OkHttpNetworkFetcher extends AXrLottieNetworkFetcher {
 
         @NonNull
         @Override
-        public InputStream bodyByteStream() throws IOException {
+        public InputStream bodyByteStream() {
             return response.body().byteStream();
         }
 

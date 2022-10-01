@@ -665,9 +665,9 @@ void LottieParserImpl::parseComposition()
         } else if (0 == strcmp(key, "h")) {
             comp->mSize.setHeight(GetInt());
         } else if (0 == strcmp(key, "ip")) {
-            comp->mStartFrame = GetDouble();
+            comp->mStartFrame = std::lround(GetDouble());
         } else if (0 == strcmp(key, "op")) {
-            comp->mEndFrame = GetDouble();
+            comp->mEndFrame = std::lround(GetDouble());
         } else if (0 == strcmp(key, "fr")) {
             comp->mFrameRate = GetDouble();
         } else if (0 == strcmp(key, "assets")) {
@@ -1142,6 +1142,10 @@ void LottieParserImpl::parseShapesAttr(model::Layer *layer)
 model::Object *LottieParserImpl::parseObjectTypeAttr()
 {
     const char *type = GetString();
+    if (!type) {
+        vWarning << "No object type specified";
+        return nullptr;
+    }
     if (0 == strcmp(type, "gr")) {
         return parseGroupObject();
     } else if (0 == strcmp(type, "rc")) {

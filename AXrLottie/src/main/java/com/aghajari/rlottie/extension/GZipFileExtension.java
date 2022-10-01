@@ -53,10 +53,8 @@ public class GZipFileExtension extends AXrFileExtension {
 
     @WorkerThread
     public static File toFile(InputStream stream, File output) {
-        try {
-            GZIPInputStream gis = new GZIPInputStream(stream);
-            FileOutputStream fos = new FileOutputStream(output);
-
+        try (GZIPInputStream gis = new GZIPInputStream(stream);
+             FileOutputStream fos = new FileOutputStream(output)) {
             byte[] buffer = new byte[1024];
             int len;
             while ((len = gis.read(buffer)) > 0) {

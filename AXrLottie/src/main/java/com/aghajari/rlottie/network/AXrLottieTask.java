@@ -79,7 +79,7 @@ public class AXrLottieTask<T> {
             try {
                 setResult(runnable.call());
             } catch (Throwable e) {
-                setResult(new AXrLottieResult<T>(e));
+                setResult(new AXrLottieResult<>(e));
             }
         } else {
             EXECUTOR.execute(new LottieFutureTask(runnable));
@@ -110,7 +110,7 @@ public class AXrLottieTask<T> {
 
     /**
      * Remove a given task listener. The task will continue to execute so you can re-add
-     * a listener if neccesary.
+     * a listener if necessary.
      *
      * @return the task for call chaining.
      */
@@ -136,7 +136,7 @@ public class AXrLottieTask<T> {
 
     /**
      * Remove a given task failure listener. The task will continue to execute so you can re-add
-     * a listener if neccesary.
+     * a listener if necessary.
      *
      * @return the task for call chaining.
      */
@@ -147,19 +147,16 @@ public class AXrLottieTask<T> {
 
     private void notifyListeners() {
         // Listeners should be called on the main thread.
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (result == null) {
-                    return;
-                }
-                // Local reference in case it gets set on a background thread.
-                AXrLottieResult<T> result = AXrLottieTask.this.result;
-                if (result.getValue() != null) {
-                    notifySuccessListeners(result.getValue());
-                } else {
-                    notifyFailureListeners(result.getException());
-                }
+        handler.post(() -> {
+            // Local reference in case it gets set on a background thread.
+            AXrLottieResult<T> result = AXrLottieTask.this.result;
+            if (result == null)
+                return;
+
+            if (result.getValue() != null) {
+                notifySuccessListeners(result.getValue());
+            } else if (result.getException() != null) {
+                notifyFailureListeners(result.getException());
             }
         });
     }
@@ -201,7 +198,7 @@ public class AXrLottieTask<T> {
             try {
                 setResult(get());
             } catch (InterruptedException | ExecutionException e) {
-                setResult(new AXrLottieResult<T>(e));
+                setResult(new AXrLottieResult<>(e));
             }
         }
     }

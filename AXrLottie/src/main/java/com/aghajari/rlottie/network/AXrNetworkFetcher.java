@@ -26,8 +26,6 @@ import androidx.annotation.WorkerThread;
 import com.aghajari.rlottie.AXrLottie;
 import com.aghajari.rlottie.decoder.AXrLottieResult;
 import com.aghajari.rlottie.decoder.AXrStreamParser;
-import com.aghajari.rlottie.extension.AXrFileExtension;
-import com.aghajari.rlottie.extension.JsonFileExtension;
 
 import java.io.File;
 import java.io.IOException;

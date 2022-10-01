@@ -23,7 +23,7 @@ import com.bumptech.glide.load.Option;
 
 /**
  * @author Amir Hossein Aghajari
- * @version 1.2.0
+ * @version 1.4.0
  */
 public final class AXrLottieGlideOptions {
 

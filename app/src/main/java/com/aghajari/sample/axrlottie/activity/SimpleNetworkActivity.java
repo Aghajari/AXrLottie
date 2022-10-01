@@ -25,10 +25,12 @@ public class SimpleNetworkActivity extends AppCompatActivity {
         //final String url = "https://image-1.gapo.vn/images/AnimatedSticker.tgs";
         final String url = "https://image-1.gapo.vn/images/kienht-gapo-sticker2.zip";
 
-        /**lottieView.setLottieDrawable(
+        /*
+        lottieView.setLottieDrawable(
          AXrLottieDrawable.fromURL(url)
          .setAutoStart(true)
-         .build());*/
+         .build());
+         */
 
         Glide.with(this)
                 .load(url)

@@ -55,7 +55,7 @@ public class AXrFileReader {
         return input;
     }
 
-    public static File fromFile(File input,boolean fromNetwork,String name) {
+    public static File fromFile(File input, boolean fromNetwork, String name) {
         String cache = "lottie_cache_" + name;
         File file = AXrLottie.getLottieCacheManager().getCachedFile(cache, JsonFileExtension.JSON, fromNetwork, true);
         if (file != null && file.exists())
@@ -116,8 +116,8 @@ public class AXrFileReader {
         return readResAsString(context, asset, rawRes);
     }
 
-    private static ThreadLocal<byte[]> readBufferLocal = new ThreadLocal<>();
-    private static ThreadLocal<byte[]> bufferLocal = new ThreadLocal<>();
+    private static final ThreadLocal<byte[]> readBufferLocal = new ThreadLocal<>();
+    private static final ThreadLocal<byte[]> bufferLocal = new ThreadLocal<>();
 
     private static String readResAsString(Context context, String asset, int rawRes) {
         return readStream(readRes(context, asset, rawRes));
@@ -169,9 +169,7 @@ public class AXrFileReader {
             return null;
         } finally {
             try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
+                inputStream.close();
             } catch (Throwable ignore) {
             }
         }

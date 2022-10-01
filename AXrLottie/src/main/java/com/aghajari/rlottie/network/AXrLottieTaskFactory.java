@@ -58,16 +58,13 @@ public class AXrLottieTaskFactory {
     public static AXrLottieTask<File> fromUrl(final String url, final boolean cache) {
         if (TextUtils.isEmpty(url)) return null;
         final String cacheKey = "url_" + url;
-        return cache(cache, cacheKey, new Callable<AXrLottieResult<File>>() {
-            @Override
-            public AXrLottieResult<File> call() {
-                AXrLottieResult<File> result = AXrLottie.getNetworkFetcher().fetchSync(url, cache);
-                File resultFile = result.getValue();
-                if (resultFile != null) {
-                    AXrLottieTaskCache.getInstance().put(cacheKey, resultFile);
-                }
-                return result;
+        return cache(cache, cacheKey, () -> {
+            AXrLottieResult<File> result = AXrLottie.getNetworkFetcher().fetchSync(url, cache);
+            File resultFile = result.getValue();
+            if (resultFile != null) {
+                AXrLottieTaskCache.getInstance().put(cacheKey, resultFile);
             }
+            return result;
         });
     }
 
@@ -80,12 +77,7 @@ public class AXrLottieTaskFactory {
         if (cache && !TextUtils.isEmpty(cacheKey)) {
             final File cachedFile = AXrLottieTaskCache.getInstance().get(cacheKey);
             if (cachedFile != null) {
-                return new AXrLottieTask<>(new Callable<AXrLottieResult<File>>() {
-                    @Override
-                    public AXrLottieResult<File> call() {
-                        return new AXrLottieResult<>(cachedFile);
-                    }
-                });
+                return new AXrLottieTask<>(() -> new AXrLottieResult<>(cachedFile));
             }
         }
 
@@ -95,18 +87,8 @@ public class AXrLottieTaskFactory {
 
         AXrLottieTask<File> task = new AXrLottieTask<>(callable);
         if (cacheKey != null) {
-            task.addListener(new AXrLottieTask.Listener<File>() {
-                @Override
-                public void onResult(File result) {
-                    taskCache.remove(cacheKey);
-                }
-            });
-            task.addFailureListener(new AXrLottieTask.Listener<Throwable>() {
-                @Override
-                public void onResult(Throwable result) {
-                    taskCache.remove(cacheKey);
-                }
-            });
+            task.addListener(result -> taskCache.remove(cacheKey));
+            task.addFailureListener(result -> taskCache.remove(cacheKey));
             taskCache.put(cacheKey, task);
         }
         return task;

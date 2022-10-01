@@ -98,7 +98,8 @@ class ZipCompositionFactory {
                         closeQuietly(inputStream);
                         return f;
                     }
-                    /**} else if (entryName.contains(".png") || entryName.contains(".webp")) {
+                    /*
+                    } else if (entryName.contains(".png") || entryName.contains(".webp")) {
                      } else {
                      File f = toFile(file, output, inputStream, entry);
                      if (f != null) {

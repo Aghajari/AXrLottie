@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
-import androidx.core.util.Pair;
 
 import com.aghajari.rlottie.extension.AXrFileExtension;
 import com.aghajari.rlottie.extension.JsonFileExtension;
@@ -39,7 +38,7 @@ public class AXrLottieCacheManager {
         if (parentDir.exists()) {
             File[] files = parentDir.listFiles();
             if (files != null && files.length > 0) {
-                for (File file : parentDir.listFiles()) {
+                for (File file : files) {
                     file.delete();
                 }
             }

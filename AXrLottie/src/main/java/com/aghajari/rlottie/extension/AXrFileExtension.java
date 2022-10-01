@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * AXrFileExtension specifies which type of files can be used in lottie.
@@ -85,6 +86,6 @@ public abstract class AXrFileExtension {
 
         AXrFileExtension that = (AXrFileExtension) o;
 
-        return extension != null ? extension.equals(that.extension) : that.extension == null;
+        return Objects.equals(extension, that.extension);
     }
 }

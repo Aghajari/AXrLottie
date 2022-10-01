@@ -40,10 +40,10 @@ public class AXrLottie2Gif {
     private boolean running;
     private boolean successful;
     private boolean destroyed = false;
-    private Builder builder;
+    private final Builder builder;
     private int mFrame, mTotalFrame;
 
-    private Lottie2GifListener listener = new Lottie2GifListener() {
+    private final Lottie2GifListener listener = new Lottie2GifListener() {
         @Override
         public void onStarted() {
             running = true;
@@ -67,7 +67,8 @@ public class AXrLottie2Gif {
     };
 
     AXrLottie2Gif(Builder builder) {
-        if (runnableQueue == null) runnableQueue = new DispatchQueuePool(2);
+        if (runnableQueue == null)
+            runnableQueue = new DispatchQueuePool(2);
         this.builder = builder;
         build();
     }
@@ -154,7 +155,7 @@ public class AXrLottie2Gif {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof AXrLottie2Gif)) return false;
+        if (!(o instanceof AXrLottie2Gif)) return false;
         AXrLottie2Gif c = (AXrLottie2Gif) o;
         if (c.getBuilder() == null) return false;
         return (c.getGifPath().equals(getGifPath()) && c.getBuilder().lottie == builder.lottie);
@@ -183,8 +184,8 @@ public class AXrLottie2Gif {
         public Builder(@NonNull AXrLottieDrawable animation) {
             this.lottie = animation.getNativePtr();
             float density = 1;
-            if (AXrLottie.context != null)
-                density = AXrLottie.context.getResources().getDisplayMetrics().density;
+            if (AXrLottie.applicationContext != null)
+                density = AXrLottie.applicationContext.getResources().getDisplayMetrics().density;
             setSize((int) (animation.getMinimumWidth() / density), (int) (animation.getMinimumHeight() / density));
         }
 

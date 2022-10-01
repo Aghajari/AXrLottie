@@ -38,7 +38,8 @@ public class AXrLottieDrawableEncoder implements ResourceEncoder<AXrLottieDrawab
     @Override
     public boolean encode(Resource<AXrLottieDrawable> data, File file, Options options) {
         AXrLottieDrawable drawable = data.get();
-        if (drawable == null || file == null) return false;
+        if (file == null)
+            return false;
         return drawable.exportJson(file);
     }
 }

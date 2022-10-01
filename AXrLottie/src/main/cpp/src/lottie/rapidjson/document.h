@@ -1127,7 +1127,7 @@ public:
                 && (d < static_cast<double>((std::numeric_limits<int64_t>::max)()))
                 && (i == static_cast<int64_t>(d));
         }
-        return true; // double, int, uint are always lossless
+        return true; // double, int, uint32_t are always lossless
     }
 
     // Checks whether a number is a float (possible lossy).

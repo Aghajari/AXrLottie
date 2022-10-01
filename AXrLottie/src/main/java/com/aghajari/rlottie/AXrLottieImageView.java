@@ -34,7 +34,7 @@ public class AXrLottieImageView extends AppCompatImageView {
 
     private ArrayList<AXrLottieProperty.PropertyUpdate> layerProperties;
     private AXrLottieDrawable drawable;
-    private boolean autoRepeat = true;
+    private int autoRepeat = AXrLottieOptions.DEFAULT;
     private boolean attachedToWindow;
     private boolean playing;
 
@@ -77,7 +77,8 @@ public class AXrLottieImageView extends AppCompatImageView {
         //release();
         if (mDrawable instanceof AXrLottieDrawable) {
             drawable = (AXrLottieDrawable) mDrawable;
-            drawable.setAutoRepeat(autoRepeat);
+            if (autoRepeat != AXrLottieOptions.DEFAULT)
+                drawable.setAutoRepeat(autoRepeat);
 
             if (layerProperties != null) {
                 drawable.setLayerProperties(layerProperties);
@@ -126,6 +127,10 @@ public class AXrLottieImageView extends AppCompatImageView {
     }
 
     public void setAutoRepeat(boolean repeat) {
+        autoRepeat = repeat ? AXrLottieDrawable.AUTO_REPEAT_INFINITE : 0;
+    }
+
+    public void setAutoRepeat(int repeat) {
         autoRepeat = repeat;
     }
 

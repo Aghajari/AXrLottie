@@ -46,6 +46,7 @@ typedef enum {
 
 typedef struct Lottie_Animation_S Lottie_Animation;
 
+
 /**
  *  @brief Constructs an animation object from file path.
  *

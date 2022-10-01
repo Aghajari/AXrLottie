@@ -25,7 +25,7 @@ import java.util.List;
 
 public class AXrLottieOptions {
 
-    public AXrLottieOptions(){
+    public AXrLottieOptions() {
         apply(AXrLottie.getDefaultOptions());
     }
 
@@ -158,7 +158,6 @@ public class AXrLottieOptions {
         return this;
     }
 
-
     public AXrLottieOptions setAutoStart(boolean autoStart) {
         this.autoStart = autoStart;
         return this;
@@ -179,7 +178,7 @@ public class AXrLottieOptions {
         return this;
     }
 
-    public AXrLottieOptions apply(AXrLottieOptions options){
+    public AXrLottieOptions apply(AXrLottieOptions options) {
         if (options == null || options == this) return this;
 
         cacheName = options.cacheName;

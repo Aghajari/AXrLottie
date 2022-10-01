@@ -42,16 +42,14 @@ import java.util.Map;
 
 /**
  * @author Amir Hossein Aghajari
- * @version 1.3.0
+ * @version 1.4.0
  */
 public class AXrLottie {
-
-    private final static String LIB_NAME = "jlottie";
 
     private AXrLottie() {
     }
 
-    static Context context;
+    static Context applicationContext;
 
     static float screenRefreshRate = 60;
 
@@ -69,8 +67,8 @@ public class AXrLottie {
     private static AXrLottieOptions defaultOptions = null;
 
     public static void init(Context context) {
-        ReLinker.loadLibrary(context, LIB_NAME);
-        AXrLottie.context = context.getApplicationContext();
+        ReLinker.loadLibrary(context, "jlottie");
+        AXrLottie.applicationContext = context.getApplicationContext();
         loadScreenRefreshRate(context);
 
         addFileExtension(ZipFileExtension.ZIP);
@@ -192,8 +190,8 @@ public class AXrLottie {
                 local = cacheManager;
                 if (local == null) {
                     cacheManager = local = new AXrLottieCacheManager(
-                            new File(context.getCacheDir(), "lottie_network"),
-                            new File(context.getCacheDir(), "lottie"));
+                            new File(applicationContext.getCacheDir(), "lottie_network"),
+                            new File(applicationContext.getCacheDir(), "lottie"));
                 }
             }
         }

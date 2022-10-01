@@ -34,6 +34,7 @@ import com.aghajari.rlottie.glide.decoder.AXrStreamLottieDecoder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.load.Option;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.module.LibraryGlideModule;
 
@@ -61,36 +62,43 @@ public class AXrLottieGlideLibraryModule extends LibraryGlideModule {
         if (file == null)
             return null;
 
-        int size = options.get(AXrLottieGlideOptions.SIZE);
+        int size = get(options, AXrLottieGlideOptions.SIZE);
 
         AXrLottieDrawable.Builder builder = AXrLottieDrawable.fromFile(file);
         builder.apply(options.get(AXrLottieGlideOptions.OPTIONS));
-
         if (size > 0)
             builder.setSize(size, size);
         else
             builder.setSize(w, h);
 
-        builder.setAutoStart(options.get(AXrLottieGlideOptions.AUTO_START));
-
+        builder.setAutoStart(get(options, AXrLottieGlideOptions.AUTO_START));
         return new AXrLottieDrawableResource(builder.build());
     }
 
     public static boolean handles(Options options) {
-        return options.get(AXrLottieGlideOptions.ENABLED) &&
+        return get(options, AXrLottieGlideOptions.ENABLED) &&
                 options.get(AXrLottieGlideOptions.NAME) != null;
     }
 
     public static AXrLottieResult<File> parseStream(InputStream stream, Options options) {
         return AXrStreamParser.parseStream(stream,
-                AXrLottie.getSupportedFileExtensions().get(options.get(AXrLottieGlideOptions.EXTENSION).toLowerCase()),
+                AXrLottie.getSupportedFileExtensions().get(
+                        get(options, AXrLottieGlideOptions.EXTENSION).toLowerCase()),
                 options.get(AXrLottieGlideOptions.NAME),
-                options.get(AXrLottieGlideOptions.NETWORK));
+                get(options, AXrLottieGlideOptions.NETWORK));
     }
 
     public static AXrLottieResult<File> parseFile(File file, Options options) {
         return new AXrLottieResult<>(AXrFileReader.fromFile(file,
-                options.get(AXrLottieGlideOptions.NETWORK),
+                get(options, AXrLottieGlideOptions.NETWORK),
                 options.get(AXrLottieGlideOptions.NAME)));
+    }
+
+    private static <T> T get(Options options, Option<T> key) {
+        T value = options.get(key);
+        if (value == null)
+            value = key.getDefaultValue();
+
+        return value;
     }
 }
