@@ -11,9 +11,9 @@ buildscript {
     }
 }
 
-plugins {
-    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
-}
+//plugins {
+//    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+//}
 
 allprojects {
     repositories {
@@ -26,27 +26,27 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-ext["signing.keyId"] = ''
-ext["signing.password"] = ''
-ext["signing.key"] = ''
-ext["sonatypeStagingProfileId"] = ''
-ext["ossrhUsername"] = ''
-ext["ossrhPassword"] = ''
-
-File secretPropsFile = project.rootProject.file('local.properties')
-Properties p = new Properties()
-new FileInputStream(secretPropsFile).withCloseable { is -> p.load(is) }
-p.each { name, value -> ext[name] = value }
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            stagingProfileId = rootProject.ext["sonatypeStagingProfileId"]
-            username = rootProject.ext["ossrhUsername"]
-            password = rootProject.ext["ossrhPassword"]
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-        }
-    }
-}
+//ext["signing.keyId"] = ''
+//ext["signing.password"] = ''
+//ext["signing.key"] = ''
+//ext["sonatypeStagingProfileId"] = ''
+//ext["ossrhUsername"] = ''
+//ext["ossrhPassword"] = ''
+//
+//File secretPropsFile = project.rootProject.file('local.properties')
+//Properties p = new Properties()
+//new FileInputStream(secretPropsFile).withCloseable { is -> p.load(is) }
+//p.each { name, value -> ext[name] = value }
+//
+//nexusPublishing {
+//    repositories {
+//        sonatype {
+//            stagingProfileId = rootProject.ext["sonatypeStagingProfileId"]
+//            username = rootProject.ext["ossrhUsername"]
+//            password = rootProject.ext["ossrhPassword"]
+//            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+//            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+//        }
+//    }
+//}
 

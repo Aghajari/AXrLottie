@@ -134,15 +134,20 @@ public class AXrLottieDrawable extends BitmapDrawable implements Animatable {
             initFromNetwork(file);
         }
     };
-
-    private final AXrLottieTask.Listener<Throwable> networkFailureListener = result -> {
-        // Failure Listener
-
-        if (result != null)
-            Log.e(TAG, result.toString());
-
-        if (loaderListener != null)
-            loaderListener.onError(AXrLottieDrawable.this, result);
+    
+    private final AXrLottieTask.Listener<Throwable> networkFailureListener = new AXrLottieTask.Listener<Throwable>() {
+        @Override
+        public void onResult(Throwable result) {
+            // Failure Listener
+            if (result == null) return;
+            String reason = result.toString();
+            if (!TextUtils.isEmpty(reason)) {
+                Log.e(TAG, reason);
+            }
+            if (loaderListener != null) {
+                loaderListener.onError(AXrLottieDrawable.this, result);
+            }
+        }
     };
 
     public interface OnFrameChangedListener {

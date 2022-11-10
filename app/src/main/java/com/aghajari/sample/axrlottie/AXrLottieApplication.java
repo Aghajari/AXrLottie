@@ -26,7 +26,7 @@ public class AXrLottieApplication extends Application {
         super.onCreate();
 
         AXrLottie.init(this);
-        //AXrLottie.setMaxNetworkCacheSize(100);
+      //AXrLottie.setMaxNetworkCacheSize(100);
         AXrLottie.setNetworkFetcher(OkHttpNetworkFetcher.create());
         AXrLottie.addFileExtension(new GZipFileExtension(".tgs"));
 
